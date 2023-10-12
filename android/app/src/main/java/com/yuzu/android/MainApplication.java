@@ -1,4 +1,4 @@
-package com.jujujam.android;
+package com.yuzu.android;
 
 import android.app.Application;
 import android.content.res.Configuration;

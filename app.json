@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Jujujam",
-    "slug": "jujujam",
+    "name": "Yuzu",
+    "slug": "yuzu",
     "version": "1.0.0",
-    "owner": "jujujam",
+    "owner": "yuzu",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "jujujam",
+    "scheme": "yuzu",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -18,14 +18,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jujujam.ios"
+      "bundleIdentifier": "com.yuzu.ios"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jujujam.android"
+      "package": "com.yuzu.android"
     },
     "web": {
       "bundler": "metro",

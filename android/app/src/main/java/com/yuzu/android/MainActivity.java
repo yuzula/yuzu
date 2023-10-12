@@ -1,4 +1,4 @@
-package com.jujujam.android;
+package com.yuzu.android;
 
 import android.os.Build;
 import android.os.Bundle;

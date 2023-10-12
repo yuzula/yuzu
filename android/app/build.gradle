@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.jujujam.android'
+    namespace 'com.yuzu.android'
     defaultConfig {
-        applicationId 'com.jujujam.android'
+        applicationId 'com.yuzu.android'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
