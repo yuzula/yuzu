@@ -6,6 +6,7 @@
 **/.next/**
 **/__generated__/**
 **/build/**
+expo-env.d.ts
 
 # Git submodules
 /react-native-lab/react-native/**
