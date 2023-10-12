@@ -1,40 +1,17 @@
-import { Link, Stack } from 'expo-router'
-import { StyleSheet } from 'react-native'
+import { Link } from 'expo-router'
+import { FunctionComponent } from 'react'
+import { Heading, Stack, Text } from 'tamagui'
 
-import { Text, View } from '../components/Themed'
+const NotFound: FunctionComponent = () => (
+  <Stack>
+    <Heading>You ain&apos;t supposed to be here!</Heading>
+    <Text>
+      You&apos;ve somehow landed on a screen that shouldn&apos;t exist
+    </Text>
+    <Link href="/">
+      <Text>Take me home</Text>
+    </Link>
+  </Stack>
+)
 
-export default function NotFoundScreen() {
-  return (
-    <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
-    </>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15
-  },
-  linkText: {
-    fontSize: 14,
-    color: '#2e78b7'
-  }
-})
+export default NotFound
