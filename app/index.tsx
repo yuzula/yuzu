@@ -10,7 +10,9 @@ const Index: FunctionComponent = () => {
       <View className="flex-1 items-center justify-center">
         <Logo height={50} width={50} />
 
-        <Text>Open up App.js to start working on your app!</Text>
+        <Text className="font-poppins">
+          Open up App.js to start working on your app!
+        </Text>
       </View>
     </SafeAreaView>
   )
