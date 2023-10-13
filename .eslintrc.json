@@ -1,6 +1,6 @@
 {
   "extends": ["universe/native"],
-  "plugins": ["simple-import-sort"],
+  "plugins": ["simple-import-sort", "eslint-plugin-tailwindcss"],
   "rules": {
     "@typescript-eslint/array-type": "error",
     "@typescript-eslint/method-signature-style": "error",
@@ -31,6 +31,11 @@
         "multiline": "last"
       }
     ],
+    "tailwindcss/classnames-order": "error",
+    "tailwindcss/enforces-negative-arbitrary-values": "error",
+    "tailwindcss/enforces-shorthand": "error",
+    "tailwindcss/no-custom-classname": "error",
+    "tailwindcss/no-contradicting-classname": "error",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
     "prettier/prettier": "error"
