@@ -8,16 +8,16 @@ const Index: FunctionComponent = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary" edges={['top']}>
       <SafeAreaView className="flex-1 bg-indigo-500" edges={['bottom']}>
-        <View className="flex-1 items-center justify-between bg-primary">
+        <View className="flex-1 basis-2 items-center justify-between bg-primary">
           <View className="grow items-center justify-center">
             <Logo height={120} width={120} />
           </View>
 
-          <View className="w-full">
+          <View className="w-full grow justify-end">
             <TouchableHighlight>
               <View className="h-20 items-center justify-center bg-blue-500">
                 <Text className="font-Poppins_600SemiBold text-xl text-white">
-                  LOGIN
+                  LOG IN
                 </Text>
               </View>
             </TouchableHighlight>
