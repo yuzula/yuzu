@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react'
-import { Text, TouchableHighlight, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Logo from '../components/Logo'
@@ -14,21 +14,21 @@ const Index: FunctionComponent = () => {
           </View>
 
           <View className="w-full grow justify-end">
-            <TouchableHighlight>
+            <Pressable className="active:opacity-90">
               <View className="h-20 items-center justify-center bg-blue-500">
                 <Text className="font-Poppins_600SemiBold text-xl text-white">
                   LOG IN
                 </Text>
               </View>
-            </TouchableHighlight>
+            </Pressable>
 
-            <TouchableHighlight>
+            <Pressable className="active:opacity-90">
               <View className="h-20 items-center justify-center bg-indigo-500">
                 <Text className="font-Poppins_600SemiBold text-xl text-white">
                   SIGN UP
                 </Text>
               </View>
-            </TouchableHighlight>
+            </Pressable>
           </View>
         </View>
       </SafeAreaView>
