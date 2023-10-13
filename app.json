@@ -3,7 +3,7 @@
     "name": "Yuzu",
     "slug": "yuzu",
     "version": "1.0.0",
-    "owner": "yuzu",
+    "owner": "yuzula",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "yuzu",
@@ -38,7 +38,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "a55b96e0-f11b-49fd-8070-9225c07b0605"
+        "projectId": "3c83602b-b346-4829-887e-b639a4fbe8c0"
       }
     }
   }
