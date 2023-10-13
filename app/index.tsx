@@ -1,23 +1,37 @@
 import { FunctionComponent } from 'react'
-import { Text, View } from 'react-native'
+import { Text, TouchableHighlight, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Logo from '../components/Logo'
 
 const Index: FunctionComponent = () => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 items-center justify-center">
-        <Logo height={50} width={50} />
+    <SafeAreaView className="flex-1 bg-primary" edges={['top']}>
+      <SafeAreaView className="flex-1 bg-indigo-500" edges={['bottom']}>
+        <View className="flex-1 items-center justify-between bg-primary">
+          <View className="grow items-center justify-center">
+            <Logo height={120} width={120} />
+          </View>
 
-        <Text className="font-Poppins_900Black_Italic text-xl">
-          Open up App.js to start working on your app!
-        </Text>
+          <View className="w-full">
+            <TouchableHighlight>
+              <View className="h-20 items-center justify-center bg-blue-500">
+                <Text className="font-Poppins_600SemiBold text-xl text-white">
+                  LOGIN
+                </Text>
+              </View>
+            </TouchableHighlight>
 
-        <Text className="font-Poppins_100Thin">
-          Open up App.js to start working on your app!
-        </Text>
-      </View>
+            <TouchableHighlight>
+              <View className="h-20 items-center justify-center bg-indigo-500">
+                <Text className="font-Poppins_600SemiBold text-xl text-white">
+                  SIGN UP
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </SafeAreaView>
     </SafeAreaView>
   )
 }
