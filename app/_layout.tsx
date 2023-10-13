@@ -3,6 +3,7 @@ import { FunctionComponent, useEffect } from 'react'
 import { TamaguiProvider } from 'tamagui'
 
 import useFonts from '../hooks/useFonts'
+import useRouteGuard from '../hooks/useRouteGuard'
 import useSession from '../hooks/useSession'
 import config from '../tamagui.config'
 
@@ -12,7 +13,13 @@ SplashScreen.preventAutoHideAsync()
 
 const Layout: FunctionComponent = () => {
   const { isLoading: areFontsLoading, error: fontsError } = useFonts()
-  const { isLoading: isSessionLoading, error: sessionError } = useSession()
+  const {
+    session,
+    isLoading: isSessionLoading,
+    error: sessionError
+  } = useSession()
+
+  useRouteGuard({ isAuthenticated: !!session })
 
   const areResourcesLoading = areFontsLoading || isSessionLoading
   const areResourcesErroring = fontsError || sessionError
