@@ -1,8 +1,9 @@
-import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
 import { FunctionComponent, useEffect } from 'react'
 import { TamaguiProvider } from 'tamagui'
 
+import useFonts from '../hooks/useFonts'
+import useSession from '../hooks/useSession'
 import config from '../tamagui.config'
 
 export { ErrorBoundary } from 'expo-router'
@@ -10,26 +11,23 @@ export { ErrorBoundary } from 'expo-router'
 SplashScreen.preventAutoHideAsync()
 
 const Layout: FunctionComponent = () => {
-  const [loaded, error] = useFonts({
-    Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
-    InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf')
-  })
+  const { isLoading: areFontsLoading, error: fontsError } = useFonts()
+  const { isLoading: isSessionLoading, error: sessionError } = useSession()
+
+  const areResourcesLoading = areFontsLoading || isSessionLoading
+  const areResourcesErroring = fontsError || sessionError
 
   useEffect(() => {
-    if (error) {
-      throw error
+    if (areResourcesErroring) {
+      throw fontsError ?? sessionError
     }
-  }, [error])
+  }, [areResourcesErroring, fontsError, sessionError])
 
   useEffect(() => {
-    if (loaded) {
+    if (!areResourcesLoading && !areResourcesErroring) {
       SplashScreen.hideAsync()
     }
-  }, [loaded])
-
-  if (!loaded) {
-    return null
-  }
+  }, [areResourcesErroring, areResourcesLoading])
 
   return (
     <TamaguiProvider config={config}>
