@@ -1,14 +1,17 @@
 import { FunctionComponent } from 'react'
+import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Button, Stack, Text } from 'tamagui'
+
+import Logo from '../components/Logo'
 
 const Index: FunctionComponent = () => {
   return (
-    <SafeAreaView>
-      <Stack alignItems="center" justifyContent="center">
-        <Text>Bruh</Text>
-        <Button>Button</Button>
-      </Stack>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View className="flex-1 items-center justify-center">
+        <Logo height={50} width={50} />
+
+        <Text>Open up App.js to start working on your app!</Text>
+      </View>
     </SafeAreaView>
   )
 }

@@ -1,11 +1,9 @@
 import { SplashScreen, Stack } from 'expo-router'
 import { FunctionComponent, useEffect } from 'react'
-import { TamaguiProvider } from 'tamagui'
 
 import useFonts from '../hooks/useFonts'
 import useRouteGuard from '../hooks/useRouteGuard'
 import useSession from '../hooks/useSession'
-import config from '../tamagui.config'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -36,11 +34,7 @@ const Layout: FunctionComponent = () => {
     }
   }, [areResourcesErroring, areResourcesLoading])
 
-  return (
-    <TamaguiProvider config={config}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </TamaguiProvider>
-  )
+  return <Stack screenOptions={{ headerShown: false }} />
 }
 
 export default Layout
