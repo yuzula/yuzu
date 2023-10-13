@@ -1,10 +1,14 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Logo from '../components/Logo'
 
 const Index: FunctionComponent = () => {
+  const handleLoginPress = useCallback(() => {}, [])
+
+  const handleSignUpPress = useCallback(() => {}, [])
+
   return (
     <SafeAreaView className="flex-1 bg-primary" edges={['top']}>
       <SafeAreaView className="flex-1 bg-indigo-500" edges={['bottom']}>
@@ -14,7 +18,7 @@ const Index: FunctionComponent = () => {
           </View>
 
           <View className="w-full grow justify-end">
-            <Pressable className="active:opacity-90">
+            <Pressable className="active:opacity-90" onPress={handleLoginPress}>
               <View className="h-20 items-center justify-center bg-blue-500">
                 <Text className="font-Poppins_600SemiBold text-xl text-white">
                   LOG IN
@@ -22,7 +26,10 @@ const Index: FunctionComponent = () => {
               </View>
             </Pressable>
 
-            <Pressable className="active:opacity-90">
+            <Pressable
+              className="active:opacity-90"
+              onPress={handleSignUpPress}
+            >
               <View className="h-20 items-center justify-center bg-indigo-500">
                 <Text className="font-Poppins_600SemiBold text-xl text-white">
                   SIGN UP

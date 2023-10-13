@@ -32,9 +32,11 @@ const Layout: FunctionComponent = () => {
     if (!areResourcesLoading && !areResourcesErroring) {
       SplashScreen.hideAsync()
     }
-  }, [areResourcesErroring, areResourcesLoading])
+  }, [areFontsLoading, areResourcesErroring, areResourcesLoading])
 
-  return <Stack screenOptions={{ headerShown: false }} />
+  return areResourcesLoading || areResourcesErroring ? null : (
+    <Stack screenOptions={{ headerShown: false }} />
+  )
 }
 
 export default Layout
