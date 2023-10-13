@@ -15,7 +15,6 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
       "bundleIdentifier": "com.yuzu.ios"
     },
     "android": {
