@@ -10,7 +10,7 @@ const NotFound: FunctionComponent = () => {
   }, [router])
 
   return (
-    <View className="flex-1 items-center justify-center space-y-2">
+    <View className="w-5/6 flex-1 items-center justify-center space-y-2">
       <Text className="font-Poppins_700Bold text-xl">
         You ain&apos;t supposed to be here!
       </Text>
