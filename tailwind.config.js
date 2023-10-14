@@ -12,7 +12,9 @@ module.exports = {
         'apple-blue-light': 'rgb(0, 122, 255)',
         'apple-blue-dark': 'rgb(10, 132, 255)',
         'apple-purple-light': 'rgb(175, 82, 222)',
-        'apple-purple-dark': 'rgb(191, 90, 242)'
+        'apple-purple-dark': 'rgb(191, 90, 242)',
+        'apple-gray-light': 'rgb(142, 142, 147)',
+        'apple-gray-dark': 'rgb(142, 142, 147)'
       },
       fontFamily: {
         Poppins_100Thin: 'Poppins_100Thin',
