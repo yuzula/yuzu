@@ -4,7 +4,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#fcf951'
+        primary: '#fcf951',
+        'apple-red-light': 'rgb(255, 59, 48)',
+        'apple-red-dark': 'rgb(255, 69, 58)',
+        'apple-blue-light': 'rgb(0, 122, 255)',
+        'apple-blue-dark': 'rgb(10, 132, 255)',
+        'apple-purple-light': 'rgb(175, 82, 222)',
+        'apple-purple-dark': 'rgb(191, 90, 242)'
       },
       fontFamily: {
         Poppins_100Thin: 'Poppins_100Thin',

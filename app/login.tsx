@@ -22,7 +22,7 @@ const Login: FunctionComponent = () => {
           </View>
         </View>
 
-        <Pressable className="w-full items-center justify-center rounded-xl bg-blue-600 p-3.5 active:opacity-90">
+        <Pressable className="w-full items-center justify-center rounded-xl bg-apple-blue-light p-3.5 active:opacity-90">
           <Text className="font-Poppins_600SemiBold text-white">Log In</Text>
         </Pressable>
       </View>
