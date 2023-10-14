@@ -30,8 +30,8 @@ const Index: FunctionComponent = () => {
               onPress={handleLoginButtonPress}
             >
               <View className="h-20 items-center justify-center bg-blue-600">
-                <Text className="font-Poppins_600SemiBold text-xl text-white">
-                  LOG IN
+                <Text className="font-Poppins_600SemiBold text-xl uppercase text-white">
+                  Log In
                 </Text>
               </View>
             </Pressable>
@@ -41,8 +41,8 @@ const Index: FunctionComponent = () => {
               onPress={handleRegisterButtonPress}
             >
               <View className="h-20 items-center justify-center bg-purple-600">
-                <Text className="font-Poppins_600SemiBold text-xl text-white">
-                  SIGN UP
+                <Text className="font-Poppins_600SemiBold text-xl uppercase text-white">
+                  Sign Up
                 </Text>
               </View>
             </Pressable>
