@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
+import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
 const registerSchema = z.object({
@@ -38,21 +39,25 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
 
   const handleSignUpButtonPress = useCallback(
     async ({ email, username, password }: RegisterSchema) => {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username
+      try {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username
+            }
           }
+        })
+
+        if (error) {
+          return Alert.alert(error.message)
         }
-      })
 
-      if (error) {
-        return Alert.alert(error.message)
+        navigation.navigate('EmailVerification', { email })
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
-
-      navigation.navigate('EmailVerification', { email })
     },
     [navigation]
   )
@@ -136,7 +141,7 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
           isDisabled={!isValid}
           onPress={handleSubmit(handleSignUpButtonPress)}
         >
-          Continue
+          Sign Up
         </Button>
       </View>
     </SafeAreaView>
