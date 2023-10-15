@@ -1,20 +1,20 @@
-import { useRouter } from 'expo-router'
 import { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Logo from '../components/Logo'
+import { RootStackScreenProps } from '../types'
 
-const Index: FunctionComponent = () => {
-  const router = useRouter()
-
+const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
+  navigation
+}) => {
   const handleLoginButtonPress = useCallback(() => {
-    router.push('/login')
-  }, [router])
+    navigation.navigate('Login')
+  }, [navigation])
 
   const handleRegisterButtonPress = useCallback(() => {
-    router.push('/register')
-  }, [router])
+    navigation.navigate('Register')
+  }, [navigation])
 
   return (
     <SafeAreaView className="flex-1 bg-primary" edges={['top']}>
@@ -53,4 +53,4 @@ const Index: FunctionComponent = () => {
   )
 }
 
-export default Index
+export default Root

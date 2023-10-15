@@ -5,8 +5,7 @@ module.exports = api => {
     plugins: [
       'transform-inline-environment-variables',
       'react-native-reanimated/plugin',
-      'nativewind/babel',
-      'expo-router/babel'
+      'nativewind/babel'
     ]
   }
 }

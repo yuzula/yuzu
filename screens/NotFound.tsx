@@ -1,13 +1,14 @@
-import { useRouter } from 'expo-router'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
-const NotFound: FunctionComponent = () => {
-  const router = useRouter()
+import { RootStackScreenProps } from '../types'
 
+const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
+  navigation
+}) => {
   const handleHomeButtonPress = useCallback(() => {
-    router.push('/')
-  }, [router])
+    navigation.navigate('Root')
+  }, [navigation])
 
   return (
     <View className="flex-1 items-center justify-center">

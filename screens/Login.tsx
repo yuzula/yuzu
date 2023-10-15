@@ -1,13 +1,22 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackButton from '../components/BackButton'
+import { RootStackScreenProps } from '../types'
 
-const Login: FunctionComponent = () => {
+const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
+  navigation
+}) => {
+  const handleBackButtonPress = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack()
+    }
+  }, [navigation])
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      <BackButton />
+      <BackButton onPress={handleBackButtonPress} />
       <View className="w-4/6 items-center justify-center space-y-8">
         <View className="w-full space-y-4">
           <View className="w-full">

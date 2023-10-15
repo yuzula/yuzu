@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'expo-router'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, Text, TextInput, View } from 'react-native'
@@ -9,6 +8,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
+import { RootStackScreenProps } from '../types'
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -18,9 +18,9 @@ const registerSchema = z.object({
 
 type RegisterSchema = z.infer<typeof registerSchema>
 
-const Register: FunctionComponent = () => {
-  const router = useRouter()
-
+const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
+  navigation
+}) => {
   const {
     control,
     handleSubmit,
@@ -29,6 +29,12 @@ const Register: FunctionComponent = () => {
     mode: 'all',
     resolver: zodResolver(registerSchema)
   })
+
+  const handleBackButtonPress = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack()
+    }
+  }, [navigation])
 
   const handleSignUpButtonPress = useCallback(
     async ({ email, username, password }: RegisterSchema) => {
@@ -46,19 +52,14 @@ const Register: FunctionComponent = () => {
         return Alert.alert(error.message)
       }
 
-      router.push({
-        pathname: '/email-verification',
-        params: {
-          email
-        }
-      })
+      navigation.navigate('EmailVerification', { email })
     },
-    [router]
+    [navigation]
   )
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      <BackButton />
+      <BackButton onPress={handleBackButtonPress} />
       <View className="w-4/6 items-center justify-center space-y-8">
         <View className="w-full space-y-4">
           <View className="w-full">
@@ -72,6 +73,9 @@ const Register: FunctionComponent = () => {
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
                   className="h-10 w-full border-b border-apple-gray-light"
                   value={value}
                   onBlur={onBlur}
@@ -92,6 +96,9 @@ const Register: FunctionComponent = () => {
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
                   className="h-10 w-full border-b border-apple-gray-light"
                   value={value}
                   onBlur={onBlur}
@@ -112,6 +119,9 @@ const Register: FunctionComponent = () => {
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
                   className="h-10 w-full border-b border-apple-gray-light"
                   value={value}
                   onBlur={onBlur}

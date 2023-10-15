@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, SafeAreaView, Text, TextInput, View } from 'react-native'
@@ -7,6 +6,7 @@ import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
+import { RootStackScreenProps } from '../types'
 
 const emailVerificationSchema = z.object({
   token: z.string().length(6)
@@ -18,10 +18,10 @@ const localSearchParamsSchema = z.object({
   email: z.string().email()
 })
 
-const EmailVerification: FunctionComponent = () => {
-  const router = useRouter()
-
-  const { email } = localSearchParamsSchema.parse(useLocalSearchParams())
+const EmailVerification: FunctionComponent<
+  RootStackScreenProps<'EmailVerification'>
+> = ({ route: { params } }) => {
+  const { email } = localSearchParamsSchema.parse(params)
 
   const {
     control,
@@ -43,10 +43,8 @@ const EmailVerification: FunctionComponent = () => {
       if (result.error) {
         return Alert.alert(result.error.message)
       }
-
-      router.replace('/home')
     },
-    [email, router]
+    [email]
   )
 
   return (
