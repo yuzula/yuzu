@@ -47,13 +47,11 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         if (error) {
           return Alert.alert(error.message)
         }
-
-        navigation.navigate('Tabs')
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [navigation]
+    []
   )
 
   return (
@@ -95,6 +93,7 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
+                  secureTextEntry
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect={false}
