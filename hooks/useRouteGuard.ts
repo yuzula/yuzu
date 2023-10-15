@@ -11,6 +11,9 @@ const useRouteGuard = ({ isAuthenticated }: UseRouteGuardParams) => {
   const navigationState = useRootNavigationState()
 
   useEffect(() => {
+    // A hack to ensure that we're only changing the routes when root navigation
+    // is ready
+    //
     // https://github.com/expo/router/issues/740#issuecomment-1649975757
     if (!navigationState?.key) {
       return
