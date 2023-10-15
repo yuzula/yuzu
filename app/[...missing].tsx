@@ -11,12 +11,13 @@ const NotFound: FunctionComponent = () => {
 
   return (
     <View className="flex-1 items-center justify-center">
-      <View className="w-4/6 items-center justify-center space-y-4">
-        <Text className="text-center font-Poppins_700Bold text-xl">
-          You ain&apos;t supposed to be here!
+      <View className="w-4/6 items-center justify-center space-y-6">
+        <Text className="text-center font-Poppins_600SemiBold text-xl">
+          You ain't supposed to be here!
         </Text>
-        <Text className="text-center font-Poppins_400Regular text-lg">
-          You&apos;ve somehow landed on a screen that shouldn&apos;t exist
+        <Text className="text-center font-Poppins_400Regular">
+          This screen doesn't exist. We've been notified of this issue and will
+          look into it.
         </Text>
         <Pressable
           className="w-full items-center rounded-xl bg-apple-blue-light p-3.5 active:opacity-90"

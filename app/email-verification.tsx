@@ -1,0 +1,90 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import React, { FunctionComponent, useCallback } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { Alert, SafeAreaView, Text, TextInput, View } from 'react-native'
+import { z } from 'zod'
+
+import { supabase } from '../clients/supabase'
+import Button from '../components/Button'
+
+const emailVerificationSchema = z.object({
+  token: z.string().length(6)
+})
+
+type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>
+
+const localSearchParamsSchema = z.object({
+  email: z.string().email()
+})
+
+const EmailVerification: FunctionComponent = () => {
+  const router = useRouter()
+
+  const { email } = localSearchParamsSchema.parse(useLocalSearchParams())
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid }
+  } = useForm<EmailVerificationSchema>({
+    mode: 'all',
+    resolver: zodResolver(emailVerificationSchema)
+  })
+
+  const handleVerifyButtonPress = useCallback(
+    async ({ token }: EmailVerificationSchema) => {
+      const result = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'signup'
+      })
+
+      if (result.error) {
+        return Alert.alert(result.error.message)
+      }
+
+      router.replace('/home')
+    },
+    [email, router]
+  )
+
+  return (
+    <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <View className="w-4/6 items-center justify-center space-y-6">
+        <Text className="text-center font-Poppins_600SemiBold text-lg">
+          Enter the verification code we just sent to your email
+        </Text>
+
+        <View className="w-full">
+          <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+            Code
+          </Text>
+          <Controller
+            control={control}
+            defaultValue=""
+            name="token"
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="h-10 w-full border-b border-apple-gray-light"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+            )}
+          />
+        </View>
+
+        <Button
+          isDisabled={!isValid}
+          onPress={handleSubmit(handleVerifyButtonPress)}
+        >
+          Verify
+        </Button>
+      </View>
+    </SafeAreaView>
+  )
+}
+
+export default EmailVerification

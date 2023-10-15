@@ -1,4 +1,4 @@
-import { useRouter, useSegments } from 'expo-router'
+import { useRootNavigationState, useRouter, useSegments } from 'expo-router'
 import { useEffect } from 'react'
 
 interface UseRouteGuardParams {
@@ -6,19 +6,23 @@ interface UseRouteGuardParams {
 }
 
 const useRouteGuard = ({ isAuthenticated }: UseRouteGuardParams) => {
-  const segments = useSegments()
-
   const router = useRouter()
+  const segments = useSegments()
+  const navigationState = useRootNavigationState()
 
   useEffect(() => {
+    if (!navigationState?.key) {
+      return
+    }
+
     const isRouteProtected = segments[0] === '(protected)'
 
     if (!isAuthenticated && isRouteProtected) {
       router.replace('/')
     } else if (isAuthenticated && !isRouteProtected) {
-      router.replace('/explore')
+      router.replace('/home')
     }
-  }, [isAuthenticated, router, segments])
+  }, [isAuthenticated, router, navigationState?.key, segments])
 }
 
 export default useRouteGuard

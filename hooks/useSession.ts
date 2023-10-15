@@ -10,7 +10,6 @@ const useSession = () => {
 
   const doGetSession = useCallback(async () => {
     setIsLoading(true)
-
     const result = await supabase.auth.getSession()
 
     if (result.error) {
