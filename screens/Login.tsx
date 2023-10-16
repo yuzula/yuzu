@@ -13,7 +13,7 @@ import { RootStackScreenProps } from '../types'
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6).max(60)
+  password: z.string().min(1).max(60)
 })
 
 type LoginSchema = z.infer<typeof loginSchema>
