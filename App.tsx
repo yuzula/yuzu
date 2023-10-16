@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
 
 import useFonts from './hooks/useFonts'
@@ -83,25 +84,28 @@ const App: FunctionComponent = memo(() => {
     return null
   } else {
     return (
-      <NavigationContainer linking={linking} onReady={handleNavigationReady}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {session ? (
-            <>
-              <Stack.Screen component={BottomTabNavigator} name="Tabs" />
-            </>
-          ) : (
-            <>
-              <Stack.Screen component={Root} name="Root" />
-              <Stack.Screen component={Register} name="Register" />
-              <Stack.Screen component={Login} name="Login" />
-              <Stack.Screen
-                component={EmailVerification}
-                name="EmailVerification"
-              />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <>
+        <StatusBar />
+        <NavigationContainer linking={linking} onReady={handleNavigationReady}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {session ? (
+              <>
+                <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+              </>
+            ) : (
+              <>
+                <Stack.Screen component={Root} name="Root" />
+                <Stack.Screen component={Register} name="Register" />
+                <Stack.Screen component={Login} name="Login" />
+                <Stack.Screen
+                  component={EmailVerification}
+                  name="EmailVerification"
+                />
+              </>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </>
     )
   }
 })

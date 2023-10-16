@@ -43,7 +43,7 @@ const Home: FunctionComponent = () => {
       {isProfileLoading ? (
         <ActivityIndicator />
       ) : (
-        <View className="w-5/6 flex-1 pt-2">
+        <View className="w-5/6 flex-1 pt-6">
           <View className="space-y-2">
             <Text className="font-Poppins_700Bold text-xl">
               {profile?.community_domain_name}
