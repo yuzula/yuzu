@@ -5,7 +5,7 @@ import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 
 const Profile: FunctionComponent = () => (
-  <SafeAreaView>
+  <SafeAreaView className="flex-1 bg-white">
     <Button
       onPress={() => {
         supabase.auth.signOut()

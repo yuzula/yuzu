@@ -30,6 +30,9 @@ const BottomTabNavigator: FunctionComponent = () => {
         tabBarInactiveTintColor: 'rgb(142, 142, 147)',
         tabBarStyle: {
           backgroundColor: 'white'
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'Poppins_600SemiBold'
         }
       }}
     >
