@@ -18,6 +18,7 @@
     "no-console": "error",
     "no-promise-executor-return": "error",
     "no-return-await": "error",
+    "no-case-declarations": "off",
     "prefer-arrow-callback": "error",
     "prefer-promise-reject-errors": "error",
     "react-hooks/exhaustive-deps": "error",

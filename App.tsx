@@ -1,3 +1,4 @@
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
@@ -102,25 +103,30 @@ const App: FunctionComponent = memo(() => {
     return (
       <>
         <StatusBar />
-        <NavigationContainer linking={linking} onReady={handleNavigationReady}>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {session ? (
-              <>
-                <Stack.Screen component={BottomTabNavigator} name="Tabs" />
-              </>
-            ) : (
-              <>
-                <Stack.Screen component={Root} name="Root" />
-                <Stack.Screen component={Register} name="Register" />
-                <Stack.Screen component={Login} name="Login" />
-                <Stack.Screen
-                  component={EmailVerification}
-                  name="EmailVerification"
-                />
-              </>
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
+        <ActionSheetProvider>
+          <NavigationContainer
+            linking={linking}
+            onReady={handleNavigationReady}
+          >
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              {session ? (
+                <>
+                  <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen component={Root} name="Root" />
+                  <Stack.Screen component={Register} name="Register" />
+                  <Stack.Screen component={Login} name="Login" />
+                  <Stack.Screen
+                    component={EmailVerification}
+                    name="EmailVerification"
+                  />
+                </>
+              )}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ActionSheetProvider>
       </>
     )
   }
