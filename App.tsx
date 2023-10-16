@@ -2,9 +2,11 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import clsx from 'clsx'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
+import { Text } from 'react-native'
 
 import useFonts from './hooks/useFonts'
 import useSession from './hooks/useSession'
@@ -42,8 +44,15 @@ const BottomTabNavigator: FunctionComponent = () => {
         name="Home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="home" size={20} />
+          tabBarIcon: ({ focused }) => (
+            <Text
+              className={clsx({
+                'text-apple-blue-light': focused,
+                'text-apple-gray-light': !focused
+              })}
+            >
+              <FontAwesome5 name="home" size={20} />
+            </Text>
           )
         }}
       />
@@ -52,8 +61,15 @@ const BottomTabNavigator: FunctionComponent = () => {
         name="Me"
         options={{
           title: 'Me',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="user" size={20} />
+          tabBarIcon: ({ focused }) => (
+            <Text
+              className={clsx({
+                'text-apple-blue-light': focused,
+                'text-apple-gray-light': !focused
+              })}
+            >
+              <FontAwesome5 name="user" size={20} />
+            </Text>
           )
         }}
       />

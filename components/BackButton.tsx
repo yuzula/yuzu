@@ -1,6 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { FunctionComponent } from 'react'
-import { Pressable } from 'react-native'
+import { Pressable, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface BackButtonProps {
@@ -16,7 +16,9 @@ const BackButton: FunctionComponent<BackButtonProps> = ({ onPress }) => {
       style={{ top: insets.top + 20, left: 20 }}
       onPress={onPress}
     >
-      <FontAwesome5 color="rgb(142, 142, 147)" name="chevron-left" size={20} />
+      <Text className="text-apple-gray-light">
+        <FontAwesome5 name="chevron-left" size={20} />
+      </Text>
     </Pressable>
   )
 }
