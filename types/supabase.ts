@@ -206,6 +206,12 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      count_members: {
+        Args: {
+          domain_name: string
+        }
+        Returns: number
+      }
       get_domain_name_from_email: {
         Args: {
           email: string
