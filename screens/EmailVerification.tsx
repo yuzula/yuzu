@@ -1,11 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, SafeAreaView, Text, TextInput, View } from 'react-native'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
+import {
+  GENERIC_ACTION_ERROR_TITLE,
+  GENERIC_ERROR_MESSAGE
+} from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
 const emailVerificationSchema = z.object({
@@ -32,16 +36,26 @@ const EmailVerification: FunctionComponent<
     resolver: zodResolver(emailVerificationSchema)
   })
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleVerifyButtonPress = useCallback(
     async ({ token }: EmailVerificationSchema) => {
-      const result = await supabase.auth.verifyOtp({
-        email,
-        token,
-        type: 'signup'
-      })
+      setIsLoading(true)
 
-      if (result.error) {
-        return Alert.alert(result.error.message)
+      try {
+        const result = await supabase.auth.verifyOtp({
+          email,
+          token,
+          type: 'signup'
+        })
+
+        if (result.error) {
+          return Alert.alert(result.error.message)
+        }
+      } catch (error) {
+        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      } finally {
+        setIsLoading(false)
       }
     },
     [email]
@@ -76,6 +90,7 @@ const EmailVerification: FunctionComponent<
 
         <Button
           isDisabled={!isValid}
+          isLoading={isLoading}
           onPress={handleSubmit(handleVerifyButtonPress)}
         >
           Verify

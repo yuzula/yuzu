@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome'
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -40,8 +39,7 @@ const useFonts = () => {
     Poppins_800ExtraBold,
     Poppins_800ExtraBold_Italic,
     Poppins_900Black,
-    Poppins_900Black_Italic,
-    ...FontAwesome.font
+    Poppins_900Black_Italic
   })
 
   return {
