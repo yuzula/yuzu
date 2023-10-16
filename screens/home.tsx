@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
+import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { ProfileSchema, profileSchema } from '../models/profile'
 
@@ -75,13 +76,25 @@ const Home: FunctionComponent = () => {
         <ActivityIndicator />
       ) : (
         <View className="w-5/6 flex-1 pt-6">
-          <View className="space-y-2">
-            <Text className="font-Poppins_700Bold text-xl">
-              {profile.community_domain_name}
-            </Text>
-            <Text className="font-Poppins_500Medium text-apple-gray-light">
-              {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
-            </Text>
+          <View className="space-y-4">
+            <View className="space-y-2">
+              <Text className="font-Poppins_700Bold text-xl">
+                {profile.community_domain_name}
+              </Text>
+              <Text className="font-Poppins_500Medium text-apple-gray-light">
+                {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
+              </Text>
+            </View>
+            <View className="flex-row space-x-2">
+              <View className="grow">
+                <Button className="h-8 rounded-lg">Post</Button>
+              </View>
+              <View className="grow">
+                <Button className="h-8 rounded-lg" variant="secondary">
+                  Sort
+                </Button>
+              </View>
+            </View>
           </View>
         </View>
       )}

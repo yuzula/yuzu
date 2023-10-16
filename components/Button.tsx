@@ -10,11 +10,13 @@ import {
 interface ButtonProps extends PropsWithChildren<PressableProps> {
   isDisabled?: boolean
   isLoading?: boolean
+  variant?: 'primary' | 'secondary'
 }
 
 const Button: FunctionComponent<ButtonProps> = ({
   isDisabled = false,
   isLoading = false,
+  variant = 'primary',
   children,
   className,
   ...rest
@@ -23,17 +25,29 @@ const Button: FunctionComponent<ButtonProps> = ({
     {...rest}
     disabled={isDisabled || isLoading}
     className={clsx(
-      className,
       {
-        'opacity-40': isDisabled || isLoading
+        'opacity-40': isDisabled || isLoading,
+        'bg-apple-blue-light': variant === 'primary',
+        'bg-gray-200': variant === 'secondary'
       },
-      'h-12 w-full items-center justify-center rounded-xl bg-apple-blue-light active:opacity-90'
+      'h-12 w-full items-center justify-center rounded-xl active:opacity-90',
+      className
     )}
   >
     {isLoading ? (
       <ActivityIndicator color="white" />
     ) : (
-      <Text className="font-Poppins_600SemiBold text-white">{children}</Text>
+      <Text
+        className={clsx(
+          {
+            'text-white': variant === 'primary',
+            'text-gray-600': variant === 'secondary'
+          },
+          'font-Poppins_600SemiBold'
+        )}
+      >
+        {children}
+      </Text>
     )}
   </Pressable>
 )
