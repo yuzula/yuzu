@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -30,6 +30,8 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
     resolver: zodResolver(loginSchema)
   })
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -38,6 +40,8 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
 
   const handleLogInButtonPress = useCallback(
     async ({ email, password }: LoginSchema) => {
+      setIsLoading(true)
+
       try {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -49,6 +53,8 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         }
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      } finally {
+        setIsLoading(false)
       }
     },
     []
@@ -109,6 +115,7 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
 
         <Button
           isDisabled={!isValid}
+          isLoading={isLoading}
           onPress={handleSubmit(handleLogInButtonPress)}
         >
           Log In

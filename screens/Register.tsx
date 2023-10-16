@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -31,6 +31,8 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
     resolver: zodResolver(registerSchema)
   })
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -39,6 +41,8 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
 
   const handleSignUpButtonPress = useCallback(
     async ({ email, username, password }: RegisterSchema) => {
+      setIsLoading(true)
+
       try {
         const { error } = await supabase.auth.signUp({
           email,
@@ -57,6 +61,8 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
         navigation.navigate('EmailVerification', { email })
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      } finally {
+        setIsLoading(false)
       }
     },
     [navigation]
@@ -139,6 +145,7 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
 
         <Button
           isDisabled={!isValid}
+          isLoading={isLoading}
           onPress={handleSubmit(handleSignUpButtonPress)}
         >
           Sign Up
