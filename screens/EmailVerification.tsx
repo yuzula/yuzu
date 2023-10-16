@@ -5,6 +5,7 @@ import { Alert, SafeAreaView, Text, TextInput, View } from 'react-native'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
+import BackButton from '../components/BackButton'
 import Button from '../components/Button'
 import {
   GENERIC_ACTION_ERROR_TITLE,
@@ -24,7 +25,7 @@ const localSearchParamsSchema = z.object({
 
 const EmailVerification: FunctionComponent<
   RootStackScreenProps<'EmailVerification'>
-> = ({ route: { params } }) => {
+> = ({ navigation, route: { params } }) => {
   const { email } = localSearchParamsSchema.parse(params)
 
   const {
@@ -37,6 +38,12 @@ const EmailVerification: FunctionComponent<
   })
 
   const [isLoading, setIsLoading] = useState(false)
+
+  const handleBackButtonPress = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack()
+    }
+  }, [navigation])
 
   const handleVerifyButtonPress = useCallback(
     async ({ token }: EmailVerificationSchema) => {
@@ -63,6 +70,8 @@ const EmailVerification: FunctionComponent<
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <BackButton onPress={handleBackButtonPress} />
+
       <View className="w-4/6 items-center justify-center space-y-6">
         <Text className="text-center font-Poppins_600SemiBold text-lg">
           Enter the verification code we just sent to your email
