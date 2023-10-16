@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 
-const Profile: FunctionComponent = () => (
+const Me: FunctionComponent = () => (
   <SafeAreaView className="flex-1 bg-white">
     <Button
       onPress={() => {
@@ -16,4 +16,4 @@ const Profile: FunctionComponent = () => (
   </SafeAreaView>
 )
 
-export default Profile
+export default Me

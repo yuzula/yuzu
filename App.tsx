@@ -11,7 +11,7 @@ import linking from './navigation/linking'
 import EmailVerification from './screens/EmailVerification'
 import Home from './screens/Home'
 import Login from './screens/Login'
-import Profile from './screens/Profile'
+import Me from './screens/Me'
 import Register from './screens/Register'
 import Root from './screens/Root'
 import { RootStackParamList, RootTabParamList } from './types'
@@ -47,12 +47,12 @@ const BottomTabNavigator: FunctionComponent = () => {
         }}
       />
       <BottomTab.Screen
-        component={Profile}
-        name="Profile"
+        component={Me}
+        name="Me"
         options={{
-          title: 'Profile',
+          title: 'Me',
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="user-alt" size={20} />
+            <FontAwesome5 color={color} name="user" size={20} />
           )
         }}
       />
