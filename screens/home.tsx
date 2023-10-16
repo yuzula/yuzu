@@ -1,5 +1,11 @@
+import { FontAwesome5 } from '@expo/vector-icons'
 import { User } from '@supabase/supabase-js'
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import { ActivityIndicator, Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { z } from 'zod'
@@ -13,6 +19,10 @@ const Home: FunctionComponent = () => {
   const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<ProfileSchema>()
   const [memberCount, setMemberCount] = useState<number>()
+
+  const handlePostButtonPress = useCallback(() => {}, [])
+
+  const handleSortButtonPress = useCallback(() => {}, [])
 
   useEffect(() => {
     const doGetUser = async () => {
@@ -87,11 +97,22 @@ const Home: FunctionComponent = () => {
             </View>
             <View className="flex-row space-x-2">
               <View className="grow">
-                <Button className="h-8 rounded-lg">Post</Button>
+                <Button
+                  className="h-8 rounded-lg"
+                  onPress={handlePostButtonPress}
+                >
+                  <FontAwesome5 name="pen" />
+                  &nbsp; Post
+                </Button>
               </View>
               <View className="grow">
-                <Button className="h-8 rounded-lg" variant="secondary">
-                  Sort
+                <Button
+                  className="h-8 rounded-lg"
+                  variant="secondary"
+                  onPress={handleSortButtonPress}
+                >
+                  <FontAwesome5 name="sort" />
+                  &nbsp; Sort
                 </Button>
               </View>
             </View>
