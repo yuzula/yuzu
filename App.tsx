@@ -31,8 +31,6 @@ const BottomTabNavigator: FunctionComponent = () => {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: 'rgb(0, 122, 255)',
-        tabBarInactiveTintColor: 'rgb(142, 142, 147)',
         tabBarStyle: {
           backgroundColor: 'white'
         },
