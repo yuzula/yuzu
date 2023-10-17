@@ -211,16 +211,22 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         </View>
                       </View>
 
-                      <View className="flex flex-row space-x-4">
-                        <Text className="text-apple-gray-light">
-                          <FontAwesome5 name="ellipsis-h" size={20} />
-                        </Text>
-                        <Text className="text-apple-gray-light">
-                          <FontAwesome5 name="arrow-up" size={20} />
-                        </Text>
-                        <Text className="text-apple-gray-light">
-                          <FontAwesome5 name="arrow-down" size={20} />
-                        </Text>
+                      <View className="flex flex-row items-center">
+                        <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                          <Text className="text-apple-gray-light">
+                            <FontAwesome5 name="ellipsis-h" size={16} />
+                          </Text>
+                        </Pressable>
+                        <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                          <Text className="text-apple-gray-light">
+                            <FontAwesome5 name="arrow-up" size={16} />
+                          </Text>
+                        </Pressable>
+                        <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                          <Text className="text-apple-gray-light">
+                            <FontAwesome5 name="arrow-down" size={16} />
+                          </Text>
+                        </Pressable>
                       </View>
                     </View>
                   </View>
