@@ -6,13 +6,14 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { ActivityIndicator, Alert, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { PostSchema, postSchema } from '../models/post'
 import { ProfileSchema, profileSchema } from '../models/profile'
 import { RootTabScreenProps } from '../types'
 
@@ -21,6 +22,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 }) => {
   const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<ProfileSchema>()
+  const [posts, setPosts] = useState<PostSchema[]>()
   const [memberCount, setMemberCount] = useState<number>()
 
   const handlePostButtonPress = useCallback(() => {
@@ -52,6 +54,30 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
     doGetUser()
   }, [])
+
+  useEffect(() => {
+    const doGetPosts = async () => {
+      if (profile) {
+        try {
+          const posts = await supabase
+            .from('posts_with_hotness')
+            .select()
+            .eq('community_domain_name', profile.community_domain_name)
+            .order('hotness', { ascending: false })
+
+          if (posts.error) {
+            return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
+          }
+
+          setPosts(postSchema.array().parse(posts.data))
+        } catch (error) {
+          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        }
+      }
+    }
+
+    doGetPosts()
+  }, [profile])
 
   useEffect(() => {
     const doGetProfile = async () => {
@@ -106,6 +132,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
               </Text>
             </View>
+
             <View className="flex-row space-x-2">
               <View className="grow">
                 <Button
@@ -127,6 +154,18 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 </Button>
               </View>
             </View>
+
+            <FlatList
+              scrollEnabled
+              className="h-full border-t border-gray-200"
+              data={posts}
+              keyExtractor={item => item.id.toString()}
+              renderItem={item => (
+                <View>
+                  <Text>{item.item.title}</Text>
+                </View>
+              )}
+            />
           </View>
         </View>
       )}

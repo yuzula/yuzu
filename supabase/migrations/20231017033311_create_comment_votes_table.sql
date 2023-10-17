@@ -13,27 +13,37 @@ create policy "Comment votes are viewable by authenticated users"
   on comment_votes for select
   using (auth.uid() is not null);
 
-create policy "Comment votes can be casted by authenticated users"
+create policy "Users can cast their own votes"
   on comment_votes for insert
-  with check (auth.uid() is not null);
+  with check (auth.uid() = user_id);
+
+create policy "Users can only vote once per comment"
+  on comment_votes for insert
+  with check (exists (
+    select 1
+    from public.comment_votes
+    where public.comment_votes.user_id = auth.uid()
+    and public.comment_votes.comment_id = comment_id
+  ));
 
 create policy "Users can update their own comment vote"
   on comment_votes for update
-  using (auth.uid() = user_id);
+  with check (auth.uid() = user_id);
 
 create policy "Users can delete their own comment vote"
   on comment_votes for delete
   using (auth.uid() = user_id);
 
--- Utility functions
-create function count_comment_votes(comment_id int)
-returns int
-language sql
-as $$
-  select sum(case when is_upvote = true then 1 else -1 end)
-  from public.comment_votes
-  where public.comment_votes.comment_id = comment_id;
-$$;
+-- Utility views
+create view public.comments_with_vote_count
+with (security_invoker) as
+select
+  public.comments.*,
+  sum(case when public.comment_votes.is_upvote = true then 1 else -1 end) as vote_count
+from public.comments
+left join public.comment_votes
+on public.comments.id = public.comment_votes.comment_id
+group by public.comments.id;
 
 -- Triggers
 create function public.set_default_values_on_comment_vote_created()

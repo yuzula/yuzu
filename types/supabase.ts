@@ -39,6 +39,12 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comment_votes_comment_id_fkey'
+            columns: ['comment_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comment_votes_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'profiles'
@@ -59,7 +65,6 @@ export interface Database {
           post_id: number
           updated_at: string | null
           user_id: string
-          vote_count: number
         }
         Insert: {
           ancestor_id?: number
@@ -73,7 +78,6 @@ export interface Database {
           post_id?: number
           updated_at?: string | null
           user_id: string
-          vote_count?: number
         }
         Update: {
           ancestor_id?: number
@@ -87,7 +91,6 @@ export interface Database {
           post_id?: number
           updated_at?: string | null
           user_id?: string
-          vote_count?: number
         }
         Relationships: [
           {
@@ -97,15 +100,39 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comments_ancestor_id_fkey'
+            columns: ['ancestor_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comments_descendent_id_fkey'
             columns: ['descendent_id']
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comments_descendent_id_fkey'
+            columns: ['descendent_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
             referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
@@ -176,6 +203,18 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'post_votes_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'profiles'
@@ -195,7 +234,6 @@ export interface Database {
           title: string
           updated_at: string | null
           user_id: string
-          vote_count: number
         }
         Insert: {
           community_domain_name: string
@@ -208,7 +246,6 @@ export interface Database {
           title: string
           updated_at?: string | null
           user_id: string
-          vote_count?: number
         }
         Update: {
           community_domain_name?: string
@@ -221,7 +258,6 @@ export interface Database {
           title?: string
           updated_at?: string | null
           user_id?: string
-          vote_count?: number
         }
         Relationships: [
           {
@@ -242,20 +278,17 @@ export interface Database {
         Row: {
           community_domain_name: string
           id: string
-          username: string | null
-          vote_count: number
+          username: string
         }
         Insert: {
           community_domain_name: string
           id: string
-          username?: string | null
-          vote_count?: number
+          username: string
         }
         Update: {
           community_domain_name?: string
           id?: string
-          username?: string | null
-          vote_count?: number
+          username?: string
         }
         Relationships: [
           {
@@ -274,24 +307,136 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      comments_with_vote_count: {
+        Row: {
+          ancestor_id: number | null
+          content: string | null
+          created_at: string | null
+          depth: number | null
+          descendent_id: number | null
+          id: number | null
+          is_deleted: boolean | null
+          is_flagged: boolean | null
+          post_id: number | null
+          updated_at: string | null
+          user_id: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'comments_ancestor_id_fkey'
+            columns: ['ancestor_id']
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_ancestor_id_fkey'
+            columns: ['ancestor_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_descendent_id_fkey'
+            columns: ['descendent_id']
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_descendent_id_fkey'
+            columns: ['descendent_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      posts_with_hotness: {
+        Row: {
+          community_domain_name: string | null
+          content: string | null
+          created_at: string | null
+          hotness: number | null
+          id: number | null
+          is_deleted: boolean | null
+          is_flagged: boolean | null
+          is_private: boolean | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      posts_with_vote_count: {
+        Row: {
+          community_domain_name: string | null
+          content: string | null
+          created_at: string | null
+          id: number | null
+          is_deleted: boolean | null
+          is_flagged: boolean | null
+          is_private: boolean | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Functions: {
-      count_comment_votes: {
-        Args: {
-          comment_id: number
-        }
-        Returns: number
-      }
       count_community_members: {
         Args: {
           domain_name: string
-        }
-        Returns: number
-      }
-      count_post_votes: {
-        Args: {
-          post_id: number
         }
         Returns: number
       }

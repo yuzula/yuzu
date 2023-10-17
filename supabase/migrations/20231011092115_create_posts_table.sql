@@ -4,7 +4,6 @@ create table public.posts (
   community_domain_name text not null references public.communities (domain_name),
   title varchar(300) not null,
   content varchar(10000) not null,
-  vote_count int not null default 0,
   is_private boolean not null,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
@@ -33,7 +32,7 @@ create policy "Users can create their own post"
 
 create policy "Users can update their own post"
   on posts for update
-  using (auth.uid() = user_id);
+  with check (auth.uid() = user_id);
 
 create policy "Users can delete their own post"
   on posts for delete
@@ -46,7 +45,6 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  new.vote_count = 0;
   new.is_flagged = false;
   new.is_deleted = false;
   new.created_at = current_timestamp;

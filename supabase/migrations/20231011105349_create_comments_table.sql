@@ -3,7 +3,6 @@ create table public.comments (
   user_id uuid not null references public.profiles (id),
   post_id serial not null references public.posts (id),
   content varchar(10000) not null,
-  vote_count int not null default 0,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
   ancestor_id serial references public.comments (id),
@@ -42,7 +41,7 @@ create policy "Users can create their own comment"
 
 create policy "Users can update their own comment"
   on comments for update
-  using (auth.uid() = user_id);
+  with check (auth.uid() = user_id);
 
 create policy "Users can delete their own comment"
   on comments for delete
@@ -55,7 +54,6 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  new.vote_count = 0;
   new.is_flagged = false;
   new.is_deleted = false;
   new.created_at = current_timestamp;
