@@ -55,7 +55,12 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
         })
 
         if (error) {
-          return Alert.alert(error.message)
+          switch (error.message) {
+            case 'duplicate key value violates unique constraint "profiles_username_key"':
+              return Alert.alert('Username is already taken')
+            default:
+              return Alert.alert(error.message)
+          }
         }
 
         navigation.navigate('EmailVerification', { email })
