@@ -12,8 +12,7 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
 const createPostSchema = z.object({
-  title: z.string().min(1).max(300),
-  content: z.string().min(1).max(10000)
+  content: z.string().min(1).max(300)
 })
 
 type CreatePostSchema = z.infer<typeof createPostSchema>
@@ -34,7 +33,7 @@ const CreatePost: FunctionComponent<RootStackScreenProps<'CreatePost'>> = ({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmitButtonPress = useCallback(
-    async ({ title, content }: CreatePostSchema) => {
+    async ({ content }: CreatePostSchema) => {
       setIsLoading(true)
 
       const user = await supabase.auth.getUser()
@@ -48,7 +47,6 @@ const CreatePost: FunctionComponent<RootStackScreenProps<'CreatePost'>> = ({
 
       const result = await supabase.from('posts').insert({
         community_domain_name: params.communityDomainName,
-        title,
         content,
         user_id: user.data.user.id,
         is_private: true
@@ -82,28 +80,6 @@ const CreatePost: FunctionComponent<RootStackScreenProps<'CreatePost'>> = ({
       <BackButton onPress={handleBackButtonPress} />
       <View className="w-4/6 space-y-6">
         <Text className="font-Poppins_700Bold text-xl">Create a post</Text>
-
-        <View className="w-full">
-          <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
-            Title
-          </Text>
-          <Controller
-            control={control}
-            defaultValue=""
-            name="title"
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                className="h-10 w-full border-b border-apple-gray-light"
-                editable={!isLoading}
-                maxLength={300}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
 
         <View className="w-full">
           <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">

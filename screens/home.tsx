@@ -167,19 +167,62 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               className="h-full w-full border-t border-gray-200"
               data={posts}
               keyExtractor={item => item.id.toString()}
+              ItemSeparatorComponent={() => (
+                <View className="w-full border-t border-gray-200" />
+              )}
               renderItem={item => (
                 <Pressable className="active:bg-gray-200">
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
-                      className="font-Poppins_600SemiBold text-base"
+                      className="font-Poppins_400Regular text-base"
                       ellipsizeMode="tail"
-                      numberOfLines={1}
+                      numberOfLines={4}
                     >
-                      {item.item.title}
-                    </Text>
-                    <Text className="font-Poppins_400Regular">
                       {item.item.content}
                     </Text>
+
+                    <View className="flex flex-row items-center justify-between">
+                      <View className="space-y-1">
+                        <Text className="font-Poppins_400Regular text-apple-gray-light">
+                          by&nbsp;
+                          <Text className="font-Poppins_500Medium">
+                            maxwowo
+                          </Text>
+                        </Text>
+                        <View className="flex flex-row space-x-2">
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <FontAwesome5 name="arrow-up" size={14} />
+                              &nbsp;25
+                            </Text>
+                          </View>
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <FontAwesome5 name="comment" size={14} />
+                              &nbsp;4
+                            </Text>
+                          </View>
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <FontAwesome5 name="clock" size={14} />
+                              &nbsp;1h
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+
+                      <View className="flex flex-row space-x-4">
+                        <Text className="text-apple-gray-light">
+                          <FontAwesome5 name="ellipsis-h" size={20} />
+                        </Text>
+                        <Text className="text-apple-gray-light">
+                          <FontAwesome5 name="arrow-up" size={20} />
+                        </Text>
+                        <Text className="text-apple-gray-light">
+                          <FontAwesome5 name="arrow-down" size={20} />
+                        </Text>
+                      </View>
+                    </View>
                   </View>
                 </Pressable>
               )}

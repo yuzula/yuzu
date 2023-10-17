@@ -231,7 +231,6 @@ export interface Database {
           is_deleted: boolean
           is_flagged: boolean
           is_private: boolean
-          title: string
           updated_at: string | null
           user_id: string
         }
@@ -243,7 +242,6 @@ export interface Database {
           is_deleted?: boolean
           is_flagged?: boolean
           is_private: boolean
-          title: string
           updated_at?: string | null
           user_id: string
         }
@@ -255,7 +253,6 @@ export interface Database {
           is_deleted?: boolean
           is_flagged?: boolean
           is_private?: boolean
-          title?: string
           updated_at?: string | null
           user_id?: string
         }
@@ -383,7 +380,6 @@ export interface Database {
           is_deleted: boolean | null
           is_flagged: boolean | null
           is_private: boolean | null
-          title: string | null
           updated_at: string | null
           user_id: string | null
           vote_count: number | null
@@ -412,7 +408,6 @@ export interface Database {
           is_deleted: boolean | null
           is_flagged: boolean | null
           is_private: boolean | null
-          title: string | null
           updated_at: string | null
           user_id: string | null
           vote_count: number | null

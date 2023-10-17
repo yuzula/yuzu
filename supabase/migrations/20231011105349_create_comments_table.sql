@@ -2,7 +2,7 @@ create table public.comments (
   id serial primary key,
   user_id uuid not null references public.profiles (id),
   post_id serial not null references public.posts (id),
-  content varchar(10000) not null,
+  content varchar(600) not null,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
   ancestor_id serial references public.comments (id),

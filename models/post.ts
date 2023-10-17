@@ -4,7 +4,6 @@ export const postSchema = z.object({
   id: z.number(),
   user_id: z.string(),
   community_domain_name: z.string(),
-  title: z.string(),
   content: z.string(),
   vote_count: z.number(),
   is_private: z.boolean(),
