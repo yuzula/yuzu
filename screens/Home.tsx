@@ -146,7 +146,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             <View className="w-5/6 flex-row space-x-2">
               <View className="grow">
                 <Button
-                  className="h-8 rounded-lg"
+                  className="h-9 rounded-lg"
                   onPress={handlePostButtonPress}
                 >
                   <FontAwesome5 name="pen" />
@@ -155,7 +155,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               </View>
               <View className="grow">
                 <Button
-                  className="h-8 rounded-lg"
+                  className="h-9 rounded-lg"
                   variant="secondary"
                   onPress={handleSortButtonPress}
                 >
@@ -177,7 +177,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 <Pressable className="active:bg-gray-200">
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
-                      className="font-Poppins_400Regular text-base"
+                      className="font-Poppins_400Regular"
                       ellipsizeMode="tail"
                       numberOfLines={4}
                     >

@@ -27,8 +27,8 @@ const Button: FunctionComponent<ButtonProps> = ({
     className={clsx(
       {
         'opacity-40': isDisabled || isLoading,
-        'bg-apple-blue-light': variant === 'primary',
-        'bg-gray-200': variant === 'secondary'
+        'bg-primary': variant === 'primary',
+        'bg-gray-100 active:bg-gray-200': variant === 'secondary'
       },
       'h-12 w-full items-center justify-center rounded-xl active:opacity-90',
       className
@@ -40,7 +40,7 @@ const Button: FunctionComponent<ButtonProps> = ({
       <Text
         className={clsx(
           {
-            'text-white': variant === 'primary',
+            'text-black': variant === 'primary',
             'text-gray-600': variant === 'secondary'
           },
           'font-Poppins_600SemiBold'
