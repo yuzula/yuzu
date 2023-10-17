@@ -9,6 +9,43 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      comment_votes: {
+        Row: {
+          comment_id: number
+          created_at: string
+          id: number
+          is_upvote: boolean
+          user_id: string
+        }
+        Insert: {
+          comment_id?: number
+          created_at?: string
+          id?: number
+          is_upvote: boolean
+          user_id: string
+        }
+        Update: {
+          comment_id?: number
+          created_at?: string
+          id?: number
+          is_upvote?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'comment_votes_comment_id_fkey'
+            columns: ['comment_id']
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comment_votes_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       comments: {
         Row: {
           ancestor_id: number
@@ -109,6 +146,43 @@ export interface Database {
         }
         Relationships: []
       }
+      post_votes: {
+        Row: {
+          created_at: string
+          id: number
+          is_upvote: boolean
+          post_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          is_upvote: boolean
+          post_id?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          is_upvote?: boolean
+          post_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'post_votes_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       posts: {
         Row: {
           community_domain_name: string
@@ -203,9 +277,21 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      count_members: {
+      count_comment_votes: {
+        Args: {
+          comment_id: number
+        }
+        Returns: number
+      }
+      count_community_members: {
         Args: {
           domain_name: string
+        }
+        Returns: number
+      }
+      count_post_votes: {
+        Args: {
+          post_id: number
         }
         Returns: number
       }

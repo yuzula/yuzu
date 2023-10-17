@@ -39,3 +39,22 @@ create policy "Users can delete their own post"
   on posts for delete
   using (auth.uid() = user_id);
 
+-- Triggers
+create function public.set_default_values_on_post_created()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  new.vote_count = 0;
+  new.is_flagged = false;
+  new.is_deleted = false;
+  new.created_at = current_timestamp;
+
+  return new;
+end;
+$$;
+
+create trigger set_default_values_on_post_created
+  after insert on public.posts
+  for each row execute procedure public.set_default_values_on_post_created();

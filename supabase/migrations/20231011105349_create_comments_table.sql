@@ -14,6 +14,8 @@ create table public.comments (
 );
 
 -- RLS
+alter table public.comments enable row level security;
+
 create policy "Public comments are viewable by authenticated users"
   on comments for select
   using (auth.uid() is not null and (
@@ -45,3 +47,23 @@ create policy "Users can update their own comment"
 create policy "Users can delete their own comment"
   on comments for delete
   using (auth.uid() = user_id);
+
+-- Triggers
+create function public.set_default_values_on_comment_created()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  new.vote_count = 0;
+  new.is_flagged = false;
+  new.is_deleted = false;
+  new.created_at = current_timestamp;
+
+  return new;
+end;
+$$;
+
+create trigger set_default_values_on_comment_created
+  after insert on public.comments
+  for each row execute procedure public.set_default_values_on_comment_created();

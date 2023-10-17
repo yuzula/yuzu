@@ -1,4 +1,4 @@
-create function count_members(domain_name text)
+create function count_community_members(domain_name text)
 returns int
 language sql
 as $$

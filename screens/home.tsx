@@ -24,8 +24,14 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const [memberCount, setMemberCount] = useState<number>()
 
   const handlePostButtonPress = useCallback(() => {
-    navigation.navigate('CreatePost')
-  }, [navigation])
+    if (profile) {
+      navigation.navigate('CreatePost', {
+        communityDomainName: profile.community_domain_name
+      })
+    } else {
+      Alert.alert('We could fetch your profile', GENERIC_ERROR_MESSAGE)
+    }
+  }, [navigation, profile])
 
   const handleSortButtonPress = useCallback(() => {}, [])
 
@@ -71,7 +77,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     const doGetMemberCount = async () => {
       if (profile) {
         try {
-          const memberCount = await supabase.rpc('count_members', {
+          const memberCount = await supabase.rpc('count_community_members', {
             domain_name: profile.community_domain_name
           })
 

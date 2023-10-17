@@ -19,15 +19,9 @@ const emailVerificationSchema = z.object({
 
 type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>
 
-const localSearchParamsSchema = z.object({
-  email: z.string().email()
-})
-
 const EmailVerification: FunctionComponent<
   RootStackScreenProps<'EmailVerification'>
 > = ({ navigation, route: { params } }) => {
-  const { email } = localSearchParamsSchema.parse(params)
-
   const {
     control,
     handleSubmit,
@@ -51,7 +45,7 @@ const EmailVerification: FunctionComponent<
 
       try {
         const result = await supabase.auth.verifyOtp({
-          email,
+          email: params.email,
           token,
           type: 'signup'
         })
@@ -65,7 +59,7 @@ const EmailVerification: FunctionComponent<
         setIsLoading(false)
       }
     },
-    [email]
+    [params.email]
   )
 
   return (

@@ -20,13 +20,17 @@ interface EmailVerificationScreenParams {
   email: string
 }
 
+interface CreatePostScreenParams {
+  communityDomainName: string
+}
+
 export type RootStackParamList = {
   Root: undefined
   Register: undefined
   Login: undefined
   EmailVerification: EmailVerificationScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
-  CreatePost: undefined
+  CreatePost: CreatePostScreenParams
   NotFound: undefined
 }
 
