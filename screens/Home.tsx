@@ -125,7 +125,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   }, [profile, user])
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-white">
+    <SafeAreaView
+      className="flex-1 items-center justify-center bg-white"
+      edges={['top']}
+    >
       {!profile || !memberCount || !posts ? (
         <ActivityIndicator />
       ) : (
@@ -164,7 +167,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
             <FlatList
               scrollEnabled
-              className="h-full w-full border-t border-gray-200"
+              className="w-full grow border-t border-gray-200"
               data={posts}
               keyExtractor={item => item.id.toString()}
               ItemSeparatorComponent={() => (
