@@ -6,7 +6,14 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Pressable,
+  Text,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
@@ -122,9 +129,9 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       {!profile || !memberCount ? (
         <ActivityIndicator />
       ) : (
-        <View className="w-5/6 flex-1 pt-6">
-          <View className="space-y-4">
-            <View className="space-y-2">
+        <View className="w-full flex-1 pt-6">
+          <View className="w-full items-center justify-center space-y-4">
+            <View className="w-5/6 space-y-2">
               <Text className="font-Poppins_700Bold text-xl">
                 {profile.community_domain_name}
               </Text>
@@ -133,7 +140,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               </Text>
             </View>
 
-            <View className="flex-row space-x-2">
+            <View className="w-5/6 flex-row space-x-2">
               <View className="grow">
                 <Button
                   className="h-8 rounded-lg"
@@ -157,13 +164,24 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
             <FlatList
               scrollEnabled
-              className="h-full border-t border-gray-200"
+              className="h-full w-full border-t border-gray-200"
               data={posts}
               keyExtractor={item => item.id.toString()}
               renderItem={item => (
-                <View>
-                  <Text>{item.item.title}</Text>
-                </View>
+                <Pressable className="active:bg-gray-200">
+                  <View className="mx-auto w-5/6 space-y-2 py-4">
+                    <Text
+                      className="font-Poppins_600SemiBold text-base"
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                    >
+                      {item.item.title}
+                    </Text>
+                    <Text className="font-Poppins_400Regular">
+                      {item.item.content}
+                    </Text>
+                  </View>
+                </Pressable>
               )}
             />
           </View>
