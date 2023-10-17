@@ -5,7 +5,7 @@ create table public.communities (
 
 create table public.profiles (
   id uuid primary key references auth.users on delete cascade,
-  username text unique,
+  username varchar(20) unique,
   community_domain_name text not null references public.communities (domain_name),
   vote_count int not null default 0
 );
