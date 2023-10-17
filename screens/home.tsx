@@ -1,4 +1,4 @@
-import { FontAwesome5 } from '@expo/vector-icons'
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { User } from '@supabase/supabase-js'
 import React, {
   FunctionComponent,
@@ -192,19 +192,19 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <View className="flex flex-row space-x-2">
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <FontAwesome5 name="arrow-up" size={14} />
+                              <AntDesign name="arrowup" size={14} />
                               &nbsp;25
                             </Text>
                           </View>
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <FontAwesome5 name="comment" size={14} />
+                              <AntDesign name="message1" size={14} />
                               &nbsp;4
                             </Text>
                           </View>
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <FontAwesome5 name="clock" size={14} />
+                              <AntDesign name="clockcircleo" size={14} />
                               &nbsp;1h
                             </Text>
                           </View>
@@ -214,17 +214,17 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       <View className="flex flex-row items-center">
                         <Pressable className="rounded-lg p-2 active:bg-gray-200">
                           <Text className="text-apple-gray-light">
-                            <FontAwesome5 name="ellipsis-h" size={16} />
+                            <AntDesign name="ellipsis1" size={20} />
                           </Text>
                         </Pressable>
                         <Pressable className="rounded-lg p-2 active:bg-gray-200">
                           <Text className="text-apple-gray-light">
-                            <FontAwesome5 name="arrow-up" size={16} />
+                            <AntDesign name="arrowup" size={20} />
                           </Text>
                         </Pressable>
                         <Pressable className="rounded-lg p-2 active:bg-gray-200">
                           <Text className="text-apple-gray-light">
-                            <FontAwesome5 name="arrow-down" size={16} />
+                            <AntDesign name="arrowdown" size={20} />
                           </Text>
                         </Pressable>
                       </View>
