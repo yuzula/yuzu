@@ -126,7 +126,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      {!profile || !memberCount ? (
+      {!profile || !memberCount || !posts ? (
         <ActivityIndicator />
       ) : (
         <View className="w-full flex-1 pt-6">
