@@ -26,6 +26,7 @@ export type RootStackParamList = {
   Login: undefined
   EmailVerification: EmailVerificationScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
+  CreatePost: undefined
   NotFound: undefined
 }
 

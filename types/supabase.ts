@@ -36,7 +36,7 @@ export interface Database {
           post_id?: number
           updated_at?: string | null
           user_id: string
-          vote_count: number
+          vote_count?: number
         }
         Update: {
           ancestor_id?: number
@@ -111,7 +111,6 @@ export interface Database {
       }
       posts: {
         Row: {
-          comment_count: number
           community_domain_name: string
           content: string
           created_at: string
@@ -125,7 +124,6 @@ export interface Database {
           vote_count: number
         }
         Insert: {
-          comment_count: number
           community_domain_name: string
           content: string
           created_at?: string
@@ -136,10 +134,9 @@ export interface Database {
           title: string
           updated_at?: string | null
           user_id: string
-          vote_count: number
+          vote_count?: number
         }
         Update: {
-          comment_count?: number
           community_domain_name?: string
           content?: string
           created_at?: string

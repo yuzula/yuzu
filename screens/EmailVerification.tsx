@@ -89,6 +89,8 @@ const EmailVerification: FunctionComponent<
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 className="h-10 w-full border-b border-apple-gray-light"
+                editable={!isLoading}
+                inputMode="numeric"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}

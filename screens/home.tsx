@@ -14,13 +14,18 @@ import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { ProfileSchema, profileSchema } from '../models/profile'
+import { RootTabScreenProps } from '../types'
 
-const Home: FunctionComponent = () => {
+const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
+  navigation
+}) => {
   const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<ProfileSchema>()
   const [memberCount, setMemberCount] = useState<number>()
 
-  const handlePostButtonPress = useCallback(() => {}, [])
+  const handlePostButtonPress = useCallback(() => {
+    navigation.navigate('CreatePost')
+  }, [navigation])
 
   const handleSortButtonPress = useCallback(() => {}, [])
 

@@ -12,6 +12,7 @@ import { Text } from 'react-native'
 import useFonts from './hooks/useFonts'
 import useSession from './hooks/useSession'
 import linking from './navigation/linking'
+import CreatePost from './screens/CreatePost'
 import EmailVerification from './screens/EmailVerification'
 import Home from './screens/Home'
 import Login from './screens/Login'
@@ -112,6 +113,7 @@ const App: FunctionComponent = memo(() => {
               {session ? (
                 <>
                   <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+                  <Stack.Screen component={CreatePost} name="CreatePost" />
                 </>
               ) : (
                 <>

@@ -3,7 +3,7 @@ create table public.comments (
   user_id uuid not null references public.profiles (id),
   post_id serial not null references public.posts (id),
   content text not null,
-  vote_count int not null,
+  vote_count int not null default 0,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
   ancestor_id serial references public.comments (id),
