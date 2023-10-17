@@ -150,7 +150,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   onPress={handlePostButtonPress}
                 >
                   <FontAwesome5 name="pen" />
-                  &nbsp; Post
+                  &nbsp;Post
                 </Button>
               </View>
               <View className="grow">
@@ -160,7 +160,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   onPress={handleSortButtonPress}
                 >
                   <FontAwesome5 name="sort" />
-                  &nbsp; Sort
+                  &nbsp;Sort
                 </Button>
               </View>
             </View>
