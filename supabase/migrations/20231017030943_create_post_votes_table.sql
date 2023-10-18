@@ -35,7 +35,7 @@ create policy "Users can delete their own post vote"
   using (auth.uid() = user_id);
 
 -- Utility views
-create view public.posts_with_vote__and_comment_count
+create view public.posts_with_vote_and_comment_count
 with (security_invoker) as
 select
   public.posts.*,
@@ -56,7 +56,7 @@ with (security_invoker) as
 select
   *,
   (vote_count - 1) / ((((extract(epoch from current_timestamp) - extract(epoch from created_at)) / 3600) + 2) ^ 1.5) as hotness
-from public.posts_with_vote__and_comment_count;
+from public.posts_with_vote_and_comment_count;
 
 -- Triggers
 create function public.self_upvote_on_post_created()
