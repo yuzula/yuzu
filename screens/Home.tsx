@@ -110,7 +110,6 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const handleVoteButtonPress = useCallback(
     async (postId: number, userId: string, isUpvote: boolean) => {
       if (posts) {
-        const oldPosts = [...posts]
         const newPosts = [...posts]
 
         const postIdx = newPosts.findIndex(post => post.id === postId)
@@ -133,8 +132,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           })
 
           if (result.error) {
-            setPosts(oldPosts)
-            return Alert.alert('Failed to vote on post', GENERIC_ERROR_MESSAGE)
+            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
           }
         } else if (
           (post.current_user_vote === 'upvote' && isUpvote) ||
@@ -152,8 +150,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             .eq('post_id', postId)
 
           if (result.error) {
-            setPosts(oldPosts)
-            return Alert.alert('Failed to remove vote', GENERIC_ERROR_MESSAGE)
+            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
           }
         } else {
           post.current_user_vote = isUpvote ? 'upvote' : 'downvote'
@@ -168,8 +165,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             .eq('post_id', postId)
 
           if (result.error) {
-            setPosts(oldPosts)
-            return Alert.alert('Failed to vote on post', GENERIC_ERROR_MESSAGE)
+            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
           }
         }
       }
