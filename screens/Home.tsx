@@ -141,7 +141,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           (post.current_user_vote === 'downvote' && !isUpvote)
         ) {
           post.current_user_vote = null
-          post.vote_count -= 1
+          post.vote_count += isUpvote ? -1 : 1
 
           setPosts(newPosts)
 
