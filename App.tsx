@@ -1,11 +1,13 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { Ionicons } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import clsx from 'clsx'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
+import { Text } from 'react-native'
 
 import useFonts from './hooks/useFonts'
 import useSession from './hooks/useSession'
@@ -30,7 +32,7 @@ const BottomTabNavigator: FunctionComponent = () => {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'black',
+        tabBarInactiveTintColor: 'rgb(142, 142, 147)',
         tabBarStyle: {
           backgroundColor: 'white'
         },
@@ -44,12 +46,16 @@ const BottomTabNavigator: FunctionComponent = () => {
         name="Home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <Ionicons name="home-sharp" size={20} />
-            ) : (
-              <Ionicons name="home-outline" size={20} />
-            )
+          tabBarIcon: ({ focused }) => (
+            <Text
+              className={clsx({
+                'text-black': focused,
+                'text-apple-gray-light': !focused
+              })}
+            >
+              <FontAwesome5 name="home" size={20} />
+            </Text>
+          )
         }}
       />
       <BottomTab.Screen
@@ -57,12 +63,16 @@ const BottomTabNavigator: FunctionComponent = () => {
         name="Me"
         options={{
           title: 'Me',
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <Ionicons name="person-sharp" size={20} />
-            ) : (
-              <Ionicons name="person-outline" size={20} />
-            )
+          tabBarIcon: ({ focused }) => (
+            <Text
+              className={clsx({
+                'text-black': focused,
+                'text-apple-gray-light': !focused
+              })}
+            >
+              <FontAwesome5 name="user" size={20} />
+            </Text>
+          )
         }}
       />
     </BottomTab.Navigator>
