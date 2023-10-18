@@ -59,6 +59,23 @@ select
 from public.posts_with_vote__and_comment_count;
 
 -- Triggers
+create function public.self_upvote_on_post_created()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.post_votes (user_id, post_id, is_upvote)
+  values (new.user_id, new.id, true);
+
+  return new;
+end;
+$$;
+
+create trigger self_upvote_on_post_created
+  after insert on public.posts
+  for each row execute procedure public.self_upvote_on_post_created();
+
 create function public.set_default_values_on_post_vote_created()
 returns trigger
 language plpgsql
