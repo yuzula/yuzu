@@ -20,6 +20,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { formatDuration } from '../helpers/time'
 import { PostSchema, postSchema } from '../models/post'
 import { ProfileSchema, profileSchema } from '../models/profile'
 import { RootTabScreenProps } from '../types'
@@ -66,17 +67,17 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     const doGetPosts = async () => {
       if (profile) {
         try {
-          const posts = await supabase
+          const postsResponse = await supabase
             .from('posts_with_hotness')
             .select()
             .eq('community_domain_name', profile.community_domain_name)
             .order('hotness', { ascending: false })
 
-          if (posts.error) {
+          if (postsResponse.error) {
             return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
           }
 
-          setPosts(postSchema.array().parse(posts.data))
+          setPosts(postSchema.array().parse(postsResponse.data))
         } catch (error) {
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
@@ -133,7 +134,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         <ActivityIndicator />
       ) : (
         <View className="w-full flex-1 pt-6">
-          <View className="w-full items-center justify-center space-y-4">
+          <View className="w-full flex-1 items-center justify-center space-y-4">
             <View className="w-5/6 space-y-2">
               <Text className="font-Poppins_700Bold text-xl">
                 {profile.community_domain_name}
@@ -202,13 +203,16 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
                               <AntDesign name="message1" size={14} />
-                              &nbsp;4
+                              &nbsp;{item.item.comment_count}
                             </Text>
                           </View>
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
                               <AntDesign name="clockcircleo" size={14} />
-                              &nbsp;1h
+                              &nbsp;
+                              {formatDuration(
+                                Date.now() - item.item.created_at.getTime()
+                              )}
                             </Text>
                           </View>
                         </View>

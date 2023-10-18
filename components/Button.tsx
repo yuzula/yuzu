@@ -27,7 +27,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     className={clsx(
       {
         'opacity-40': isDisabled || isLoading,
-        'bg-primary': variant === 'primary',
+        'bg-primary active:bg-primary-darker': variant === 'primary',
         'bg-gray-100 active:bg-gray-200': variant === 'secondary'
       },
       'h-12 w-full items-center justify-center rounded-xl active:opacity-90',
@@ -35,7 +35,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     )}
   >
     {isLoading ? (
-      <ActivityIndicator color="white" />
+      <ActivityIndicator color={variant === 'primary' ? 'black' : 'white'} />
     ) : (
       <Text
         className={clsx(

@@ -3,7 +3,7 @@ create table public.post_votes (
   user_id uuid not null references public.profiles (id),
   post_id serial not null references public.posts (id),
   is_upvote boolean not null,
-  created_at timestamp not null default current_timestamp
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
 );
 
 -- RLS
@@ -35,17 +35,20 @@ create policy "Users can delete their own post vote"
   using (auth.uid() = user_id);
 
 -- Utility views
-create view public.posts_with_vote_count
+create view public.posts_with_vote__and_comment_count
 with (security_invoker) as
 select
   public.posts.*,
   sum(case
     when public.post_votes.is_upvote = true then 1
     when public.post_votes.is_upvote = false then -1
-    else 0 end) as vote_count
+    else 0 end) as vote_count,
+  count(public.comments.id) as comment_count
 from public.posts
 left join public.post_votes
 on public.posts.id = public.post_votes.post_id
+left join public.comments
+on public.posts.id = public.comments.post_id
 group by public.posts.id;
 
 create view public.posts_with_hotness
@@ -53,7 +56,7 @@ with (security_invoker) as
 select
   *,
   (vote_count - 1) / ((((extract(epoch from current_timestamp) - extract(epoch from created_at)) / 3600) + 2) ^ 1.5) as hotness
-from public.posts_with_vote_count;
+from public.posts_with_vote__and_comment_count;
 
 -- Triggers
 create function public.set_default_values_on_post_vote_created()
@@ -62,7 +65,7 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  new.created_at = current_timestamp;
+  new.created_at = current_timestamp at time zone 'UTC';
 
   return new;
 end;

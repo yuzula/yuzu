@@ -6,7 +6,7 @@ create table public.posts (
   is_private boolean not null,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
-  created_at timestamp not null default current_timestamp,
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp
 );
 
@@ -46,7 +46,7 @@ as $$
 begin
   new.is_flagged = false;
   new.is_deleted = false;
-  new.created_at = current_timestamp;
+  new.created_at = current_timestamp at time zone 'UTC';
 
   return new;
 end;

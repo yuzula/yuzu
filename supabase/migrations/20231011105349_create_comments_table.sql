@@ -8,7 +8,7 @@ create table public.comments (
   ancestor_id serial references public.comments (id),
   descendent_id serial references public.comments (id),
   depth int,
-  created_at timestamp not null default current_timestamp,
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp
 );
 
@@ -56,7 +56,7 @@ as $$
 begin
   new.is_flagged = false;
   new.is_deleted = false;
-  new.created_at = current_timestamp;
+  new.created_at = current_timestamp at time zone 'UTC';
 
   return new;
 end;

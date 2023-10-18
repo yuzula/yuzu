@@ -1,6 +1,6 @@
 create table public.communities (
   domain_name text primary key,
-  created_at timestamp not null default current_timestamp
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
 );
 
 create table public.profiles (

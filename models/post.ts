@@ -6,6 +6,7 @@ export const postSchema = z.object({
   community_domain_name: z.string(),
   content: z.string(),
   vote_count: z.number(),
+  comment_count: z.number(),
   is_private: z.boolean(),
   is_flagged: z.boolean(),
   is_deleted: z.boolean(),

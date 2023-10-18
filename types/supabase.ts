@@ -132,7 +132,7 @@ export interface Database {
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
-            referencedRelation: 'posts_with_vote_count'
+            referencedRelation: 'posts_with_vote__and_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -211,7 +211,7 @@ export interface Database {
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
-            referencedRelation: 'posts_with_vote_count'
+            referencedRelation: 'posts_with_vote__and_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -359,7 +359,7 @@ export interface Database {
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
-            referencedRelation: 'posts_with_vote_count'
+            referencedRelation: 'posts_with_vote__and_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -372,6 +372,7 @@ export interface Database {
       }
       posts_with_hotness: {
         Row: {
+          comment_count: number | null
           community_domain_name: string | null
           content: string | null
           created_at: string | null
@@ -399,8 +400,9 @@ export interface Database {
           }
         ]
       }
-      posts_with_vote_count: {
+      posts_with_vote__and_comment_count: {
         Row: {
+          comment_count: number | null
           community_domain_name: string | null
           content: string | null
           created_at: string | null

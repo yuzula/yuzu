@@ -3,7 +3,7 @@ create table public.comment_votes (
   user_id uuid not null references public.profiles (id),
   comment_id serial not null references public.comments (id),
   is_upvote boolean not null,
-  created_at timestamp not null default current_timestamp
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
 );
 
 -- RLS
@@ -52,7 +52,7 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  new.created_at = current_timestamp;
+  new.created_at = current_timestamp at time zone 'UTC';
 
   return new;
 end;

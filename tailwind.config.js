@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       colors: {
         primary: '#fcf951',
+        'primary-darker': '#e3e049',
         'apple-red-light': 'rgb(255, 59, 48)',
         'apple-red-dark': 'rgb(255, 69, 58)',
         'apple-green-light': 'rgb(52, 199, 89)',
