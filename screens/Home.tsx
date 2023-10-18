@@ -34,6 +34,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const [posts, setPosts] = useState<PostSchema[]>()
   const [memberCount, setMemberCount] = useState<number>()
 
+  const [arePostsRefreshing, setArePostsRefreshing] = useState(false)
+
   const handlePostButtonPress = useCallback(() => {
     if (profile) {
       navigation.navigate('CreatePost', {
@@ -45,6 +47,65 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   }, [navigation, profile])
 
   const handleSortButtonPress = useCallback(() => {}, [])
+
+  const getPosts = useCallback(async () => {
+    if (profile) {
+      try {
+        const postsResponse = await supabase
+          .from('posts_with_hotness')
+          .select()
+          .eq('community_domain_name', profile.community_domain_name)
+          .order('hotness', { ascending: false })
+
+        if (postsResponse.error) {
+          return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
+        }
+
+        const postDtos = [...postDtoSchema.array().parse(postsResponse.data)]
+
+        setPosts(
+          postSchema.array().parse(
+            await Promise.all(
+              postDtos.map(async postDto => {
+                const voteResponse = await supabase
+                  .from('post_votes')
+                  .select()
+                  .eq('post_id', postDto.id)
+                  .eq('user_id', profile.id)
+                  .maybeSingle()
+
+                if (voteResponse.error) {
+                  return Alert.alert(
+                    'Could not fetch votes for posts',
+                    GENERIC_ERROR_MESSAGE
+                  )
+                }
+
+                return {
+                  ...postDto,
+                  current_user_vote: !voteResponse.data
+                    ? null
+                    : voteResponse.data.is_upvote
+                    ? 'upvote'
+                    : 'downvote'
+                }
+              })
+            )
+          )
+        )
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [profile])
+
+  const handlePostsRefresh = useCallback(async () => {
+    setArePostsRefreshing(true)
+
+    await getPosts()
+
+    setArePostsRefreshing(false)
+  }, [getPosts])
 
   const handleVoteButtonPress = useCallback(
     async (postId: number, userId: string, isUpvote: boolean) => {
@@ -135,59 +196,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   }, [])
 
   useEffect(() => {
-    const doGetPosts = async () => {
-      if (profile) {
-        try {
-          const postsResponse = await supabase
-            .from('posts_with_hotness')
-            .select()
-            .eq('community_domain_name', profile.community_domain_name)
-            .order('hotness', { ascending: false })
-
-          if (postsResponse.error) {
-            return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
-          }
-
-          const postDtos = [...postDtoSchema.array().parse(postsResponse.data)]
-
-          setPosts(
-            postSchema.array().parse(
-              await Promise.all(
-                postDtos.map(async postDto => {
-                  const voteResponse = await supabase
-                    .from('post_votes')
-                    .select()
-                    .eq('post_id', postDto.id)
-                    .eq('user_id', profile.id)
-                    .maybeSingle()
-
-                  if (voteResponse.error) {
-                    return Alert.alert(
-                      'Could not fetch votes for posts',
-                      GENERIC_ERROR_MESSAGE
-                    )
-                  }
-
-                  return {
-                    ...postDto,
-                    current_user_vote: !voteResponse.data
-                      ? null
-                      : voteResponse.data.is_upvote
-                      ? 'upvote'
-                      : 'downvote'
-                  }
-                })
-              )
-            )
-          )
-        } catch (error) {
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-      }
-    }
-
-    doGetPosts()
-  }, [profile])
+    getPosts()
+  }, [getPosts, profile])
 
   useEffect(() => {
     const doGetProfile = async () => {
@@ -273,6 +283,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               className="w-full grow border-t border-gray-200"
               data={posts}
               keyExtractor={item => item.id.toString()}
+              refreshing={arePostsRefreshing}
               ItemSeparatorComponent={() => (
                 <View className="w-full border-t border-gray-200" />
               )}
@@ -329,7 +340,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <Pressable
                           className={clsx(
                             {
-                              'bg-primary active:bg-opacity-90':
+                              'bg-primary active:bg-primary-darker':
                                 item.item.current_user_vote === 'upvote',
                               'active:bg-gray-200':
                                 item.item.current_user_vote !== 'upvote'
@@ -354,7 +365,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <Pressable
                           className={clsx(
                             {
-                              'bg-apple-blue-light active:bg-opacity-90':
+                              'bg-apple-blue-light active:opacity-90':
                                 item.item.current_user_vote === 'downvote',
                               'active:bg-gray-200':
                                 item.item.current_user_vote !== 'downvote'
@@ -381,6 +392,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   </View>
                 </Pressable>
               )}
+              onRefresh={handlePostsRefresh}
             />
           </View>
         </View>

@@ -1,5 +1,6 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -104,31 +105,33 @@ const App: FunctionComponent = memo(() => {
     return (
       <>
         <StatusBar />
-        <ActionSheetProvider>
-          <NavigationContainer
-            linking={linking}
-            onReady={handleNavigationReady}
-          >
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              {session ? (
-                <>
-                  <Stack.Screen component={BottomTabNavigator} name="Tabs" />
-                  <Stack.Screen component={CreatePost} name="CreatePost" />
-                </>
-              ) : (
-                <>
-                  <Stack.Screen component={Root} name="Root" />
-                  <Stack.Screen component={Register} name="Register" />
-                  <Stack.Screen component={Login} name="Login" />
-                  <Stack.Screen
-                    component={EmailVerification}
-                    name="EmailVerification"
-                  />
-                </>
-              )}
-            </Stack.Navigator>
-          </NavigationContainer>
-        </ActionSheetProvider>
+        <BottomSheetModalProvider>
+          <ActionSheetProvider>
+            <NavigationContainer
+              linking={linking}
+              onReady={handleNavigationReady}
+            >
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                {session ? (
+                  <>
+                    <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+                    <Stack.Screen component={CreatePost} name="CreatePost" />
+                  </>
+                ) : (
+                  <>
+                    <Stack.Screen component={Root} name="Root" />
+                    <Stack.Screen component={Register} name="Register" />
+                    <Stack.Screen component={Login} name="Login" />
+                    <Stack.Screen
+                      component={EmailVerification}
+                      name="EmailVerification"
+                    />
+                  </>
+                )}
+              </Stack.Navigator>
+            </NavigationContainer>
+          </ActionSheetProvider>
+        </BottomSheetModalProvider>
       </>
     )
   }
