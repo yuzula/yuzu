@@ -196,7 +196,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                           <View>
                             <Text className="font-Poppins_400Regular text-apple-gray-light">
                               <AntDesign name="arrowup" size={14} />
-                              &nbsp;25
+                              &nbsp;{item.item.vote_count}
                             </Text>
                           </View>
                           <View>
