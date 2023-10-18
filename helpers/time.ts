@@ -1,10 +1,6 @@
 export const formatDuration = (durationMs: number) => {
-  if (durationMs < 1000 * 30) {
-    return 'Now'
-  }
-
   if (durationMs < 1000 * 60) {
-    return `${durationMs / 1000}s`
+    return 'Now'
   }
 
   if (durationMs < 1000 * 60 * 60) {

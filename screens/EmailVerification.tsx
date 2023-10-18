@@ -85,6 +85,7 @@ const EmailVerification: FunctionComponent<
                 className="h-10 w-full border-b border-apple-gray-light"
                 editable={!isLoading}
                 inputMode="numeric"
+                maxLength={6}
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
