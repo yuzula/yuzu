@@ -1,7 +1,7 @@
 create table public.post_votes (
   id serial primary key,
   user_id uuid not null references public.profiles (id),
-  post_id serial not null references public.posts (id),
+  post_id int not null references public.posts (id),
   is_upvote boolean not null,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
 );
@@ -28,6 +28,7 @@ create policy "Users can only vote once per post"
 
 create policy "Users can update their own post vote"
   on post_votes for update
+  using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 create policy "Users can delete their own post vote"

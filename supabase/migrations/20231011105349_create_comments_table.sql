@@ -1,12 +1,12 @@
 create table public.comments (
   id serial primary key,
   user_id uuid not null references public.profiles (id),
-  post_id serial not null references public.posts (id),
+  post_id int not null references public.posts (id),
   content varchar(600) not null,
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
-  ancestor_id serial references public.comments (id),
-  descendent_id serial references public.comments (id),
+  ancestor_id int references public.comments (id),
+  descendent_id int references public.comments (id),
   depth int,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp
@@ -41,6 +41,7 @@ create policy "Users can create their own comment"
 
 create policy "Users can update their own comment"
   on comments for update
+  using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 create policy "Users can delete their own comment"

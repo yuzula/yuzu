@@ -18,7 +18,7 @@ export interface Database {
           user_id: string
         }
         Insert: {
-          comment_id?: number
+          comment_id: number
           created_at?: string
           id?: number
           is_upvote: boolean
@@ -54,11 +54,11 @@ export interface Database {
       }
       comments: {
         Row: {
-          ancestor_id: number
+          ancestor_id: number | null
           content: string
           created_at: string
           depth: number | null
-          descendent_id: number
+          descendent_id: number | null
           id: number
           is_deleted: boolean
           is_flagged: boolean
@@ -67,24 +67,24 @@ export interface Database {
           user_id: string
         }
         Insert: {
-          ancestor_id?: number
+          ancestor_id?: number | null
           content: string
           created_at?: string
           depth?: number | null
-          descendent_id?: number
+          descendent_id?: number | null
           id?: number
           is_deleted?: boolean
           is_flagged?: boolean
-          post_id?: number
+          post_id: number
           updated_at?: string | null
           user_id: string
         }
         Update: {
-          ancestor_id?: number
+          ancestor_id?: number | null
           content?: string
           created_at?: string
           depth?: number | null
-          descendent_id?: number
+          descendent_id?: number | null
           id?: number
           is_deleted?: boolean
           is_flagged?: boolean
@@ -185,7 +185,7 @@ export interface Database {
           created_at?: string
           id?: number
           is_upvote: boolean
-          post_id?: number
+          post_id: number
           user_id: string
         }
         Update: {

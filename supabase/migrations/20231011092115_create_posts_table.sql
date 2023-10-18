@@ -31,6 +31,7 @@ create policy "Users can create their own post"
 
 create policy "Users can update their own post"
   on posts for update
+  using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 create policy "Users can delete their own post"

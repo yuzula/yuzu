@@ -22,6 +22,7 @@ create policy "Users can create their own profile"
 
 create policy "Users can update their own profile"
   on profiles for update
+  using (auth.uid() = id)
   with check (auth.uid() = id);
 
 -- Communities RLS
