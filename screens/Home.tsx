@@ -67,6 +67,9 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const [profile, setProfile] = useState<ProfileSchema>()
   const [posts, setPosts] = useState<PostSchema[]>()
   const [memberCount, setMemberCount] = useState<number>()
+  const [sortingBy, setSortingBy] = useState<'hot' | 'new' | 'controversial'>(
+    'hot'
+  )
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
 
@@ -221,12 +224,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
 
         switch (index) {
           case 0:
+            setSortingBy('hot')
             await doGetPostsSortedByHotness()
             break
           case 1:
+            setSortingBy('new')
             await doGetPostsSortedByNew()
             break
           case 2:
+            setSortingBy('controversial')
             await doGetPostsSortedByCommentCount()
             break
         }
@@ -241,13 +247,28 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     showActionSheetWithOptions
   ])
 
-  const handlePostsRefresh = useCallback(async () => {
+  const handleRefresh = useCallback(async () => {
     setArePostsRefreshing(true)
 
-    await doGetPostsSortedByHotness()
+    switch (sortingBy) {
+      case 'hot':
+        await doGetPostsSortedByHotness()
+        break
+      case 'new':
+        await doGetPostsSortedByNew()
+        break
+      case 'controversial':
+        await doGetPostsSortedByCommentCount()
+        break
+    }
 
     setArePostsRefreshing(false)
-  }, [doGetPostsSortedByHotness])
+  }, [
+    doGetPostsSortedByCommentCount,
+    doGetPostsSortedByHotness,
+    doGetPostsSortedByNew,
+    sortingBy
+  ])
 
   const handleVoteButtonPress = useCallback(
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
@@ -536,7 +557,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                   </View>
                 </Pressable>
               )}
-              onRefresh={handlePostsRefresh}
+              onRefresh={handleRefresh}
             />
           </View>
         </View>
