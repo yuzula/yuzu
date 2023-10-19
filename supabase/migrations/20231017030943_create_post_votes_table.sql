@@ -3,7 +3,8 @@ create table public.post_votes (
   user_id uuid not null references public.profiles (id),
   post_id int not null references public.posts (id),
   is_upvote boolean not null,
-  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
+  unique(user_id, post_id)
 );
 
 -- RLS
@@ -16,15 +17,6 @@ create policy "Post votes are viewable by authenticated users"
 create policy "Users can cast their own votes"
   on post_votes for insert
   with check (auth.uid() = user_id);
-
-create policy "Users can only vote once per post"
-  on post_votes for insert
-  with check (exists (
-    select 1
-    from public.post_votes
-    where public.post_votes.user_id = auth.uid()
-    and public.post_votes.post_id = post_id
-  ));
 
 create policy "Users can update their own post vote"
   on post_votes for update

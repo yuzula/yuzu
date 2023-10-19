@@ -21,7 +21,7 @@
     "android:device": "expo run:android --device",
     "ios:device": "expo run:ios --device",
     "postinstall": "husky install",
-    "supabase:generate": "npx --yes supabase gen types typescript --linked --schema public"
+    "supabase:types": "npx --yes supabase gen types typescript --linked --schema public"
   },
   "jest": {
     "preset": "jest-expo"

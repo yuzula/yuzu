@@ -81,7 +81,7 @@ const EmailVerification: FunctionComponent<
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="h-10 w-full border-b border-apple-gray-light"
+                className="h-10 w-full border-b border-apple-gray-light font-Poppins_400Regular"
                 editable={!isLoading}
                 inputMode="numeric"
                 maxLength={6}

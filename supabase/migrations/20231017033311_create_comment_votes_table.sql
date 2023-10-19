@@ -3,7 +3,8 @@ create table public.comment_votes (
   user_id uuid not null references public.profiles (id),
   comment_id int not null references public.comments (id),
   is_upvote boolean not null,
-  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
+  created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
+  unique(user_id, comment_id)
 );
 
 -- RLS
@@ -16,15 +17,6 @@ create policy "Comment votes are viewable by authenticated users"
 create policy "Users can cast their own votes"
   on comment_votes for insert
   with check (auth.uid() = user_id);
-
-create policy "Users can only vote once per comment"
-  on comment_votes for insert
-  with check (exists (
-    select 1
-    from public.comment_votes
-    where public.comment_votes.user_id = auth.uid()
-    and public.comment_votes.comment_id = comment_id
-  ));
 
 create policy "Users can update their own comment vote"
   on comment_votes for update
