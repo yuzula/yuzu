@@ -71,7 +71,6 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
             </Text>
             <Controller
               control={control}
-              defaultValue=""
               name="email"
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -95,7 +94,6 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
             </Text>
             <Controller
               control={control}
-              defaultValue=""
               name="password"
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (

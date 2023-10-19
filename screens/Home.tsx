@@ -1,21 +1,26 @@
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { User } from '@supabase/supabase-js'
 import clsx from 'clsx'
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useRef,
   useState
 } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
   Alert,
   FlatList,
   Pressable,
   Text,
+  TextInput,
   View
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
@@ -29,25 +34,65 @@ import { getPostsWithHotness } from '../services/post'
 import { getPostVote, registerPostVote } from '../services/post/vote'
 import { RootTabScreenProps } from '../types'
 
-const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
-  navigation
-}) => {
+const createPostSchema = z.object({
+  content: z.string().min(1).max(300)
+})
+
+type CreatePostSchema = z.infer<typeof createPostSchema>
+
+const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
+  const insets = useSafeAreaInsets()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isDirty },
+    reset
+  } = useForm<CreatePostSchema>({
+    defaultValues: { content: '' },
+    mode: 'all',
+    resolver: zodResolver(createPostSchema)
+  })
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+
   const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<ProfileSchema>()
   const [posts, setPosts] = useState<PostSchema[]>()
   const [memberCount, setMemberCount] = useState<number>()
 
+  const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
+
   const [arePostsRefreshing, setArePostsRefreshing] = useState(false)
 
   const handlePostButtonPress = useCallback(() => {
-    if (profile) {
-      navigation.navigate('CreatePost', {
-        communityDomainName: profile.community_domain_name
-      })
+    bottomSheetModalRef.current?.present()
+  }, [])
+
+  const handlePostCloseButtonPress = useCallback(() => {
+    if (isDirty) {
+      Alert.alert(
+        'Unsaved Changes',
+        'You have unsaved changes. Are you sure you want to close the editor?',
+        [
+          {
+            text: 'Yes',
+            onPress: () => {
+              reset()
+              bottomSheetModalRef.current?.close()
+            }
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          }
+        ],
+        { cancelable: false }
+      )
     } else {
-      Alert.alert('We could fetch your profile', GENERIC_ERROR_MESSAGE)
+      bottomSheetModalRef.current?.close()
     }
-  }, [navigation, profile])
+  }, [isDirty, reset])
 
   const handleSortButtonPress = useCallback(() => {}, [])
 
@@ -125,6 +170,36 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       }
     },
     [posts]
+  )
+
+  const handleCreatePostSubmitButtonPress = useCallback(
+    async ({ content }: CreatePostSchema) => {
+      if (profile) {
+        setIsCreatePostLoading(true)
+
+        try {
+          const result = await supabase.from('posts').insert({
+            community_domain_name: profile.community_domain_name,
+            content,
+            user_id: profile.id,
+            is_private: true
+          })
+
+          if (result.error) {
+            return Alert.alert('Could not create post', GENERIC_ERROR_MESSAGE)
+          }
+
+          reset()
+
+          bottomSheetModalRef.current?.close()
+        } catch (error) {
+          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        } finally {
+          setIsCreatePostLoading(false)
+        }
+      }
+    },
+    [profile, reset]
   )
 
   useEffect(() => {
@@ -355,6 +430,57 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           </View>
         </View>
       )}
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        enableContentPanningGesture={false}
+        enableHandlePanningGesture={false}
+        handleComponent={null}
+        snapPoints={['100%']}
+      >
+        <View
+          className="mt-4 flex-1 space-y-4"
+          style={{ paddingTop: insets.top }}
+        >
+          <View className="mx-auto w-5/6 flex-row space-x-2">
+            <View className="grow">
+              <Button
+                isDisabled={!isValid}
+                isLoading={isCreatePostLoading}
+                onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
+              >
+                Submit
+              </Button>
+            </View>
+
+            <View className="grow">
+              <Button variant="secondary" onPress={handlePostCloseButtonPress}>
+                Cancel
+              </Button>
+            </View>
+          </View>
+
+          <View className="grow">
+            <Controller
+              control={control}
+              name="content"
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  autoFocus
+                  multiline
+                  className="mx-auto w-5/6 font-Poppins_500Medium text-lg"
+                  editable={!isCreatePostLoading}
+                  maxLength={300}
+                  placeholder="What's happening?"
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                />
+              )}
+            />
+          </View>
+        </View>
+      </BottomSheetModal>
     </SafeAreaView>
   )
 }

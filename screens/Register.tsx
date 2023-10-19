@@ -84,7 +84,6 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </Text>
             <Controller
               control={control}
-              defaultValue=""
               name="email"
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -109,7 +108,6 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </Text>
             <Controller
               control={control}
-              defaultValue=""
               name="username"
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -134,7 +132,6 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </Text>
             <Controller
               control={control}
-              defaultValue=""
               name="password"
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (

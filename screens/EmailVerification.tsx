@@ -77,7 +77,6 @@ const EmailVerification: FunctionComponent<
           </Text>
           <Controller
             control={control}
-            defaultValue=""
             name="token"
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (

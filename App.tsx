@@ -9,11 +9,11 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
 import { Text } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import useFonts from './hooks/useFonts'
 import useSession from './hooks/useSession'
 import linking from './navigation/linking'
-import CreatePost from './screens/CreatePost'
 import EmailVerification from './screens/EmailVerification'
 import Home from './screens/Home'
 import Login from './screens/Login'
@@ -103,7 +103,7 @@ const App: FunctionComponent = memo(() => {
     return null
   } else {
     return (
-      <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar />
         <BottomSheetModalProvider>
           <ActionSheetProvider>
@@ -115,7 +115,6 @@ const App: FunctionComponent = memo(() => {
                 {session ? (
                   <>
                     <Stack.Screen component={BottomTabNavigator} name="Tabs" />
-                    <Stack.Screen component={CreatePost} name="CreatePost" />
                   </>
                 ) : (
                   <>
@@ -132,7 +131,7 @@ const App: FunctionComponent = memo(() => {
             </NavigationContainer>
           </ActionSheetProvider>
         </BottomSheetModalProvider>
-      </>
+      </GestureHandlerRootView>
     )
   }
 })
