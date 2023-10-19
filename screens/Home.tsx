@@ -22,8 +22,11 @@ import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
+import { getResultingVote } from '../helpers/vote'
 import { postDtoSchema, PostSchema, postSchema } from '../models/post'
 import { ProfileSchema, profileSchema } from '../models/profile'
+import { getPostsWithHotness } from '../services/post'
+import { getPostVote, registerPostVote } from '../services/post/vote'
 import { RootTabScreenProps } from '../types'
 
 const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
@@ -51,41 +54,24 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const getPosts = useCallback(async () => {
     if (profile) {
       try {
-        const postsResponse = await supabase
-          .from('posts_with_hotness')
-          .select()
-          .eq('community_domain_name', profile.community_domain_name)
-          .order('hotness', { ascending: false })
-
-        if (postsResponse.error) {
-          return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
-        }
-
-        const postDtos = [...postDtoSchema.array().parse(postsResponse.data)]
+        const postDtos = postDtoSchema
+          .array()
+          .parse(await getPostsWithHotness(profile.community_domain_name))
 
         setPosts(
           postSchema.array().parse(
             await Promise.all(
               postDtos.map(async postDto => {
-                const voteResponse = await supabase
-                  .from('post_votes')
-                  .select()
-                  .eq('post_id', postDto.id)
-                  .eq('user_id', profile.id)
-                  .maybeSingle()
-
-                if (voteResponse.error) {
-                  return Alert.alert(
-                    'Could not fetch votes for posts',
-                    GENERIC_ERROR_MESSAGE
-                  )
-                }
+                const vote = await getPostVote({
+                  postId: postDto.id,
+                  userId: profile.id
+                })
 
                 return {
                   ...postDto,
-                  current_user_vote: !voteResponse.data
+                  current_user_vote: !vote
                     ? null
-                    : voteResponse.data.is_upvote
+                    : vote.is_upvote
                     ? 'upvote'
                     : 'downvote'
                 }
@@ -108,66 +94,34 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   }, [getPosts])
 
   const handleVoteButtonPress = useCallback(
-    async (postId: number, userId: string, isUpvote: boolean) => {
+    async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
       if (posts) {
         const newPosts = [...posts]
 
-        const postIdx = newPosts.findIndex(post => post.id === postId)
-        const post = newPosts[postIdx]
+        const post = newPosts[newPosts.findIndex(post => post.id === postId)]
 
         if (!post) {
           return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
 
-        if (post.current_user_vote === null) {
-          post.current_user_vote = isUpvote ? 'upvote' : 'downvote'
-          post.vote_count += isUpvote ? 1 : -1
+        const oldVote = post.current_user_vote
 
-          setPosts(newPosts)
+        const resultingVote = getResultingVote({
+          oldVote,
+          vote
+        })
 
-          const result = await supabase.from('post_votes').insert({
-            user_id: userId,
-            post_id: postId,
-            is_upvote: isUpvote
-          })
+        post.current_user_vote = resultingVote.newVote
+        post.vote_count += resultingVote.delta
 
-          if (result.error) {
-            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
-          }
-        } else if (
-          (post.current_user_vote === 'upvote' && isUpvote) ||
-          (post.current_user_vote === 'downvote' && !isUpvote)
-        ) {
-          post.current_user_vote = null
-          post.vote_count += isUpvote ? -1 : 1
+        setPosts(newPosts)
 
-          setPosts(newPosts)
-
-          const result = await supabase
-            .from('post_votes')
-            .delete()
-            .eq('user_id', userId)
-            .eq('post_id', postId)
-
-          if (result.error) {
-            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
-          }
-        } else {
-          post.current_user_vote = isUpvote ? 'upvote' : 'downvote'
-          post.vote_count += isUpvote ? 2 : -2
-
-          setPosts(newPosts)
-
-          const result = await supabase
-            .from('post_votes')
-            .update({ is_upvote: isUpvote })
-            .eq('user_id', userId)
-            .eq('post_id', postId)
-
-          if (result.error) {
-            return Alert.alert('Failed to register vote', GENERIC_ERROR_MESSAGE)
-          }
-        }
+        await registerPostVote({
+          postId,
+          userId,
+          oldVote,
+          vote
+        })
       }
     },
     [posts]
@@ -344,7 +298,11 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handleVoteButtonPress(item.item.id, user.id, true)
+                            handleVoteButtonPress(
+                              item.item.id,
+                              user.id,
+                              'upvote'
+                            )
                           }
                         >
                           <Text
@@ -369,7 +327,11 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handleVoteButtonPress(item.item.id, user.id, false)
+                            handleVoteButtonPress(
+                              item.item.id,
+                              user.id,
+                              'downvote'
+                            )
                           }
                         >
                           <Text
