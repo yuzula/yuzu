@@ -442,7 +442,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
           style={{ paddingTop: insets.top }}
         >
           <View className="mx-auto w-5/6 flex-row space-x-2">
-            <View className="grow">
+            <View className="basis-1/2">
               <Button
                 isDisabled={!isValid}
                 isLoading={isCreatePostLoading}
@@ -452,7 +452,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
               </Button>
             </View>
 
-            <View className="grow">
+            <View className="basis-1/2">
               <Button variant="secondary" onPress={handlePostCloseButtonPress}>
                 Cancel
               </Button>
