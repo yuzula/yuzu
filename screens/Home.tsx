@@ -1,3 +1,4 @@
+import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,7 +31,11 @@ import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { postDtoSchema, PostSchema, postSchema } from '../models/post'
 import { ProfileSchema, profileSchema } from '../models/profile'
-import { getPostsWithHotness } from '../services/post'
+import {
+  getPostsSortedByCommentCount,
+  getPostsSortedByHotness,
+  getPostsSortedByNew
+} from '../services/post'
 import { getPostVote, registerPostVote } from '../services/post/vote'
 import { RootTabScreenProps } from '../types'
 
@@ -55,6 +60,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   })
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+
+  const { showActionSheetWithOptions } = useActionSheet()
 
   const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<ProfileSchema>()
@@ -94,14 +101,12 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     }
   }, [isDirty, reset])
 
-  const handleSortButtonPress = useCallback(() => {}, [])
-
-  const getPosts = useCallback(async () => {
+  const doGetPostsSortedByHotness = useCallback(async () => {
     if (profile) {
       try {
         const postDtos = postDtoSchema
           .array()
-          .parse(await getPostsWithHotness(profile.community_domain_name))
+          .parse(await getPostsSortedByHotness(profile.community_domain_name))
 
         setPosts(
           postSchema.array().parse(
@@ -130,13 +135,119 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     }
   }, [profile])
 
+  const doGetPostsSortedByNew = useCallback(async () => {
+    if (profile) {
+      try {
+        const postDtos = postDtoSchema
+          .array()
+          .parse(await getPostsSortedByNew(profile.community_domain_name))
+
+        setPosts(
+          postSchema.array().parse(
+            await Promise.all(
+              postDtos.map(async postDto => {
+                const vote = await getPostVote({
+                  postId: postDto.id,
+                  userId: profile.id
+                })
+
+                return {
+                  ...postDto,
+                  current_user_vote: !vote
+                    ? null
+                    : vote.is_upvote
+                    ? 'upvote'
+                    : 'downvote'
+                }
+              })
+            )
+          )
+        )
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [profile])
+
+  const doGetPostsSortedByCommentCount = useCallback(async () => {
+    if (profile) {
+      try {
+        const postDtos = postDtoSchema
+          .array()
+          .parse(
+            await getPostsSortedByCommentCount(profile.community_domain_name)
+          )
+
+        setPosts(
+          postSchema.array().parse(
+            await Promise.all(
+              postDtos.map(async postDto => {
+                const vote = await getPostVote({
+                  postId: postDto.id,
+                  userId: profile.id
+                })
+
+                return {
+                  ...postDto,
+                  current_user_vote: !vote
+                    ? null
+                    : vote.is_upvote
+                    ? 'upvote'
+                    : 'downvote'
+                }
+              })
+            )
+          )
+        )
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [profile])
+
+  const handleSortButtonPress = useCallback(() => {
+    showActionSheetWithOptions(
+      {
+        title: 'Sort posts by',
+        options: ['Hot', 'New', 'Controversial', 'Cancel'],
+        cancelButtonIndex: 3
+      },
+      async index => {
+        if (index === 3) {
+          return
+        }
+
+        setArePostsRefreshing(true)
+
+        switch (index) {
+          case 0:
+            await doGetPostsSortedByHotness()
+            break
+          case 1:
+            await doGetPostsSortedByNew()
+            break
+          case 2:
+            await doGetPostsSortedByCommentCount()
+            break
+        }
+
+        setArePostsRefreshing(false)
+      }
+    )
+  }, [
+    doGetPostsSortedByCommentCount,
+    doGetPostsSortedByHotness,
+    doGetPostsSortedByNew,
+    showActionSheetWithOptions
+  ])
+
   const handlePostsRefresh = useCallback(async () => {
     setArePostsRefreshing(true)
 
-    await getPosts()
+    await doGetPostsSortedByHotness()
 
     setArePostsRefreshing(false)
-  }, [getPosts])
+  }, [doGetPostsSortedByHotness])
 
   const handleVoteButtonPress = useCallback(
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
@@ -221,8 +332,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   }, [])
 
   useEffect(() => {
-    getPosts()
-  }, [getPosts, profile])
+    doGetPostsSortedByHotness()
+  }, [doGetPostsSortedByHotness, profile])
 
   useEffect(() => {
     const doGetProfile = async () => {
