@@ -36,24 +36,16 @@ export const registerPostVote = async ({
 }: VoteParams) => {
   const resultingVote = getResultingVote({ oldVote, vote })
 
-  const existingVoteResponse = await supabase
-    .from('post_votes')
-    .select()
-    .eq('post_id', postId)
-    .eq('user_id', userId)
-    .maybeSingle()
+  const existingVote = await getPostVote({ postId, userId })
 
-  if (existingVoteResponse.error) {
-    throw existingVoteResponse.error
-  }
   // User has voted on this post already
-  if (existingVoteResponse.data) {
+  if (existingVote) {
     // The new vote results in an upvote or downvote
     if (resultingVote.newVote) {
       const response = await supabase
         .from('post_votes')
         .update({ is_upvote: resultingVote.newVote === 'upvote' })
-        .eq('id', existingVoteResponse.data.id)
+        .eq('id', existingVote.id)
 
       if (response.error) {
         throw response.error
@@ -63,7 +55,7 @@ export const registerPostVote = async ({
       const response = await supabase
         .from('post_votes')
         .delete()
-        .eq('id', existingVoteResponse.data.id)
+        .eq('id', existingVote.id)
 
       if (response.error) {
         throw response.error
