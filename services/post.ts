@@ -35,7 +35,7 @@ export const getPosts = async ({
     response.data.map(data => ({
       ...data,
       current_user_vote: !data.post_votes[0]
-        ? null
+        ? undefined
         : data.post_votes[0].is_upvote
         ? 'upvote'
         : 'downvote'
@@ -66,7 +66,7 @@ export const getVote = async ({ postId, userId }: GetPostVotesParams) => {
 interface VoteParams {
   postId: number
   userId: string
-  oldVote: 'upvote' | 'downvote' | null
+  oldVote?: 'upvote' | 'downvote'
   vote: 'upvote' | 'downvote'
 }
 
