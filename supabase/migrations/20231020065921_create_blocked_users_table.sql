@@ -31,12 +31,14 @@ create policy "Users can unblock people they blocked before"
 
 -- Posts RLS
 create policy "Posts are viewable if their creators are not blocked by the viewee"
-  on posts for select
+  on posts
+  as restrictive
+  for select
   to authenticated
-  using (auth.uid() not in (
-    select blocker_id
+  using (user_id not in (
+    select blockee_id
     from blocked_users
-    where blockee_id = user_id
+    where blocker_id = auth.uid()
   ));
 
 -- Comments RLS

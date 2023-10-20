@@ -10,8 +10,21 @@ create table posts (
   updated_at timestamp
 );
 
+-- Utility functions
+create function private.get_community_domain_name_from_profile(user_id uuid)
+returns text
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select profiles.community_domain_name
+  from profiles
+  where profiles.id = user_id;
+$$;
+
 -- RLS
-alter table posts enable row level security;
+alter table public.posts enable row level security;
 
 create policy "Public posts are viewable by authenticated users"
   on posts for select
@@ -21,11 +34,7 @@ create policy "Public posts are viewable by authenticated users"
 create policy "Private posts are viewable by users from the same community"
   on posts for select
   to authenticated
-  using (community_domain_name = (
-    select profiles.community_domain_name
-    from profiles
-    where profiles.id = auth.uid()
-  ));
+  using (is_private = true and (community_domain_name = private.get_community_domain_name_from_profile(auth.uid())));
 
 create policy "Users can create their own post"
   on posts for insert

@@ -42,6 +42,7 @@ returns text
 language plpgsql
 security definer
 set search_path = public
+stable
 as $$
 declare
   domain text;

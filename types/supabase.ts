@@ -192,21 +192,6 @@ export interface Database {
         }
         Relationships: []
       }
-      domain_suffixes: {
-        Row: {
-          id: number
-          suffix: string
-        }
-        Insert: {
-          id?: number
-          suffix: string
-        }
-        Update: {
-          id?: number
-          suffix?: string
-        }
-        Relationships: []
-      }
       post_votes: {
         Row: {
           created_at: string
@@ -470,12 +455,6 @@ export interface Database {
           domain_name: string
         }
         Returns: number
-      }
-      get_domain_name_from_email: {
-        Args: {
-          email: string
-        }
-        Returns: string
       }
     }
     Enums: {
