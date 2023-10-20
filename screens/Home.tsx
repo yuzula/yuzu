@@ -71,11 +71,11 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
 
   const [arePostsRefreshing, setArePostsRefreshing] = useState(false)
 
-  const handlePostButtonPress = useCallback(() => {
+  const handleCreatePostButtonPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
 
-  const handlePostCloseButtonPress = useCallback(() => {
+  const handleCreatePostCloseButtonPress = useCallback(() => {
     if (isDirty) {
       Alert.alert(
         'Unsaved Changes',
@@ -187,7 +187,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     showActionSheetWithOptions
   ])
 
-  const handleRefresh = useCallback(async () => {
+  const handlePostsRefresh = useCallback(async () => {
     setArePostsRefreshing(true)
 
     switch (sortBy) {
@@ -210,7 +210,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     sortBy
   ])
 
-  const handleVoteButtonPress = useCallback(
+  const handlePostVoteButtonPress = useCallback(
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
       if (posts) {
         const newPosts = [...posts]
@@ -337,7 +337,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
               <View className="grow">
                 <Button
                   className="h-9 rounded-lg"
-                  onPress={handlePostButtonPress}
+                  onPress={handleCreatePostButtonPress}
                 >
                   <FontAwesome5 name="pen" />
                   &nbsp;Post
@@ -425,7 +425,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handleVoteButtonPress(
+                            handlePostVoteButtonPress(
                               item.item.id,
                               user.id,
                               'upvote'
@@ -454,7 +454,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handleVoteButtonPress(
+                            handlePostVoteButtonPress(
                               item.item.id,
                               user.id,
                               'downvote'
@@ -477,7 +477,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                   </View>
                 </Pressable>
               )}
-              onRefresh={handleRefresh}
+              onRefresh={handlePostsRefresh}
             />
           </View>
         </View>
@@ -505,7 +505,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
             </View>
 
             <View className="basis-1/2">
-              <Button variant="secondary" onPress={handlePostCloseButtonPress}>
+              <Button
+                variant="secondary"
+                onPress={handleCreatePostCloseButtonPress}
+              >
                 Cancel
               </Button>
             </View>
