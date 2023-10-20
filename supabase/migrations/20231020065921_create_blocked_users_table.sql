@@ -13,6 +13,10 @@ create policy "Users can view who they blocked"
   on blocked_users for select
   using (auth.uid() = blocker_id);
 
+create policy "Users cannot block themselves"
+  on blocked_users for insert
+  with check (auth.uid() != blockee_id);
+
 create policy "Users can block others"
   on blocked_users for insert
   with check (auth.uid() = blocker_id);

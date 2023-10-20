@@ -7,7 +7,7 @@ create table public.comments (
   is_deleted boolean not null default false,
   ancestor_id int references public.comments (id),
   descendent_id int references public.comments (id),
-  depth int,
+  depth int check (depth < 10),
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp
 );

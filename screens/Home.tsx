@@ -31,6 +31,7 @@ import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import * as postModel from '../models/post'
 import * as profileModel from '../models/profile'
+import * as blockService from '../services/block'
 import * as communityService from '../services/community'
 import * as postService from '../services/post'
 import * as profileService from '../services/profile'
@@ -244,6 +245,63 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     [posts]
   )
 
+  const handleBlockAuthorButtonPress = useCallback(
+    async (authorId: string) => {
+      try {
+        if (user) {
+          await blockService.blockUser({
+            blockerId: user.id,
+            blockeeId: authorId
+          })
+
+          await handlePostsRefresh()
+        } else {
+          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
+        }
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    },
+    [handlePostsRefresh, user]
+  )
+
+  const handleReportPostButtonPress = useCallback(async (postId: number) => {
+    try {
+      postId
+    } catch (error) {
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    }
+  }, [])
+
+  const handlePostEllipsisButtonPress = useCallback(
+    (post: postModel.Schema) => {
+      showActionSheetWithOptions(
+        {
+          title: 'More actions',
+          options: ['Report this post', 'Block the author', 'Cancel'],
+          destructiveButtonIndex: 1,
+          cancelButtonIndex: 2
+        },
+        async index => {
+          if (index === 2) {
+            return
+          }
+
+          if (index === 0) {
+            await handleReportPostButtonPress(post.id)
+          } else if (index === 1) {
+            await handleBlockAuthorButtonPress(post.user_id)
+          }
+        }
+      )
+    },
+    [
+      handleBlockAuthorButtonPress,
+      handleReportPostButtonPress,
+      showActionSheetWithOptions
+    ]
+  )
+
   const handleCreatePostSubmitButtonPress = useCallback(
     async ({ content }: CreatePostSchema) => {
       if (profile) {
@@ -409,11 +467,21 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                       </View>
 
                       <View className="flex flex-row items-center space-x-1">
-                        <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                          <Text className="text-apple-gray-light">
-                            <AntDesign name="ellipsis1" size={20} />
-                          </Text>
-                        </Pressable>
+                        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
+                        since right now it only contains report and block actions, both of which the user can't
+                        perform on themselves */}
+                        {user.id !== item.item.user_id && (
+                          <Pressable
+                            className="rounded-lg p-2 active:bg-gray-200"
+                            onPress={() =>
+                              handlePostEllipsisButtonPress(item.item)
+                            }
+                          >
+                            <Text className="text-apple-gray-light">
+                              <AntDesign name="ellipsis1" size={20} />
+                            </Text>
+                          </Pressable>
+                        )}
                         <Pressable
                           className={clsx(
                             {
