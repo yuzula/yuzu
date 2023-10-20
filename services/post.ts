@@ -4,17 +4,20 @@ import * as postModel from '../models/post'
 
 interface GetSortedPostsParams {
   communityDomainName: string
+  userId: string
   sortBy: 'hot' | 'new' | 'controversial'
 }
 
 export const getPosts = async ({
   communityDomainName,
+  userId,
   sortBy = 'hot'
 }: GetSortedPostsParams) => {
   const response = await supabase
     .from('posts_with_hotness')
-    .select()
+    .select('*, post_votes(user_id, is_upvote)')
     .eq('community_domain_name', communityDomainName)
+    .eq('post_votes.user_id', userId)
     .order(
       sortBy === 'hot'
         ? 'hotness'
@@ -28,7 +31,16 @@ export const getPosts = async ({
     throw response.error
   }
 
-  return postModel.dtoSchema.array().parse(response.data)
+  return postModel.schema.array().parse(
+    response.data.map(data => ({
+      ...data,
+      current_user_vote: !data.post_votes[0]
+        ? null
+        : data.post_votes[0].is_upvote
+        ? 'upvote'
+        : 'downvote'
+    }))
+  )
 }
 
 interface GetPostVotesParams {

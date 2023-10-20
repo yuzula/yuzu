@@ -100,34 +100,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     }
   }, [isDirty, reset])
 
-  const doGetPostsSortedByHotness = useCallback(async () => {
+  const getPostsSortByHot = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = await postService.getPosts({
-          communityDomainName: profile.community_domain_name,
-          sortBy: 'hot'
-        })
-
         setPosts(
-          postModel.schema.array().parse(
-            await Promise.all(
-              postDtos.map(async postDto => {
-                const vote = await postService.getVote({
-                  postId: postDto.id,
-                  userId: profile.id
-                })
-
-                return {
-                  ...postDto,
-                  current_user_vote: !vote
-                    ? null
-                    : vote.is_upvote
-                    ? 'upvote'
-                    : 'downvote'
-                }
-              })
-            )
-          )
+          await postService.getPosts({
+            communityDomainName: profile.community_domain_name,
+            userId: profile.id,
+            sortBy: 'hot'
+          })
         )
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
@@ -135,34 +116,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     }
   }, [profile])
 
-  const doGetPostsSortedByNew = useCallback(async () => {
+  const getPostsSortByNew = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = await postService.getPosts({
-          communityDomainName: profile.community_domain_name,
-          sortBy: 'new'
-        })
-
         setPosts(
-          postModel.schema.array().parse(
-            await Promise.all(
-              postDtos.map(async postDto => {
-                const vote = await postService.getVote({
-                  postId: postDto.id,
-                  userId: profile.id
-                })
-
-                return {
-                  ...postDto,
-                  current_user_vote: !vote
-                    ? null
-                    : vote.is_upvote
-                    ? 'upvote'
-                    : 'downvote'
-                }
-              })
-            )
-          )
+          await postService.getPosts({
+            communityDomainName: profile.community_domain_name,
+            userId: profile.id,
+            sortBy: 'new'
+          })
         )
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
@@ -170,34 +132,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     }
   }, [profile])
 
-  const doGetPostsSortedByCommentCount = useCallback(async () => {
+  const getPostsSortByControversial = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = await postService.getPosts({
-          communityDomainName: profile.community_domain_name,
-          sortBy: 'controversial'
-        })
-
         setPosts(
-          postModel.schema.array().parse(
-            await Promise.all(
-              postDtos.map(async postDto => {
-                const vote = await postService.getVote({
-                  postId: postDto.id,
-                  userId: profile.id
-                })
-
-                return {
-                  ...postDto,
-                  current_user_vote: !vote
-                    ? null
-                    : vote.is_upvote
-                    ? 'upvote'
-                    : 'downvote'
-                }
-              })
-            )
-          )
+          await postService.getPosts({
+            communityDomainName: profile.community_domain_name,
+            userId: profile.id,
+            sortBy: 'controversial'
+          })
         )
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
@@ -222,15 +165,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
         switch (index) {
           case 0:
             setSortBy('hot')
-            await doGetPostsSortedByHotness()
+            await getPostsSortByHot()
             break
           case 1:
             setSortBy('new')
-            await doGetPostsSortedByNew()
+            await getPostsSortByNew()
             break
           case 2:
             setSortBy('controversial')
-            await doGetPostsSortedByCommentCount()
+            await getPostsSortByControversial()
             break
         }
 
@@ -238,9 +181,9 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
       }
     )
   }, [
-    doGetPostsSortedByCommentCount,
-    doGetPostsSortedByHotness,
-    doGetPostsSortedByNew,
+    getPostsSortByControversial,
+    getPostsSortByHot,
+    getPostsSortByNew,
     showActionSheetWithOptions
   ])
 
@@ -249,21 +192,21 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
 
     switch (sortBy) {
       case 'hot':
-        await doGetPostsSortedByHotness()
+        await getPostsSortByHot()
         break
       case 'new':
-        await doGetPostsSortedByNew()
+        await getPostsSortByNew()
         break
       case 'controversial':
-        await doGetPostsSortedByCommentCount()
+        await getPostsSortByControversial()
         break
     }
 
     setArePostsRefreshing(false)
   }, [
-    doGetPostsSortedByCommentCount,
-    doGetPostsSortedByHotness,
-    doGetPostsSortedByNew,
+    getPostsSortByControversial,
+    getPostsSortByHot,
+    getPostsSortByNew,
     sortBy
   ])
 
@@ -272,21 +215,21 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
       if (posts) {
         const newPosts = [...posts]
 
-        const post = newPosts[newPosts.findIndex(post => post.id === postId)]
+        const newPost = newPosts[newPosts.findIndex(post => post.id === postId)]
 
-        if (!post) {
+        if (!newPost) {
           return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
 
-        const oldVote = post.current_user_vote
+        const oldVote = newPost.current_user_vote
 
         const resultingVote = getResultingVote({
           oldVote,
           vote
         })
 
-        post.current_user_vote = resultingVote.newVote
-        post.vote_count += resultingVote.delta
+        newPost.current_user_vote = resultingVote.newVote
+        newPost.vote_count += resultingVote.delta
 
         setPosts(newPosts)
 
@@ -342,8 +285,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   }, [])
 
   useEffect(() => {
-    doGetPostsSortedByHotness()
-  }, [doGetPostsSortedByHotness, profile])
+    getPostsSortByHot()
+  }, [getPostsSortByHot, profile])
 
   useEffect(() => {
     ;(async () => {
