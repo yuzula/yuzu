@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
-export const profileSchema = z.object({
+export const schema = z.object({
   id: z.string(),
   username: z.string(),
   community_domain_name: z.string()
 })
 
-export type ProfileSchema = z.infer<typeof profileSchema>
+export type Schema = z.infer<typeof schema>

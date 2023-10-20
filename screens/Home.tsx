@@ -29,14 +29,12 @@ import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import { postDtoSchema, PostSchema, postSchema } from '../models/post'
-import { ProfileSchema, profileSchema } from '../models/profile'
-import {
-  getPostsSortedByCommentCount,
-  getPostsSortedByHotness,
-  getPostsSortedByNew
-} from '../services/post'
-import { getPostVote, registerPostVote } from '../services/post/vote'
+import * as postModel from '../models/post'
+import * as profileModel from '../models/profile'
+import * as communityService from '../services/community'
+import * as postService from '../services/post'
+import * as profileService from '../services/profile'
+import * as userService from '../services/user'
 import { RootTabScreenProps } from '../types'
 
 const createPostSchema = z.object({
@@ -64,8 +62,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const { showActionSheetWithOptions } = useActionSheet()
 
   const [user, setUser] = useState<User>()
-  const [profile, setProfile] = useState<ProfileSchema>()
-  const [posts, setPosts] = useState<PostSchema[]>()
+  const [profile, setProfile] = useState<profileModel.Schema>()
+  const [posts, setPosts] = useState<postModel.Schema[]>()
   const [memberCount, setMemberCount] = useState<number>()
   const [sortingBy, setSortingBy] = useState<'hot' | 'new' | 'controversial'>(
     'hot'
@@ -107,15 +105,19 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByHotness = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postDtoSchema
+        const postDtos = postModel.dtoSchema
           .array()
-          .parse(await getPostsSortedByHotness(profile.community_domain_name))
+          .parse(
+            await postService.getPostsSortedByHotness(
+              profile.community_domain_name
+            )
+          )
 
         setPosts(
-          postSchema.array().parse(
+          postModel.schema.array().parse(
             await Promise.all(
               postDtos.map(async postDto => {
-                const vote = await getPostVote({
+                const vote = await postService.getVote({
                   postId: postDto.id,
                   userId: profile.id
                 })
@@ -141,15 +143,17 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByNew = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postDtoSchema
+        const postDtos = postModel.dtoSchema
           .array()
-          .parse(await getPostsSortedByNew(profile.community_domain_name))
+          .parse(
+            await postService.getPostsSortedByNew(profile.community_domain_name)
+          )
 
         setPosts(
-          postSchema.array().parse(
+          postModel.schema.array().parse(
             await Promise.all(
               postDtos.map(async postDto => {
-                const vote = await getPostVote({
+                const vote = await postService.getVote({
                   postId: postDto.id,
                   userId: profile.id
                 })
@@ -175,17 +179,19 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByCommentCount = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postDtoSchema
+        const postDtos = postModel.dtoSchema
           .array()
           .parse(
-            await getPostsSortedByCommentCount(profile.community_domain_name)
+            await postService.getPostsSortedByCommentCount(
+              profile.community_domain_name
+            )
           )
 
         setPosts(
-          postSchema.array().parse(
+          postModel.schema.array().parse(
             await Promise.all(
               postDtos.map(async postDto => {
-                const vote = await getPostVote({
+                const vote = await postService.getVote({
                   postId: postDto.id,
                   userId: profile.id
                 })
@@ -293,7 +299,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
 
         setPosts(newPosts)
 
-        await registerPostVote({
+        await postService.registerVote({
           postId,
           userId,
           oldVote,
@@ -335,21 +341,13 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   )
 
   useEffect(() => {
-    const doGetUser = async () => {
+    ;(async () => {
       try {
-        const user = await supabase.auth.getUser()
-
-        if (user.error) {
-          return Alert.alert('Could not fetch user', GENERIC_ERROR_MESSAGE)
-        }
-
-        setUser(user.data.user)
+        setUser(await userService.getCurrentUser())
       } catch (error) {
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
-    }
-
-    doGetUser()
+    })()
   }, [])
 
   useEffect(() => {
@@ -357,42 +355,30 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   }, [doGetPostsSortedByHotness, profile])
 
   useEffect(() => {
-    const doGetProfile = async () => {
+    ;(async () => {
       if (user) {
         try {
-          const profile = await supabase
-            .from('profiles')
-            .select()
-            .eq('id', user.id)
-            .single()
-
-          setProfile(profileSchema.parse(profile.data))
+          setProfile(await profileService.get(user.id))
         } catch (error) {
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
       }
-    }
-
-    doGetProfile()
+    })()
   }, [user])
 
   useEffect(() => {
-    const doGetMemberCount = async () => {
+    ;(async () => {
       if (profile) {
         try {
-          const memberCount = await supabase.rpc('count_community_members', {
-            domain_name: profile.community_domain_name
-          })
-
-          setMemberCount(z.number().parse(memberCount.data))
+          setMemberCount(
+            await communityService.getMemberCount(profile.community_domain_name)
+          )
         } catch (error) {
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
       }
-    }
-
-    doGetMemberCount()
-  }, [profile, user])
+    })()
+  }, [profile])
 
   return (
     <SafeAreaView

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const postDtoSchema = z.object({
+export const dtoSchema = z.object({
   id: z.number(),
   user_id: z.string(),
   community_domain_name: z.string(),
@@ -14,8 +14,8 @@ export const postDtoSchema = z.object({
   updated_at: z.coerce.date().optional()
 })
 
-export const postSchema = postDtoSchema.extend({
+export const schema = dtoSchema.extend({
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).nullable()
 })
 
-export type PostSchema = z.infer<typeof postSchema>
+export type Schema = z.infer<typeof schema>
