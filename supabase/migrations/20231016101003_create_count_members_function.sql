@@ -1,6 +1,7 @@
 create function count_community_members(domain_name text)
 returns int
 language sql
+stable
 as $$
   select count(id)
   from profiles

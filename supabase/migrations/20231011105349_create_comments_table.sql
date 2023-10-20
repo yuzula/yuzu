@@ -12,30 +12,43 @@ create table comments (
   updated_at timestamp
 );
 
+-- Utility functions
+create function private.is_post_private(post_id int)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select is_private
+  from posts
+  where id = post_id;
+$$;
+
+create function private.get_community_domain_name_from_post(post_id int)
+returns text
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select community_domain_name
+  from posts
+  where id = post_id;
+$$;
+
 -- RLS
 alter table comments enable row level security;
 
 create policy "Public comments are viewable by authenticated users"
   on comments for select
   to authenticated
-  using ((
-    select posts.is_private
-    from posts
-    where posts.id = post_id
-  ) = false);
+  using (private.is_post_private(post_id) = false);
 
 create policy "Private comments are viewable by users from the same community"
   on comments for select
   to authenticated
-  using ((
-    select posts.community_domain_name
-    from posts
-    where posts.id = post_id
-    ) = (
-    select profiles.community_domain_name
-    from profiles
-    where profiles.id = auth.uid()
-  ));
+  using (private.get_community_domain_name_from_post(post_id) = private.get_community_domain_name_from_profile());
 
 create policy "Users can create their own comment"
   on comments for insert

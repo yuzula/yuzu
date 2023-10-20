@@ -11,16 +11,16 @@ create table posts (
 );
 
 -- Utility functions
-create function private.get_community_domain_name_from_profile(user_id uuid)
+create function private.get_community_domain_name_from_profile()
 returns text
 language sql
 security definer
 set search_path = public
 stable
 as $$
-  select profiles.community_domain_name
+  select community_domain_name
   from profiles
-  where profiles.id = user_id;
+  where id = auth.uid();
 $$;
 
 -- RLS
@@ -34,7 +34,7 @@ create policy "Public posts are viewable by authenticated users"
 create policy "Private posts are viewable by users from the same community"
   on posts for select
   to authenticated
-  using (is_private = true and (community_domain_name = private.get_community_domain_name_from_profile(auth.uid())));
+  using (community_domain_name = private.get_community_domain_name_from_profile());
 
 create policy "Users can create their own post"
   on posts for insert

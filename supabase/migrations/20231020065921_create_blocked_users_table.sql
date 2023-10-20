@@ -29,27 +29,34 @@ create policy "Users can unblock people they blocked before"
   to authenticated
   using (auth.uid() = blocker_id);
 
+-- Utility functions
+create function private.is_user_blocked_by_current_user(user_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select user_id in (
+    select blockee_id
+    from blocked_users
+    where blocker_id = auth.uid()
+  )
+$$;
+
 -- Posts RLS
 create policy "Posts are viewable if their creators are not blocked by the viewee"
   on posts
   as restrictive
   for select
   to authenticated
-  using (user_id not in (
-    select blockee_id
-    from blocked_users
-    where blocker_id = auth.uid()
-  ));
+  using (not private.is_user_blocked_by_current_user(user_id));
 
 -- Comments RLS
 create policy "Comments are viewable if their creators are not blocked by the viewee"
   on comments for select
   to authenticated
-  using (auth.uid() not in (
-    select blocker_id
-    from blocked_users
-    where blockee_id = user_id
-  ));
+  using (not private.is_user_blocked_by_current_user(user_id));
 
 -- Triggers
 create function private.set_default_values_on_blocked_user_created()
