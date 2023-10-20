@@ -9,6 +9,40 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      blocked_users: {
+        Row: {
+          blockee_id: string
+          blocker_id: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          blockee_id: string
+          blocker_id: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          blockee_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'blocked_users_blockee_id_fkey'
+            columns: ['blockee_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'blocked_users_blocker_id_fkey'
+            columns: ['blocker_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       comment_votes: {
         Row: {
           comment_id: number

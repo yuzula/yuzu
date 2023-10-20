@@ -15,7 +15,7 @@ export const getPosts = async ({
 }: GetSortedPostsParams) => {
   const response = await supabase
     .from('posts_with_hotness')
-    .select('*, post_votes(user_id, is_upvote)')
+    .select('*, post_votes(user_id, is_upvote), profiles(username)')
     .eq('community_domain_name', communityDomainName)
     .eq('post_votes.user_id', userId)
     .order(
@@ -34,6 +34,7 @@ export const getPosts = async ({
   return postModel.schema.array().parse(
     response.data.map(data => ({
       ...data,
+      username: data.profiles?.username,
       current_user_vote: !data.post_votes[0]
         ? undefined
         : data.post_votes[0].is_upvote

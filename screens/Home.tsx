@@ -380,7 +380,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                         <Text className="font-Poppins_400Regular text-apple-gray-light">
                           by&nbsp;
                           <Text className="font-Poppins_500Medium">
-                            maxwowo
+                            {item.item.username}
                           </Text>
                         </Text>
                         <View className="flex flex-row space-x-2">
