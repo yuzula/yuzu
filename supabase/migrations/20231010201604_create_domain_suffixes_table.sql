@@ -5,6 +5,9 @@ create table private.domain_suffixes (
   suffix text not null unique
 );
 
+create index domain_suffixes_suffix_idx
+on private.domain_suffixes (lower(suffix));
+
 insert into private.domain_suffixes (suffix)
 values
   ('ac'),

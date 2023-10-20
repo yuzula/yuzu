@@ -7,6 +7,12 @@ create table comment_votes (
   unique(user_id, comment_id)
 );
 
+create index comment_votes_user_id_idx
+on comment_votes (user_id);
+
+create index comment_votes_comment_id_idx
+on comment_votes (comment_id);
+
 -- RLS
 alter table comment_votes enable row level security;
 

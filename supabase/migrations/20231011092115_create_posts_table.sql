@@ -10,6 +10,12 @@ create table posts (
   updated_at timestamp
 );
 
+create index posts_user_id_idx
+on posts (user_id);
+
+create index posts_community_domain_name_idx
+on posts (community_domain_name);
+
 -- Utility functions
 create function private.get_community_domain_name_from_profile()
 returns text
@@ -24,7 +30,7 @@ as $$
 $$;
 
 -- RLS
-alter table public.posts enable row level security;
+alter table posts enable row level security;
 
 create policy "Public posts are viewable by authenticated users"
   on posts for select

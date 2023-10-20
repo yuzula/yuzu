@@ -9,6 +9,12 @@ create table profiles (
   community_domain_name text not null references communities (domain_name)
 );
 
+create index profiles_username_idx
+on profiles (username);
+
+create index profiles_community_domain_name_idx
+on profiles (community_domain_name);
+
 -- Profiles RLS
 alter table profiles enable row level security;
 

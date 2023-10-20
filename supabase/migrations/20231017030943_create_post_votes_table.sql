@@ -7,6 +7,12 @@ create table post_votes (
   unique(user_id, post_id)
 );
 
+create index post_votes_user_id_idx
+on post_votes (user_id);
+
+create index post_votes_post_id_idx
+on post_votes (post_id);
+
 -- RLS
 alter table post_votes enable row level security;
 

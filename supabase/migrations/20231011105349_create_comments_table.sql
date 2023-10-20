@@ -12,6 +12,21 @@ create table comments (
   updated_at timestamp
 );
 
+create index comments_user_id_idx
+on comments (user_id);
+
+create index comments_post_id_idx
+on comments (post_id);
+
+create index comments_ancestor_id_idx
+on comments (ancestor_id);
+
+create index comments_descendent_id_idx
+on comments (descendent_id);
+
+create index comments_depth_idx
+on comments (depth);
+
 -- Utility functions
 create function private.is_post_private(post_id int)
 returns boolean

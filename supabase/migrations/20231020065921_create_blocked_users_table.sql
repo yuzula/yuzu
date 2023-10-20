@@ -6,6 +6,12 @@ create table blocked_users (
   unique(blocker_id, blockee_id)
 );
 
+create index blocked_users_blocker_id_idx
+on blocked_users (blocker_id);
+
+create index blocked_users_blockee_id_idx
+on blocked_users (blockee_id);
+
 -- Blocked users RLS
 alter table blocked_users enable row level security;
 
