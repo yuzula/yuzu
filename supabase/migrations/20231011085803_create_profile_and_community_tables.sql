@@ -1,42 +1,47 @@
-create table public.communities (
+create table communities (
   domain_name text primary key,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC')
 );
 
-create table public.profiles (
+create table profiles (
   id uuid primary key references auth.users on delete cascade,
   username varchar(20) not null unique,
-  community_domain_name text not null references public.communities (domain_name)
+  community_domain_name text not null references communities (domain_name)
 );
 
 -- Profiles RLS
-alter table public.profiles enable row level security;
+alter table profiles enable row level security;
 
 create policy "Profiles are viewable by authenticated users"
   on profiles for select
-  using (auth.uid() is not null);
+  to authenticated
+  using (true);
 
 create policy "Users can create their own profile"
   on profiles for insert
+  to authenticated
   with check (auth.uid() = id);
 
 create policy "Users can update their own profile"
   on profiles for update
+  to authenticated
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
 -- Communities RLS
-alter table public.communities enable row level security;
+alter table communities enable row level security;
 
 create policy "Communities are viewable by authenticated users"
   on communities for select
-  using ( auth.uid() is not null );
+  to authenticated
+  using (true);
 
 -- Utility functions
-create function public.get_domain_name_from_email(email text)
+create function private.get_domain_name_from_email(email text)
 returns text
 language plpgsql
-security definer set search_path = public
+security definer
+set search_path = public
 as $$
 declare
   domain text;
@@ -51,7 +56,7 @@ begin
   -- Find the longest matching suffix
   select suffix
   into domain_suffix
-  from public.domain_suffixes
+  from private.domain_suffixes
   where domain ILIKE '%' || suffix
   order by length(suffix) desc
   limit 1;
@@ -72,23 +77,24 @@ end;
 $$;
 
 -- Triggers
-create function public.create_profile_and_community_on_auth_user_created()
+create function private.create_profile_and_community_on_auth_user_created()
 returns trigger
 language plpgsql
-security definer set search_path = public
+security definer
+set search_path = public
 as $$
 declare
   domain_name_from_email text;
 begin
-  domain_name_from_email := public.get_domain_name_from_email(new.email);
+  domain_name_from_email := private.get_domain_name_from_email(new.email);
 
   -- Create community
-  insert into public.communities (domain_name)
+  insert into communities (domain_name)
   values (domain_name_from_email)
   on conflict (domain_name) do nothing;
 
   -- Create user
-  insert into public.profiles (id, username, community_domain_name)
+  insert into profiles (id, username, community_domain_name)
   values (new.id, new.raw_user_meta_data->>'username', domain_name_from_email);
 
   return new;
@@ -97,4 +103,4 @@ $$;
 
 create trigger create_profile_and_community_on_auth_user_created
   after insert on auth.users
-  for each row execute procedure public.create_profile_and_community_on_auth_user_created();
+  for each row execute procedure private.create_profile_and_community_on_auth_user_created();

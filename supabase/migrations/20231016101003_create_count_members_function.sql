@@ -3,6 +3,6 @@ returns int
 language sql
 as $$
   select count(id)
-  from public.profiles
+  from profiles
   where community_domain_name = domain_name;
 $$;

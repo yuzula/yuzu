@@ -1,9 +1,11 @@
-create table public.domain_suffixes (
+create schema private;
+
+create table private.domain_suffixes (
   id serial primary key,
   suffix text not null unique
 );
 
-insert into public.domain_suffixes (suffix)
+insert into private.domain_suffixes (suffix)
 values
   ('ac'),
   ('com.ac'),
@@ -9113,4 +9115,4 @@ values
   ('virtualserver.io'),
   ('enterprisecloud.nu');
 
-alter table public.domain_suffixes enable row level security;
+alter table private.domain_suffixes enable row level security;
