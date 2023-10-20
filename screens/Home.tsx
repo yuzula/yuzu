@@ -65,9 +65,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const [profile, setProfile] = useState<profileModel.Schema>()
   const [posts, setPosts] = useState<postModel.Schema[]>()
   const [memberCount, setMemberCount] = useState<number>()
-  const [sortingBy, setSortingBy] = useState<'hot' | 'new' | 'controversial'>(
-    'hot'
-  )
+  const [sortBy, setSortBy] = useState<'hot' | 'new' | 'controversial'>('hot')
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
 
@@ -105,13 +103,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByHotness = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postModel.dtoSchema
-          .array()
-          .parse(
-            await postService.getPostsSortedByHotness(
-              profile.community_domain_name
-            )
-          )
+        const postDtos = await postService.getPosts({
+          communityDomainName: profile.community_domain_name,
+          sortBy: 'hot'
+        })
 
         setPosts(
           postModel.schema.array().parse(
@@ -143,11 +138,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByNew = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postModel.dtoSchema
-          .array()
-          .parse(
-            await postService.getPostsSortedByNew(profile.community_domain_name)
-          )
+        const postDtos = await postService.getPosts({
+          communityDomainName: profile.community_domain_name,
+          sortBy: 'new'
+        })
 
         setPosts(
           postModel.schema.array().parse(
@@ -179,13 +173,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const doGetPostsSortedByCommentCount = useCallback(async () => {
     if (profile) {
       try {
-        const postDtos = postModel.dtoSchema
-          .array()
-          .parse(
-            await postService.getPostsSortedByCommentCount(
-              profile.community_domain_name
-            )
-          )
+        const postDtos = await postService.getPosts({
+          communityDomainName: profile.community_domain_name,
+          sortBy: 'controversial'
+        })
 
         setPosts(
           postModel.schema.array().parse(
@@ -230,15 +221,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
 
         switch (index) {
           case 0:
-            setSortingBy('hot')
+            setSortBy('hot')
             await doGetPostsSortedByHotness()
             break
           case 1:
-            setSortingBy('new')
+            setSortBy('new')
             await doGetPostsSortedByNew()
             break
           case 2:
-            setSortingBy('controversial')
+            setSortBy('controversial')
             await doGetPostsSortedByCommentCount()
             break
         }
@@ -256,7 +247,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const handleRefresh = useCallback(async () => {
     setArePostsRefreshing(true)
 
-    switch (sortingBy) {
+    switch (sortBy) {
       case 'hot':
         await doGetPostsSortedByHotness()
         break
@@ -273,7 +264,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     doGetPostsSortedByCommentCount,
     doGetPostsSortedByHotness,
     doGetPostsSortedByNew,
-    sortingBy
+    sortBy
   ])
 
   const handleVoteButtonPress = useCallback(

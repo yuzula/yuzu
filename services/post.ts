@@ -1,50 +1,34 @@
 import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
+import * as postModel from '../models/post'
 
-export const getPostsSortedByHotness = async (
-  community_domain_name: string
-) => {
-  const response = await supabase
-    .from('posts_with_hotness')
-    .select()
-    .eq('community_domain_name', community_domain_name)
-    .order('hotness', { ascending: false })
-
-  if (response.error) {
-    throw response.error
-  }
-
-  return response.data
+interface GetSortedPostsParams {
+  communityDomainName: string
+  sortBy: 'hot' | 'new' | 'controversial'
 }
 
-export const getPostsSortedByNew = async (community_domain_name: string) => {
+export const getPosts = async ({
+  communityDomainName,
+  sortBy = 'hot'
+}: GetSortedPostsParams) => {
   const response = await supabase
     .from('posts_with_hotness')
     .select()
-    .eq('community_domain_name', community_domain_name)
-    .order('created_at', { ascending: false })
+    .eq('community_domain_name', communityDomainName)
+    .order(
+      sortBy === 'hot'
+        ? 'hotness'
+        : sortBy === 'new'
+        ? 'created_at'
+        : 'comment_count',
+      { ascending: false }
+    )
 
   if (response.error) {
     throw response.error
   }
 
-  return response.data
-}
-
-export const getPostsSortedByCommentCount = async (
-  community_domain_name: string
-) => {
-  const response = await supabase
-    .from('posts_with_hotness')
-    .select()
-    .eq('community_domain_name', community_domain_name)
-    .order('comment_count', { ascending: false })
-
-  if (response.error) {
-    throw response.error
-  }
-
-  return response.data
+  return postModel.dtoSchema.array().parse(response.data)
 }
 
 interface GetPostVotesParams {
