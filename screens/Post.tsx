@@ -212,6 +212,26 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             </View>
           </View>
 
+          <View className="border-b border-gray-200">
+            <View className="mx-auto w-5/6 flex-row justify-between py-2">
+              <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                <Text className="text-apple-gray-light">
+                  <AntDesign name="arrowup" size={20} />
+                </Text>
+              </Pressable>
+              <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                <Text className="text-apple-gray-light">
+                  <AntDesign name="arrowdown" size={20} />
+                </Text>
+              </Pressable>
+              <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                <Text className="text-apple-gray-light">
+                  <AntDesign name="message1" size={20} />
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
           <View className="w-full grow" />
         </View>
       )}
