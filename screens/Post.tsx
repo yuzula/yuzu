@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,6 +10,7 @@ import {
   GENERIC_ERROR_TITLE
 } from '../constants/alert'
 import { formatCount } from '../helpers/count'
+import { formatDuration } from '../helpers/time'
 import useCurrentUser from '../hooks/useCurrentUser'
 import * as postModel from '../models/post'
 import * as blockService from '../services/block'
@@ -158,11 +159,9 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </Text>
               </Pressable>
             </View>
-
             <Text className="basis-1/3 text-center font-Poppins_600SemiBold">
               {formatCount(post.comment_count)} Comments
             </Text>
-
             <View className="basis-1/3 items-end pr-2">
               <Pressable
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
@@ -174,6 +173,45 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </Pressable>
             </View>
           </View>
+
+          <View className="w-full border-b border-gray-200">
+            <View className="mx-auto w-5/6 space-y-2 py-4">
+              <Text className="font-Poppins_500Medium text-base">
+                {post.content}
+              </Text>
+
+              <View className="space-y-1">
+                <Text className="font-Poppins_400Regular text-apple-gray-light">
+                  by&nbsp;
+                  <Text className="font-Poppins_500Medium">
+                    {post.username}
+                  </Text>
+                </Text>
+                <View className="flex flex-row space-x-2">
+                  <View>
+                    <Text className="font-Poppins_400Regular text-apple-gray-light">
+                      <AntDesign name="arrowup" size={14} />
+                      &nbsp;{post.vote_count}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text className="font-Poppins_400Regular text-apple-gray-light">
+                      <AntDesign name="message1" size={14} />
+                      &nbsp;{post.comment_count}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text className="font-Poppins_400Regular text-apple-gray-light">
+                      <AntDesign name="clockcircleo" size={14} />
+                      &nbsp;
+                      {formatDuration(Date.now() - post.created_at.getTime())}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+
           <View className="w-full grow" />
         </View>
       )}

@@ -460,7 +460,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 >
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
-                      className="font-Poppins_400Regular"
+                      className="font-Poppins_500Medium"
                       ellipsizeMode="tail"
                       numberOfLines={4}
                     >
