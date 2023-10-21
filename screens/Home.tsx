@@ -445,7 +445,6 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
 
             <FlatList
-              scrollEnabled
               className="w-full grow border-t border-gray-200"
               data={posts}
               keyExtractor={item => item.id.toString()}

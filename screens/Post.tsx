@@ -5,6 +5,7 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -220,109 +221,144 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             </View>
           </View>
 
-          <View className="w-full border-b border-gray-200">
-            <View className="mx-auto w-5/6 space-y-2 py-4">
-              <Text className="font-Poppins_500Medium text-base">
-                {post.content}
-              </Text>
+          <FlatList
+            className="w-full grow"
+            keyExtractor={item => item.id.toString()}
+            ListHeaderComponent={
+              <>
+                <View className="w-full border-b border-gray-200">
+                  <View className="mx-auto w-5/6 space-y-2 py-4">
+                    <Text className="font-Poppins_500Medium text-base">
+                      {post.content}
+                    </Text>
 
-              <View className="space-y-1">
-                <Text className="font-Poppins_400Regular text-apple-gray-light">
-                  by&nbsp;
-                  <Text className="font-Poppins_500Medium">
-                    {post.username}
-                  </Text>
-                </Text>
-                <View className="flex flex-row space-x-2">
-                  <View>
-                    <Text className="font-Poppins_400Regular text-apple-gray-light">
-                      <AntDesign name="arrowup" size={14} />
-                      &nbsp;{post.vote_count}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text className="font-Poppins_400Regular text-apple-gray-light">
-                      <AntDesign name="message1" size={14} />
-                      &nbsp;{post.comment_count}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text className="font-Poppins_400Regular text-apple-gray-light">
-                      <AntDesign name="clockcircleo" size={14} />
-                      &nbsp;
-                      {formatDuration(Date.now() - post.created_at.getTime())}
-                    </Text>
+                    <View className="space-y-1">
+                      <Text className="font-Poppins_400Regular text-apple-gray-light">
+                        by&nbsp;
+                        <Text className="font-Poppins_500Medium">
+                          {post.username}
+                        </Text>
+                      </Text>
+                      <View className="flex flex-row space-x-2">
+                        <View>
+                          <Text className="font-Poppins_400Regular text-apple-gray-light">
+                            <AntDesign name="arrowup" size={14} />
+                            &nbsp;{post.vote_count}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text className="font-Poppins_400Regular text-apple-gray-light">
+                            <AntDesign name="message1" size={14} />
+                            &nbsp;{post.comment_count}
+                          </Text>
+                        </View>
+                        <View>
+                          <Text className="font-Poppins_400Regular text-apple-gray-light">
+                            <AntDesign name="clockcircleo" size={14} />
+                            &nbsp;
+                            {formatDuration(
+                              Date.now() - post.created_at.getTime()
+                            )}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
                   </View>
                 </View>
-              </View>
+                <View className="border-b border-gray-200">
+                  <View className="mx-auto w-5/6 flex-row justify-between py-2">
+                    <Pressable
+                      className={clsx(
+                        {
+                          'bg-primary active:bg-primary-darker':
+                            post.current_user_vote === 'upvote',
+                          'active:bg-gray-200':
+                            post.current_user_vote !== 'upvote'
+                        },
+                        'rounded-lg p-2'
+                      )}
+                      onPress={() =>
+                        handlePostVoteButtonPress(post.id, user.id, 'upvote')
+                      }
+                    >
+                      <Text
+                        className={clsx({
+                          'text-black': post.current_user_vote === 'upvote',
+                          'text-apple-gray-light':
+                            post.current_user_vote !== 'upvote'
+                        })}
+                      >
+                        <AntDesign name="arrowup" size={20} />
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      className={clsx(
+                        {
+                          'bg-apple-blue-light active:opacity-90':
+                            post.current_user_vote === 'downvote',
+                          'active:bg-gray-200':
+                            post.current_user_vote !== 'downvote'
+                        },
+                        'rounded-lg p-2'
+                      )}
+                      onPress={() =>
+                        handlePostVoteButtonPress(post.id, user.id, 'downvote')
+                      }
+                    >
+                      <Text
+                        className={clsx({
+                          'text-white': post.current_user_vote === 'downvote',
+                          'text-apple-gray-light':
+                            post.current_user_vote !== 'downvote'
+                        })}
+                      >
+                        <AntDesign name="arrowdown" size={20} />
+                      </Text>
+                    </Pressable>
+                    <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                      <Text className="text-apple-gray-light">
+                        <AntDesign name="message1" size={20} />
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </>
+            }
+            data={[
+              { id: 1, k: 'hello' },
+              { id: 2, k: 'bruh' },
+              { id: 3, k: 'ayo' },
+              { id: 4, k: 'hello' },
+              { id: 5, k: 'bruh' },
+              { id: 6, k: 'ayo' },
+              { id: 7, k: 'hello' },
+              { id: 8, k: 'bruh' },
+              { id: 9, k: 'ayo' },
+              { id: 10, k: 'hello' },
+              { id: 11, k: 'bruh' },
+              { id: 12, k: 'ayo' },
+              { id: 13, k: 'hello' },
+              { id: 14, k: 'bruh' },
+              { id: 15, k: 'ayo' },
+              { id: 16, k: 'hello' },
+              { id: 17, k: 'bruh' },
+              { id: 18, k: 'ayo' }
+            ]}
+            renderItem={item => (
+              <Text className="mx-auto w-5/6">{item.item.k}</Text>
+            )}
+          />
+
+          <View className="border-t border-gray-200 py-2">
+            <View className="mx-auto w-5/6 flex-row space-x-2">
+              <TextInput
+                className="h-10 grow rounded-xl bg-gray-100 px-2 font-Poppins_400Regular"
+                placeholder="Add a comment"
+              />
+              <Button isDisabled className="h-10 w-20">
+                Send
+              </Button>
             </View>
-          </View>
-
-          <View className="border-b border-gray-200">
-            <View className="mx-auto w-5/6 flex-row justify-between py-2">
-              <Pressable
-                className={clsx(
-                  {
-                    'bg-primary active:bg-primary-darker':
-                      post.current_user_vote === 'upvote',
-                    'active:bg-gray-200': post.current_user_vote !== 'upvote'
-                  },
-                  'rounded-lg p-2'
-                )}
-                onPress={() =>
-                  handlePostVoteButtonPress(post.id, user.id, 'upvote')
-                }
-              >
-                <Text
-                  className={clsx({
-                    'text-black': post.current_user_vote === 'upvote',
-                    'text-apple-gray-light': post.current_user_vote !== 'upvote'
-                  })}
-                >
-                  <AntDesign name="arrowup" size={20} />
-                </Text>
-              </Pressable>
-              <Pressable
-                className={clsx(
-                  {
-                    'bg-apple-blue-light active:opacity-90':
-                      post.current_user_vote === 'downvote',
-                    'active:bg-gray-200': post.current_user_vote !== 'downvote'
-                  },
-                  'rounded-lg p-2'
-                )}
-                onPress={() =>
-                  handlePostVoteButtonPress(post.id, user.id, 'downvote')
-                }
-              >
-                <Text
-                  className={clsx({
-                    'text-white': post.current_user_vote === 'downvote',
-                    'text-apple-gray-light':
-                      post.current_user_vote !== 'downvote'
-                  })}
-                >
-                  <AntDesign name="arrowdown" size={20} />
-                </Text>
-              </Pressable>
-              <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                <Text className="text-apple-gray-light">
-                  <AntDesign name="message1" size={20} />
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-
-          <View className="w-full grow border-4 border-black" />
-
-          <View className="flex-row space-x-2 border-t border-gray-200 p-4">
-            <TextInput
-              className="h-12 grow rounded-xl bg-gray-100 px-2 font-Poppins_400Regular"
-              placeholder="Add a comment"
-            />
-            <Button isDisabled className="w-20">
-              Send
-            </Button>
           </View>
         </KeyboardAvoidingView>
       )}
