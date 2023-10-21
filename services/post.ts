@@ -2,6 +2,23 @@ import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
 import * as postModel from '../models/post'
 
+export const get = async (id: number) => {
+  const response = await supabase
+    .from('posts_with_vote_and_comment_count')
+    .select('*, profiles(username)')
+    .eq('id', id)
+    .single()
+
+  if (response.error) {
+    throw response.error
+  }
+
+  return postModel.schema.parse({
+    ...response.data,
+    username: response.data.profiles?.username
+  })
+}
+
 interface GetAllParams {
   communityDomainName: string
   userId: string

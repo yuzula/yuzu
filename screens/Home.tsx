@@ -2,7 +2,6 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { User } from '@supabase/supabase-js'
 import clsx from 'clsx'
 import React, {
   FunctionComponent,
@@ -28,6 +27,7 @@ import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
+import useCurrentUser from '../hooks/useCurrentUser'
 import * as postModel from '../models/post'
 import * as profileModel from '../models/profile'
 import * as blockService from '../services/block'
@@ -35,7 +35,6 @@ import * as communityService from '../services/community'
 import * as postService from '../services/post'
 import * as profileService from '../services/profile'
 import * as reportService from '../services/report'
-import * as userService from '../services/user'
 import { RootTabScreenProps } from '../types'
 
 const createPostSchema = z.object({
@@ -44,7 +43,10 @@ const createPostSchema = z.object({
 
 type CreatePostSchema = z.infer<typeof createPostSchema>
 
-const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
+const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
+  navigation,
+  route
+}) => {
   const insets = useSafeAreaInsets()
 
   const {
@@ -61,8 +63,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const { showActionSheetWithOptions } = useActionSheet()
+  const user = useCurrentUser()
 
-  const [user, setUser] = useState<User>()
   const [profile, setProfile] = useState<profileModel.Schema>()
   const [posts, setPosts] = useState<postModel.Schema[]>()
   const [memberCount, setMemberCount] = useState<number>()
@@ -358,19 +360,22 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     [profile, reset]
   )
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        setUser(await userService.getCurrentUser())
-      } catch (error) {
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    })()
-  }, [])
+  const handlePostPress = useCallback(
+    (postId: number) => {
+      navigation.navigate('Post', { postId })
+    },
+    [navigation]
+  )
 
   useEffect(() => {
     getPostsSortByHot()
   }, [getPostsSortByHot, profile])
+
+  useEffect(() => {
+    if (route.params?.shouldRefresh) {
+      handlePostsRefresh()
+    }
+  }, [handlePostsRefresh, route.params?.shouldRefresh])
 
   useEffect(() => {
     ;(async () => {
@@ -449,7 +454,10 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
                 <View className="w-full border-t border-gray-200" />
               )}
               renderItem={item => (
-                <Pressable className="active:bg-gray-200">
+                <Pressable
+                  className="active:bg-gray-200"
+                  onPress={() => handlePostPress(item.item.id)}
+                >
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
                       className="font-Poppins_400Regular"

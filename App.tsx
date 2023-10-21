@@ -18,6 +18,7 @@ import EmailVerification from './screens/EmailVerification'
 import Home from './screens/Home'
 import Login from './screens/Login'
 import Me from './screens/Me'
+import Post from './screens/Post'
 import Register from './screens/Register'
 import Root from './screens/Root'
 import { RootStackParamList, RootTabParamList } from './types'
@@ -115,6 +116,7 @@ const App: FunctionComponent = memo(() => {
                 {session ? (
                   <>
                     <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+                    <Stack.Screen component={Post} name="Post" />
                   </>
                 ) : (
                   <>

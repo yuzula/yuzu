@@ -16,6 +16,7 @@ const linking: LinkingOptions<RootStackParamList> = {
       Root: 'root',
       Login: 'login',
       Register: 'register',
+      Post: 'post',
       Tabs: {
         screens: {
           Home: {

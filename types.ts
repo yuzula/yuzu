@@ -20,11 +20,20 @@ interface EmailVerificationScreenParams {
   email: string
 }
 
+interface PostScreenParams {
+  postId: number
+}
+
+interface HomeTabParams {
+  shouldRefresh?: boolean
+}
+
 export type RootStackParamList = {
   Root: undefined
   Register: undefined
   Login: undefined
   EmailVerification: EmailVerificationScreenParams
+  Post: PostScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
   NotFound: undefined
 }
@@ -33,7 +42,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>
 
 export type RootTabParamList = {
-  Home: undefined
+  Home: HomeTabParams
   Me: undefined
 }
 
