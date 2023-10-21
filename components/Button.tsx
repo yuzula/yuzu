@@ -10,6 +10,7 @@ import {
 interface ButtonProps extends PropsWithChildren<PressableProps> {
   isDisabled?: boolean
   isLoading?: boolean
+  isFixedHeight?: boolean
   variant?: 'primary' | 'secondary'
 }
 
@@ -17,6 +18,7 @@ const Button: FunctionComponent<ButtonProps> = ({
   isDisabled = false,
   isLoading = false,
   variant = 'primary',
+  isFixedHeight = true,
   children,
   className,
   ...rest
@@ -28,9 +30,10 @@ const Button: FunctionComponent<ButtonProps> = ({
       {
         'opacity-40': isDisabled || isLoading,
         'bg-primary active:bg-primary-darker': variant === 'primary',
-        'bg-gray-100 active:bg-gray-200': variant === 'secondary'
+        'bg-gray-100 active:bg-gray-200': variant === 'secondary',
+        'h-12': isFixedHeight
       },
-      'h-12 w-full items-center justify-center rounded-xl active:opacity-90',
+      'w-full items-center justify-center rounded-xl active:opacity-90',
       className
     )}
   >

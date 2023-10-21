@@ -353,10 +353,11 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           <View className="border-t border-gray-200 py-2">
             <View className="mx-auto w-5/6 flex-row space-x-2">
               <TextInput
-                className="h-10 grow rounded-xl bg-gray-100 px-2 font-Poppins_400Regular"
+                multiline
+                className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_400Regular"
                 placeholder="Add a comment"
               />
-              <Button isDisabled className="h-10 w-20">
+              <Button isDisabled className="basis-3/12" isFixedHeight={false}>
                 Send
               </Button>
             </View>
