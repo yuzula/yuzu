@@ -35,6 +35,7 @@ import * as blockService from '../services/block'
 import * as communityService from '../services/community'
 import * as postService from '../services/post'
 import * as profileService from '../services/profile'
+import * as reportService from '../services/report'
 import * as userService from '../services/user'
 import { RootTabScreenProps } from '../types'
 
@@ -265,13 +266,43 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     [handlePostsRefresh, user]
   )
 
-  const handleReportPostButtonPress = useCallback(async (postId: number) => {
-    try {
-      postId
-    } catch (error) {
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    }
-  }, [])
+  const handleReportPostButtonPress = useCallback(
+    async (post: postModel.Schema) => {
+      try {
+        if (user) {
+          await reportService.reportPost({
+            postId: post.id,
+            reporterId: user.id
+          })
+
+          Alert.alert('Post has been reported for moderation', undefined, [
+            {
+              onPress: () => {
+                Alert.alert(
+                  'Would you like to block the author of the post?',
+                  undefined,
+                  [
+                    {
+                      text: 'No'
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () => handleBlockAuthorButtonPress(post.user_id)
+                    }
+                  ]
+                )
+              }
+            }
+          ])
+        } else {
+          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
+        }
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    },
+    [handleBlockAuthorButtonPress, user]
+  )
 
   const handlePostEllipsisButtonPress = useCallback(
     (post: postModel.Schema) => {
@@ -288,7 +319,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
           }
 
           if (index === 0) {
-            await handleReportPostButtonPress(post.id)
+            await handleReportPostButtonPress(post)
           } else if (index === 1) {
             await handleBlockAuthorButtonPress(post.user_id)
           }

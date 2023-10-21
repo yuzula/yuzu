@@ -9,7 +9,7 @@ create table comments (
   descendent_id int references comments (id),
   depth int check (depth < 10),
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
-  updated_at timestamp
+  updated_at timestamp with time zone
 );
 
 create index comments_user_id_idx

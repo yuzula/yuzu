@@ -16,15 +16,32 @@ on post_votes (post_id);
 -- RLS
 alter table post_votes enable row level security;
 
-create policy "Post votes are viewable by authenticated users"
+create policy "Public post votes are viewable by authenticated users"
   on post_votes for select
   to authenticated
-  using (true);
+  using (private.is_post_private(post_id) = false);
 
-create policy "Users can cast their own votes"
-  on post_votes for insert
+create policy "Private post votes are viewable by users from the same community"
+  on post_votes for select
+  to authenticated
+  using (private.get_community_domain_name_from_post(post_id) = private.get_community_domain_name_from_profile());
+
+create policy "Users must cast their own votes"
+  on post_votes
+  as restrictive
+  for insert
   to authenticated
   with check (auth.uid() = user_id);
+
+create policy "Users can vote on public posts"
+  on post_votes for insert
+  to authenticated
+  with check (private.is_post_private(post_id) = false);
+
+create policy "Users can vote on private posts of the same community"
+  on post_votes for insert
+  to authenticated
+  with check (private.get_community_domain_name_from_post(post_id) = private.get_community_domain_name_from_profile());
 
 create policy "Users can update their own post vote"
   on post_votes for update

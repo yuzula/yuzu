@@ -7,7 +7,7 @@ create table posts (
   is_flagged boolean not null default false,
   is_deleted boolean not null default false,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
-  updated_at timestamp
+  updated_at timestamp with time zone
 );
 
 create index posts_user_id_idx
