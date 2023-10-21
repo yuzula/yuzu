@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import Button from '../components/Button'
 import {
   GENERIC_ACTION_ERROR_TITLE,
   GENERIC_ERROR_MESSAGE,
@@ -309,11 +310,14 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           <View className="w-full grow" />
 
-          <View className="border-t border-gray-200 p-4">
+          <View className="flex-row space-x-2 border-t border-gray-200 p-4">
             <TextInput
-              className="rounded-lg bg-gray-100 p-2 font-Poppins_400Regular"
+              className="h-12 grow rounded-xl bg-gray-100 px-2 font-Poppins_400Regular"
               placeholder="Add a comment"
             />
+            <Button isDisabled className="w-20" variant="secondary">
+              Send
+            </Button>
           </View>
         </View>
       )}
