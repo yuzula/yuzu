@@ -224,6 +224,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           <FlatList
             className="w-full grow"
             keyExtractor={item => item.id.toString()}
+            keyboardDismissMode="interactive"
             ListHeaderComponent={
               <>
                 <View className="w-full border-b border-gray-200">
