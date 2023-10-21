@@ -2,7 +2,14 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import {
@@ -176,10 +183,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   ])
 
   return (
-    <SafeAreaView
-      className="flex-1 items-center justify-center bg-white"
-      edges={['top']}
-    >
+    <SafeAreaView className="flex-1 items-center justify-center bg-white">
       {!post || !user ? (
         <ActivityIndicator />
       ) : (
@@ -304,6 +308,13 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           </View>
 
           <View className="w-full grow" />
+
+          <View className="border-t border-gray-200 p-4">
+            <TextInput
+              className="rounded-lg bg-gray-100 p-2 font-Poppins_400Regular"
+              placeholder="Add a comment"
+            />
+          </View>
         </View>
       )}
     </SafeAreaView>
