@@ -24,7 +24,6 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
-import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
@@ -106,7 +105,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     if (profile) {
       try {
         setPosts(
-          await postService.getPosts({
+          await postService.getAll({
             communityDomainName: profile.community_domain_name,
             userId: profile.id,
             sortBy: 'hot'
@@ -122,7 +121,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     if (profile) {
       try {
         setPosts(
-          await postService.getPosts({
+          await postService.getAll({
             communityDomainName: profile.community_domain_name,
             userId: profile.id,
             sortBy: 'new'
@@ -138,7 +137,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
     if (profile) {
       try {
         setPosts(
-          await postService.getPosts({
+          await postService.getAll({
             communityDomainName: profile.community_domain_name,
             userId: profile.id,
             sortBy: 'controversial'
@@ -339,16 +338,12 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = () => {
         setIsCreatePostLoading(true)
 
         try {
-          const result = await supabase.from('posts').insert({
-            community_domain_name: profile.community_domain_name,
+          await postService.create({
+            communityDomainName: profile.community_domain_name,
             content,
-            user_id: profile.id,
-            is_private: true
+            userId: profile.id,
+            isPrivate: true
           })
-
-          if (result.error) {
-            return Alert.alert('Could not create post', GENERIC_ERROR_MESSAGE)
-          }
 
           reset()
 

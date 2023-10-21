@@ -2,17 +2,17 @@ import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
 import * as postModel from '../models/post'
 
-interface GetSortedPostsParams {
+interface GetAllParams {
   communityDomainName: string
   userId: string
   sortBy: 'hot' | 'new' | 'controversial'
 }
 
-export const getPosts = async ({
+export const getAll = async ({
   communityDomainName,
   userId,
   sortBy = 'hot'
-}: GetSortedPostsParams) => {
+}: GetAllParams) => {
   const response = await supabase
     .from('posts_with_hotness')
     .select('*, post_votes(user_id, is_upvote), profiles(username)')
@@ -42,6 +42,31 @@ export const getPosts = async ({
         : 'downvote'
     }))
   )
+}
+
+interface CreateParams {
+  communityDomainName: string
+  userId: string
+  content: string
+  isPrivate: boolean
+}
+
+export const create = async ({
+  communityDomainName,
+  userId,
+  content,
+  isPrivate
+}: CreateParams) => {
+  const response = await supabase.from('posts').insert({
+    community_domain_name: communityDomainName,
+    content,
+    user_id: userId,
+    is_private: isPrivate
+  })
+
+  if (response.error) {
+    throw response.error
+  }
 }
 
 interface GetPostVotesParams {
