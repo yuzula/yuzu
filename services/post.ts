@@ -2,11 +2,17 @@ import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
 import * as postModel from '../models/post'
 
-export const get = async (id: number) => {
+interface GetParams {
+  postId: number
+  userId: string
+}
+
+export const get = async ({ postId, userId }: GetParams) => {
   const response = await supabase
     .from('posts_with_vote_and_comment_count')
-    .select('*, profiles(username)')
-    .eq('id', id)
+    .select('*, post_votes(user_id, is_upvote), profiles(username)')
+    .eq('id', postId)
+    .eq('post_votes.user_id', userId)
     .single()
 
   if (response.error) {
@@ -15,7 +21,12 @@ export const get = async (id: number) => {
 
   return postModel.schema.parse({
     ...response.data,
-    username: response.data.profiles?.username
+    username: response.data.profiles?.username,
+    current_user_vote: !response.data.post_votes[0]
+      ? undefined
+      : response.data.post_votes[0].is_upvote
+      ? 'upvote'
+      : 'downvote'
   })
 }
 

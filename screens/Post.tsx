@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import clsx from 'clsx'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -11,6 +12,7 @@ import {
 } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { formatDuration } from '../helpers/time'
+import { getResultingVote } from '../helpers/vote'
 import useCurrentUser from '../hooks/useCurrentUser'
 import * as postModel from '../models/post'
 import * as blockService from '../services/block'
@@ -37,15 +39,49 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [navigation])
 
+  const handlePostVoteButtonPress = useCallback(
+    async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
+      if (post) {
+        const newPost = { ...post }
+
+        if (!newPost) {
+          return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        }
+
+        const oldVote = newPost.current_user_vote
+
+        const resultingVote = getResultingVote({
+          oldVote,
+          vote
+        })
+
+        newPost.current_user_vote = resultingVote.newVote
+        newPost.vote_count += resultingVote.delta
+
+        setPost(newPost)
+
+        await postService.registerVote({
+          postId,
+          userId,
+          oldVote,
+          vote
+        })
+      }
+    },
+    [post]
+  )
+
   useEffect(() => {
     ;(async () => {
-      try {
-        setPost(await postService.get(postId))
-      } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      if (user) {
+        try {
+          setPost(await postService.get({ postId, userId: user.id }))
+        } catch (error) {
+          Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        }
       }
     })()
-  }, [postId])
+  }, [postId, user])
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
@@ -144,7 +180,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      {!post ? (
+      {!post || !user ? (
         <ActivityIndicator />
       ) : (
         <View className="w-full flex-1">
@@ -214,13 +250,48 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           <View className="border-b border-gray-200">
             <View className="mx-auto w-5/6 flex-row justify-between py-2">
-              <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                <Text className="text-apple-gray-light">
+              <Pressable
+                className={clsx(
+                  {
+                    'bg-primary active:bg-primary-darker':
+                      post.current_user_vote === 'upvote',
+                    'active:bg-gray-200': post.current_user_vote !== 'upvote'
+                  },
+                  'rounded-lg p-2'
+                )}
+                onPress={() =>
+                  handlePostVoteButtonPress(post.id, user.id, 'upvote')
+                }
+              >
+                <Text
+                  className={clsx({
+                    'text-black': post.current_user_vote === 'upvote',
+                    'text-apple-gray-light': post.current_user_vote !== 'upvote'
+                  })}
+                >
                   <AntDesign name="arrowup" size={20} />
                 </Text>
               </Pressable>
-              <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                <Text className="text-apple-gray-light">
+              <Pressable
+                className={clsx(
+                  {
+                    'bg-apple-blue-light active:opacity-90':
+                      post.current_user_vote === 'downvote',
+                    'active:bg-gray-200': post.current_user_vote !== 'downvote'
+                  },
+                  'rounded-lg p-2'
+                )}
+                onPress={() =>
+                  handlePostVoteButtonPress(post.id, user.id, 'downvote')
+                }
+              >
+                <Text
+                  className={clsx({
+                    'text-white': post.current_user_vote === 'downvote',
+                    'text-apple-gray-light':
+                      post.current_user_vote !== 'downvote'
+                  })}
+                >
                   <AntDesign name="arrowdown" size={20} />
                 </Text>
               </Pressable>
