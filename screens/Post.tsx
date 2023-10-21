@@ -155,7 +155,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 onPress={handleBackButtonPress}
               >
                 <Text className="text-apple-gray-light">
-                  <FontAwesome5 name="chevron-left" size={20} />
+                  <FontAwesome5 name="chevron-left" size={16} />
                 </Text>
               </Pressable>
             </View>
@@ -168,7 +168,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 onPress={handlePostEllipsisButtonPress}
               >
                 <Text className="text-apple-gray-light">
-                  <FontAwesome5 name="ellipsis-h" size={20} />
+                  <FontAwesome5 name="ellipsis-h" size={16} />
                 </Text>
               </Pressable>
             </View>
