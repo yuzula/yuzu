@@ -602,7 +602,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 isLoading={isCreatePostLoading}
                 onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
               >
-                Submit
+                Post
               </Button>
             </View>
 
