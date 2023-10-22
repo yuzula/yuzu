@@ -192,58 +192,6 @@ export interface Database {
         }
         Relationships: []
       }
-      moderated_posts: {
-        Row: {
-          created_at: string
-          id: number
-          is_pending: boolean
-          post_id: number
-          reporter_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          is_pending?: boolean
-          post_id: number
-          reporter_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          is_pending?: boolean
-          post_id?: number
-          reporter_id?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'moderated_posts_post_id_fkey'
-            columns: ['post_id']
-            referencedRelation: 'posts'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'moderated_posts_post_id_fkey'
-            columns: ['post_id']
-            referencedRelation: 'posts_with_hotness'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'moderated_posts_post_id_fkey'
-            columns: ['post_id']
-            referencedRelation: 'posts_with_vote_and_comment_count'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'moderated_posts_reporter_id_fkey'
-            columns: ['reporter_id']
-            referencedRelation: 'profiles'
-            referencedColumns: ['id']
-          }
-        ]
-      }
       post_votes: {
         Row: {
           created_at: string
@@ -369,6 +317,61 @@ export interface Database {
             foreignKeyName: 'profiles_id_fkey'
             columns: ['id']
             referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      reported_posts: {
+        Row: {
+          created_at: string
+          id: number
+          is_flagged: boolean
+          is_pending: boolean
+          post_id: number
+          reporter_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          is_flagged?: boolean
+          is_pending?: boolean
+          post_id: number
+          reporter_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          is_flagged?: boolean
+          is_pending?: boolean
+          post_id?: number
+          reporter_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_reporter_id_fkey'
+            columns: ['reporter_id']
+            referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
         ]
