@@ -1,14 +1,9 @@
 import { supabase } from '../clients/supabase'
 
-interface ReportPostParams {
-  postId: number
-  reporterId: string
-}
-
-export const reportPost = async ({ postId, reporterId }: ReportPostParams) => {
+export const reportPost = async (postId: number) => {
   const response = await supabase
     .from('reported_posts')
-    .insert({ post_id: postId, reporter_id: reporterId })
+    .insert({ post_id: postId })
 
   if (response.error) {
     throw response.error

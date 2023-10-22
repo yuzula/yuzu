@@ -1,7 +1,7 @@
 create table blocked_users (
   id serial primary key,
-  blocker_id uuid not null references profiles (id),
-  blockee_id uuid not null references profiles (id),
+  blocker_id uuid not null references profiles (id) on delete cascade,
+  blockee_id uuid not null references profiles (id) on delete cascade,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   unique(blocker_id, blockee_id)
 );

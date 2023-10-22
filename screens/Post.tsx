@@ -121,10 +121,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (post: postModel.Schema) => {
       try {
         if (user) {
-          await reportService.reportPost({
-            postId: post.id,
-            reporterId: user.id
-          })
+          await reportService.reportPost(post.id)
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {

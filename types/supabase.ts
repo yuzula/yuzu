@@ -328,7 +328,6 @@ export interface Database {
           is_flagged: boolean
           is_pending: boolean
           post_id: number
-          reporter_id: string
           updated_at: string | null
         }
         Insert: {
@@ -337,7 +336,6 @@ export interface Database {
           is_flagged?: boolean
           is_pending?: boolean
           post_id: number
-          reporter_id: string
           updated_at?: string | null
         }
         Update: {
@@ -346,7 +344,6 @@ export interface Database {
           is_flagged?: boolean
           is_pending?: boolean
           post_id?: number
-          reporter_id?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -366,12 +363,6 @@ export interface Database {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
             referencedRelation: 'posts_with_vote_and_comment_count'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'reported_posts_reporter_id_fkey'
-            columns: ['reporter_id']
-            referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
         ]

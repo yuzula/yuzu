@@ -1,6 +1,6 @@
 create table posts (
   id serial primary key,
-  user_id uuid not null references profiles (id),
+  user_id uuid not null references profiles (id) on delete cascade,
   community_domain_name text not null references communities (domain_name),
   content varchar(300) not null,
   is_private boolean not null,

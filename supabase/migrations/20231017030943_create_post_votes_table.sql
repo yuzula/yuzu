@@ -1,6 +1,6 @@
 create table post_votes (
   id serial primary key,
-  user_id uuid not null references profiles (id),
+  user_id uuid not null references profiles (id) on delete cascade,
   post_id int not null references posts (id),
   is_upvote boolean not null,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),

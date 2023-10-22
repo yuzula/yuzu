@@ -1,6 +1,6 @@
 create table comments (
   id serial primary key,
-  user_id uuid not null references profiles (id),
+  user_id uuid not null references profiles (id) on delete cascade,
   post_id int not null references posts (id),
   content varchar(600) not null,
   is_flagged boolean not null default false,
