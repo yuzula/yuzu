@@ -41,6 +41,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const user = useCurrentUser()
   const [post, setPost] = useState<postModel.Schema>()
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -81,18 +82,6 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     },
     [post]
   )
-
-  useEffect(() => {
-    ;(async () => {
-      if (user) {
-        try {
-          setPost(await postService.get({ postId, userId: user.id }))
-        } catch (error) {
-          Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-      }
-    })()
-  }, [postId, user])
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
@@ -183,6 +172,28 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     showActionSheetWithOptions
   ])
 
+  const getPost = useCallback(async () => {
+    if (user) {
+      try {
+        setPost(await postService.get({ postId, userId: user.id }))
+      } catch (error) {
+        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [postId, user])
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await getPost()
+
+    setIsRefreshing(false)
+  }, [getPost])
+
+  useEffect(() => {
+    getPost()
+  }, [getPost])
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
       {!post || !user ? (
@@ -222,6 +233,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             className="w-full grow"
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
+            refreshing={isRefreshing}
             ListHeaderComponent={
               <>
                 <View className="w-full border-b border-gray-200">
@@ -345,6 +357,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             renderItem={item => (
               <Text className="mx-auto w-5/6">{item.item.k}</Text>
             )}
+            onRefresh={handleRefresh}
           />
 
           <View className="border-t border-gray-200 py-2">
