@@ -212,16 +212,15 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   }, [getPost])
 
   const handleCreateCommentSendButtonPress = useCallback(
-    ({ content }: CreateCommentSchema) => {
+    async ({ content }: CreateCommentSchema) => {
       if (post && user) {
         setIsCreateCommentLoading(true)
 
         try {
-          commentService.create({
+          await commentService.create({
             postId: post.id,
             userId: user.id,
-            content,
-            depth: 0
+            content
           })
         } catch (error) {
           Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)

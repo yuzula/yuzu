@@ -88,66 +88,45 @@ export interface Database {
       }
       comments: {
         Row: {
-          ancestor_id: number | null
           content: string
           created_at: string
-          depth: number | null
-          descendent_id: number | null
           id: number
           is_deleted: boolean
-          is_flagged: boolean
+          parent_comment_id: number | null
           post_id: number
           updated_at: string | null
           user_id: string
         }
         Insert: {
-          ancestor_id?: number | null
           content: string
           created_at?: string
-          depth?: number | null
-          descendent_id?: number | null
           id?: number
           is_deleted?: boolean
-          is_flagged?: boolean
+          parent_comment_id?: number | null
           post_id: number
           updated_at?: string | null
           user_id: string
         }
         Update: {
-          ancestor_id?: number | null
           content?: string
           created_at?: string
-          depth?: number | null
-          descendent_id?: number | null
           id?: number
           is_deleted?: boolean
-          is_flagged?: boolean
+          parent_comment_id?: number | null
           post_id?: number
           updated_at?: string | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'comments_ancestor_id_fkey'
-            columns: ['ancestor_id']
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'comments_ancestor_id_fkey'
-            columns: ['ancestor_id']
-            referencedRelation: 'comments_with_vote_count'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'comments_descendent_id_fkey'
-            columns: ['descendent_id']
-            referencedRelation: 'comments'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'comments_descendent_id_fkey'
-            columns: ['descendent_id']
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
@@ -248,7 +227,6 @@ export interface Database {
           created_at: string
           id: number
           is_deleted: boolean
-          is_flagged: boolean
           is_private: boolean
           updated_at: string | null
           user_id: string
@@ -259,7 +237,6 @@ export interface Database {
           created_at?: string
           id?: number
           is_deleted?: boolean
-          is_flagged?: boolean
           is_private: boolean
           updated_at?: string | null
           user_id: string
@@ -270,7 +247,6 @@ export interface Database {
           created_at?: string
           id?: number
           is_deleted?: boolean
-          is_flagged?: boolean
           is_private?: boolean
           updated_at?: string | null
           user_id?: string
@@ -371,14 +347,11 @@ export interface Database {
     Views: {
       comments_with_vote_count: {
         Row: {
-          ancestor_id: number | null
           content: string | null
           created_at: string | null
-          depth: number | null
-          descendent_id: number | null
           id: number | null
           is_deleted: boolean | null
-          is_flagged: boolean | null
+          parent_comment_id: number | null
           post_id: number | null
           updated_at: string | null
           user_id: string | null
@@ -386,26 +359,14 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'comments_ancestor_id_fkey'
-            columns: ['ancestor_id']
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'comments_ancestor_id_fkey'
-            columns: ['ancestor_id']
-            referencedRelation: 'comments_with_vote_count'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'comments_descendent_id_fkey'
-            columns: ['descendent_id']
-            referencedRelation: 'comments'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'comments_descendent_id_fkey'
-            columns: ['descendent_id']
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
@@ -444,7 +405,6 @@ export interface Database {
           hotness: number | null
           id: number | null
           is_deleted: boolean | null
-          is_flagged: boolean | null
           is_private: boolean | null
           updated_at: string | null
           user_id: string | null
@@ -473,7 +433,6 @@ export interface Database {
           created_at: string | null
           id: number | null
           is_deleted: boolean | null
-          is_flagged: boolean | null
           is_private: boolean | null
           updated_at: string | null
           user_id: string | null

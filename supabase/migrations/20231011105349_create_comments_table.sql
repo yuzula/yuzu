@@ -3,11 +3,8 @@ create table comments (
   user_id uuid not null references profiles (id) on delete cascade,
   post_id int not null references posts (id),
   content varchar(600) not null,
-  is_flagged boolean not null default false,
   is_deleted boolean not null default false,
-  ancestor_id int references comments (id),
-  descendent_id int references comments (id),
-  depth int check (depth < 10),
+  parent_comment_id int references comments (id),
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp with time zone
 );
@@ -18,14 +15,8 @@ on comments (user_id);
 create index comments_post_id_idx
 on comments (post_id);
 
-create index comments_ancestor_id_idx
-on comments (ancestor_id);
-
-create index comments_descendent_id_idx
-on comments (descendent_id);
-
-create index comments_depth_idx
-on comments (depth);
+create index comments_parent_comment_id_idx
+on comments (parent_comment_id);
 
 -- Utility functions
 create function private.is_post_private(post_id int)
@@ -89,7 +80,6 @@ security definer
 set search_path = public
 as $$
 begin
-  new.is_flagged = false;
   new.is_deleted = false;
   new.created_at = current_timestamp at time zone 'UTC';
 

@@ -4,7 +4,6 @@ create table posts (
   community_domain_name text not null references communities (domain_name),
   content varchar(300) not null,
   is_private boolean not null,
-  is_flagged boolean not null default false,
   is_deleted boolean not null default false,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
   updated_at timestamp with time zone
@@ -66,7 +65,6 @@ security definer
 set search_path = public
 as $$
 begin
-  new.is_flagged = false;
   new.is_deleted = false;
   new.created_at = current_timestamp at time zone 'UTC';
 
