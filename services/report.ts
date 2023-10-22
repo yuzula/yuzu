@@ -7,7 +7,7 @@ interface ReportPostParams {
 
 export const reportPost = async ({ postId, reporterId }: ReportPostParams) => {
   const response = await supabase
-    .from('moderated_posts')
+    .from('reported_posts')
     .insert({ post_id: postId, reporter_id: reporterId })
 
   if (response.error) {

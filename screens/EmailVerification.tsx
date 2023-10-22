@@ -1,11 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, SafeAreaView, Text, TextInput, View } from 'react-native'
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
-import BackButton from '../components/BackButton'
 import Button from '../components/Button'
 import {
   GENERIC_ACTION_ERROR_TITLE,
@@ -63,44 +70,56 @@ const EmailVerification: FunctionComponent<
   )
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      <BackButton onPress={handleBackButtonPress} />
-
-      <View className="w-4/6 items-center justify-center space-y-6">
-        <Text className="text-center font-Poppins_600SemiBold text-lg">
-          Enter the verification code we just sent to your email
-        </Text>
-
-        <View className="w-full">
-          <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
-            Code
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1 items-center justify-center"
+      >
+        <View className="w-4/6 items-center justify-center space-y-6">
+          <Text className="text-center font-Poppins_600SemiBold text-lg">
+            Enter the verification code we just sent to your email
           </Text>
-          <Controller
-            control={control}
-            name="token"
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                className="h-10 w-full border-b border-apple-gray-light font-Poppins_400Regular"
-                editable={!isLoading}
-                inputMode="numeric"
-                maxLength={6}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-              />
-            )}
-          />
-        </View>
 
-        <Button
-          isDisabled={!isValid}
-          isLoading={isLoading}
-          onPress={handleSubmit(handleVerifyButtonPress)}
-        >
-          Verify
-        </Button>
-      </View>
+          <View className="w-full">
+            <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              Code
+            </Text>
+            <Controller
+              control={control}
+              name="token"
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  className="h-10 w-full border-b border-apple-gray-light font-Poppins_400Regular"
+                  editable={!isLoading}
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                />
+              )}
+            />
+          </View>
+
+          <View className="w-full space-y-2">
+            <Button
+              isDisabled={!isValid}
+              isLoading={isLoading}
+              onPress={handleSubmit(handleVerifyButtonPress)}
+            >
+              Verify
+            </Button>
+            <Button
+              isDisabled={isLoading}
+              variant="secondary"
+              onPress={handleBackButtonPress}
+            >
+              Cancel
+            </Button>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
