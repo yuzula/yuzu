@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

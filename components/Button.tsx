@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { FunctionComponent, PropsWithChildren } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import {
   ActivityIndicator,
   Pressable,

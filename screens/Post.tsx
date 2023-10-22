@@ -2,7 +2,12 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
