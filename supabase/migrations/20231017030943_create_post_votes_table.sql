@@ -55,21 +55,37 @@ create policy "Users can delete their own post vote"
   using (auth.uid() = user_id);
 
 -- Utility views
-create view posts_with_vote_and_comment_count
+create view posts_with_vote_count
 with (security_invoker) as
 select
   posts.*,
   sum(case
     when post_votes.is_upvote = true then 1
     when post_votes.is_upvote = false then -1
-    else 0 end) as vote_count,
-  count(comments.id) as comment_count
+    else 0 end) as vote_count
 from posts
 left join post_votes
 on posts.id = post_votes.post_id
+group by posts.id;
+
+create view posts_with_comment_count
+with (security_invoker) as
+select
+  posts.*,
+  count(comments.id) as comment_count
+from posts
 left join comments
 on posts.id = comments.post_id
 group by posts.id;
+
+create view posts_with_vote_and_comment_count
+with (security_invoker) as
+select
+  posts_with_vote_count.*,
+  posts_with_comment_count.comment_count
+from posts_with_vote_count
+inner join posts_with_comment_count
+on posts_with_vote_count.id = posts_with_comment_count.id;
 
 create view posts_with_hotness
 with (security_invoker) as
