@@ -1,7 +1,9 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
   Alert,
@@ -14,6 +16,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { z } from 'zod'
 
 import Button from '../components/Button'
 import {
@@ -27,9 +30,16 @@ import { getResultingVote } from '../helpers/vote'
 import useCurrentUser from '../hooks/useCurrentUser'
 import * as postModel from '../models/post'
 import * as blockService from '../services/block'
+import * as commentService from '../services/comment'
 import * as postService from '../services/post'
 import * as reportService from '../services/report'
 import { RootStackScreenProps } from '../types'
+
+const createCommentSchema = z.object({
+  content: z.string().min(1).max(600)
+})
+
+type CreateCommentSchema = z.infer<typeof createCommentSchema>
 
 const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   navigation,
@@ -37,11 +47,22 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     params: { postId }
   }
 }) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+    reset
+  } = useForm<CreateCommentSchema>({
+    mode: 'all',
+    resolver: zodResolver(createCommentSchema)
+  })
+
   const { showActionSheetWithOptions } = useActionSheet()
 
   const user = useCurrentUser()
   const [post, setPost] = useState<postModel.Schema>()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
 
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -189,6 +210,30 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
     setIsRefreshing(false)
   }, [getPost])
+
+  const handleCreateCommentSendButtonPress = useCallback(
+    ({ content }: CreateCommentSchema) => {
+      if (post && user) {
+        setIsCreateCommentLoading(true)
+
+        try {
+          commentService.create({
+            postId: post.id,
+            userId: user.id,
+            content,
+            depth: 0
+          })
+        } catch (error) {
+          Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        } finally {
+          reset()
+
+          setIsCreateCommentLoading(false)
+        }
+      }
+    },
+    [post, reset, user]
+  )
 
   useEffect(() => {
     getPost()
@@ -362,12 +407,30 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           <View className="border-t border-gray-200 py-2">
             <View className="mx-auto w-5/6 flex-row space-x-2">
-              <TextInput
-                multiline
-                className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_400Regular"
-                placeholder="Add a comment"
+              <Controller
+                control={control}
+                name="content"
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    multiline
+                    className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_400Regular"
+                    editable={!isCreateCommentLoading}
+                    maxLength={600}
+                    placeholder="Add a comment"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                  />
+                )}
               />
-              <Button isDisabled className="basis-3/12" isFixedHeight={false}>
+              <Button
+                className="basis-3/12"
+                isDisabled={!isValid}
+                isFixedHeight={false}
+                isLoading={isCreateCommentLoading}
+                onPress={handleSubmit(handleCreateCommentSendButtonPress)}
+              >
                 Send
               </Button>
             </View>
