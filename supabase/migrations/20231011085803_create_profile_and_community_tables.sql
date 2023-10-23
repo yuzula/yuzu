@@ -28,12 +28,6 @@ create policy "Users can create their own profile"
   to authenticated
   with check (auth.uid() = id);
 
-create policy "Users can update their own profile"
-  on profiles for update
-  to authenticated
-  using (auth.uid() = id)
-  with check (auth.uid() = id);
-
 -- Communities RLS
 alter table communities enable row level security;
 

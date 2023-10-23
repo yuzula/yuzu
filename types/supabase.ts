@@ -139,6 +139,12 @@ export interface Database {
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
@@ -146,6 +152,12 @@ export interface Database {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
             referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
@@ -203,6 +215,12 @@ export interface Database {
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
@@ -210,6 +228,12 @@ export interface Database {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
             referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
@@ -332,6 +356,12 @@ export interface Database {
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
@@ -339,6 +369,12 @@ export interface Database {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
             referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           }
         ]
@@ -379,6 +415,12 @@ export interface Database {
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
@@ -389,7 +431,40 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            referencedRelation: 'posts_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comments_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      posts_with_comment_count: {
+        Row: {
+          comment_count: number | null
+          community_domain_name: string | null
+          content: string | null
+          created_at: string | null
+          id: number | null
+          is_deleted: boolean | null
+          is_private: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'profiles'
             referencedColumns: ['id']
@@ -428,6 +503,33 @@ export interface Database {
       posts_with_vote_and_comment_count: {
         Row: {
           comment_count: number | null
+          community_domain_name: string | null
+          content: string | null
+          created_at: string | null
+          id: number | null
+          is_deleted: boolean | null
+          is_private: boolean | null
+          updated_at: string | null
+          user_id: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      posts_with_vote_count: {
+        Row: {
           community_domain_name: string | null
           content: string | null
           created_at: string | null

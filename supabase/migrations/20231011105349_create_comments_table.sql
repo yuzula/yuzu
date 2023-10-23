@@ -18,6 +18,9 @@ on comments (post_id);
 create index comments_parent_comment_id_idx
 on comments (parent_comment_id);
 
+-- Functions
+
+
 -- Utility functions
 create function private.is_post_private(post_id int)
 returns boolean
@@ -43,6 +46,54 @@ as $$
   where id = post_id;
 $$;
 
+create function private.get_comment_child_count(comment_id int)
+returns text
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  depth int;
+begin
+  with recursive comment_hierarchy as (
+    select id, parent_comment_id, 1 as depth
+    from comments c1
+    where id = comment_id
+    union all
+    select c2.id, c2.parent_comment_id, c1.depth + 1
+    from comments c2
+    inner join comment_hierarchy c1 on c2.parent_comment_id = c1.id
+  )
+
+  select max(depth) into depth
+  from comment_hierarchy;
+
+  return depth;
+end;
+$$;
+
+create function private.get_comment_depth(comment_id int)
+returns text
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  depth int := 0;
+  current_comment_id int := comment_id;
+begin
+  while current_comment_id is not null and depth < 10 loop
+    select parent_comment_id into current_comment_id from comments where id = current_comment_id;
+
+    depth := depth + 1;
+  end loop;
+
+  RETURN depth;
+end;
+$$;
+
 -- RLS
 alter table comments enable row level security;
 
@@ -61,11 +112,11 @@ create policy "Users can create their own comment"
   to authenticated
   with check (auth.uid() = user_id);
 
-create policy "Users can update their own comment"
-  on comments for update
-  to authenticated
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+create policy "Comments can be at most 10 levels deep"
+  on comments
+  as restrictive
+  for insert, update
+  using (private.get_comment_depth(id) <= 10);
 
 create policy "Users can delete their own comment"
   on comments for delete

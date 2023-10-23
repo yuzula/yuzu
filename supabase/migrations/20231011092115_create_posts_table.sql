@@ -46,12 +46,6 @@ create policy "Users can create their own post"
   to authenticated
   with check (auth.uid() = user_id);
 
-create policy "Users can update their own post"
-  on posts for update
-  to authenticated
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
 create policy "Users can delete their own post"
   on posts for delete
   to authenticated
