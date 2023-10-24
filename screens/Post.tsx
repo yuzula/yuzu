@@ -415,7 +415,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </Text>
                     <View className="flex-row items-center">
                       <Text className="text-apple-gray-light">
-                        <AntDesign name="arrowup" size={14} />
+                        <AntDesign name="arrowup" size={16} />
                       </Text>
                       <Text className="font-Poppins_400Regular text-apple-gray-light">
                         &nbsp;
@@ -424,10 +424,12 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </View>
                   </View>
 
-                  <View className="flex-row items-center space-x-2">
-                    <Text className="text-apple-gray-light">
-                      <AntDesign name="ellipsis1" size={16} />
-                    </Text>
+                  <View className="flex-row items-center space-x-1">
+                    <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                      <Text className="text-apple-gray-light">
+                        <AntDesign name="ellipsis1" size={16} />
+                      </Text>
+                    </Pressable>
                     <Text className="font-Poppins_400Regular text-apple-gray-light">
                       {formatDuration(
                         Date.now() - item.item.created_at.getTime()
@@ -442,22 +444,24 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   </Text>
                 </View>
 
-                <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-4">
-                  <Text className="text-apple-gray-light">
-                    <AntDesign
-                      name="back"
-                      size={16}
-                      style={{ transform: [{ scaleY: -1 }] }}
-                    />
-                    &nbsp;
-                    <Text className="font-Poppins_400Regular">Reply</Text>
-                  </Text>
-                  <Text className="text-apple-gray-light">
-                    <AntDesign name="arrowup" size={16} />
-                  </Text>
-                  <Text className="text-apple-gray-light">
-                    <AntDesign name="arrowdown" size={16} />
-                  </Text>
+                <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-1">
+                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                    <Text className="text-apple-gray-light">
+                      <AntDesign name="back" size={16} />
+                      &nbsp;
+                      <Text className="font-Poppins_400Regular">Reply</Text>
+                    </Text>
+                  </Pressable>
+                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                    <Text className="text-apple-gray-light">
+                      <AntDesign name="arrowup" size={16} />
+                    </Text>
+                  </Pressable>
+                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                    <Text className="text-apple-gray-light">
+                      <AntDesign name="arrowdown" size={16} />
+                    </Text>
+                  </Pressable>
                 </View>
               </View>
             )}
