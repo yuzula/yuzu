@@ -30,7 +30,7 @@ as $$
     select c1.*
     from comments c1
     where c1.post_id = post_id
-    union all
+    union
     select c2.*
     from comments c2
     inner join nested_comments c1 on c2.parent_comment_id = c1.id
@@ -65,33 +65,6 @@ as $$
   where id = post_id;
 $$;
 
-create function private.get_comment_child_count(comment_id int)
-returns int
-language plpgsql
-security definer
-set search_path = public
-stable
-as $$
-declare
-  depth int;
-begin
-  with recursive nested_comments as (
-    select id, parent_comment_id, 1 as depth
-    from comments c1
-    where id = comment_id
-    union all
-    select c2.id, c2.parent_comment_id, c1.depth + 1
-    from comments c2
-    inner join nested_comments c1 on c2.parent_comment_id = c1.id
-  )
-
-  select max(depth) into depth
-  from nested_comments;
-
-  return depth;
-end;
-$$;
-
 create function private.get_comment_depth(comment_id int)
 returns int
 language plpgsql
@@ -103,7 +76,7 @@ declare
   depth int := 0;
   current_comment_id int := comment_id;
 begin
-  while current_comment_id is not null and depth < 10 loop
+  while current_comment_id is not null and depth < 2 loop
     select parent_comment_id into current_comment_id from comments where id = current_comment_id;
 
     depth := depth + 1;
