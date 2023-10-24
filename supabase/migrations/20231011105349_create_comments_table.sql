@@ -20,28 +20,24 @@ on comments (parent_comment_id);
 
 -- Functions
 create function private.get_nested_comments(post_id int)
-returns text
-language plpgsql
+returns setof comments
+language sql
 security definer
 set search_path = public
 stable
 as $$
-declare
-  depth int;
-begin
   with recursive nested_comments as (
-    select id, parent_comment_id, 1 as depth
+    select c1.*
     from comments c1
-    where id = comment_id
+    where c1.post_id = post_id
     union all
-    select c2.id, c2.parent_comment_id, c1.depth + 1
+    select c2.*
     from comments c2
     inner join nested_comments c1 on c2.parent_comment_id = c1.id
   )
 
-  select * into depth
+  select *
   from nested_comments;
-end;
 $$;
 
 -- Utility functions
