@@ -303,6 +303,9 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
             refreshing={isRefreshing}
+            ItemSeparatorComponent={() => (
+              <View className="w-full border-t border-gray-200" />
+            )}
             ListHeaderComponent={
               <>
                 <View className="w-full border-b border-gray-200">
@@ -404,7 +407,55 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </>
             }
             renderItem={item => (
-              <Text className="mx-auto w-5/6">{item.item.content}</Text>
+              <View className="space-y-1 py-4">
+                <View className="mx-auto w-5/6 flex-row items-center justify-between">
+                  <View className="flex-row items-center space-x-2">
+                    <Text className="font-Poppins_500Medium">
+                      {item.item.username}
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-apple-gray-light">
+                        <AntDesign name="arrowup" size={14} />
+                      </Text>
+                      <Text className="font-Poppins_400Regular text-apple-gray-light">
+                        &nbsp;
+                        {item.item.vote_count}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View className="flex-row items-center space-x-2">
+                    <Text className="text-apple-gray-light">
+                      <AntDesign name="ellipsis1" size={16} />
+                    </Text>
+                    <Text className="font-Poppins_400Regular text-apple-gray-light">
+                      {formatDuration(
+                        Date.now() - item.item.created_at.getTime()
+                      )}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="mx-auto w-5/6">
+                  <Text className="font-Poppins_400Regular">
+                    {item.item.content}
+                  </Text>
+                </View>
+
+                <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-4">
+                  <Text>
+                    <AntDesign
+                      name="back"
+                      size={16}
+                      style={{ transform: [{ scaleY: -1 }] }}
+                    />
+                    &nbsp;
+                    <Text className="font-Poppins_400Regular">Reply</Text>
+                  </Text>
+                  <AntDesign name="arrowup" size={16} />
+                  <AntDesign name="arrowdown" size={16} />
+                </View>
+              </View>
             )}
             onRefresh={handleRefresh}
           />
