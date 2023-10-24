@@ -33,6 +33,7 @@ import { formatCount } from '../helpers/count'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import useCurrentUser from '../hooks/useCurrentUser'
+import * as commentModel from '../models/comment'
 import * as postModel from '../models/post'
 import * as blockService from '../services/block'
 import * as commentService from '../services/comment'
@@ -66,6 +67,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const user = useCurrentUser()
   const [post, setPost] = useState<postModel.Schema>()
+  const [comments, setComments] = useState<commentModel.Schema[]>()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
 
@@ -216,6 +218,18 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     setIsRefreshing(false)
   }, [getPost])
 
+  const getComments = useCallback(async () => {
+    if (user && post) {
+      try {
+        setComments(
+          await commentService.getAllRoot({ postId: post.id, userId: user.id })
+        )
+      } catch (error) {
+        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [post, user])
+
   const handleCreateCommentSendButtonPress = useCallback(
     async ({ content }: CreateCommentSchema) => {
       if (post && user) {
@@ -242,6 +256,10 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   useEffect(() => {
     getPost()
   }, [getPost])
+
+  useEffect(() => {
+    getComments()
+  }, [getComments])
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
@@ -280,6 +298,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           <FlatList
             className="w-full grow"
+            data={comments}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
             refreshing={isRefreshing}
@@ -383,28 +402,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </View>
               </>
             }
-            data={[
-              { id: 1, k: 'hello' },
-              { id: 2, k: 'bruh' },
-              { id: 3, k: 'ayo' },
-              { id: 4, k: 'hello' },
-              { id: 5, k: 'bruh' },
-              { id: 6, k: 'ayo' },
-              { id: 7, k: 'hello' },
-              { id: 8, k: 'bruh' },
-              { id: 9, k: 'ayo' },
-              { id: 10, k: 'hello' },
-              { id: 11, k: 'bruh' },
-              { id: 12, k: 'ayo' },
-              { id: 13, k: 'hello' },
-              { id: 14, k: 'bruh' },
-              { id: 15, k: 'ayo' },
-              { id: 16, k: 'hello' },
-              { id: 17, k: 'bruh' },
-              { id: 18, k: 'ayo' }
-            ]}
             renderItem={item => (
-              <Text className="mx-auto w-5/6">{item.item.k}</Text>
+              <Text className="mx-auto w-5/6">{item.item.content}</Text>
             )}
             onRefresh={handleRefresh}
           />
