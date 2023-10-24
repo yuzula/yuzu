@@ -210,14 +210,6 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [postId, user])
 
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-
-    await getPost()
-
-    setIsRefreshing(false)
-  }, [getPost])
-
   const getComments = useCallback(async () => {
     if (user && post) {
       try {
@@ -229,6 +221,15 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       }
     }
   }, [post, user])
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await getPost()
+    await getComments()
+
+    setIsRefreshing(false)
+  }, [getComments, getPost])
 
   const handleCreateCommentSendButtonPress = useCallback(
     async ({ content }: CreateCommentSchema) => {
@@ -263,7 +264,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      {!post || !user ? (
+      {!post || !user || !comments ? (
         <ActivityIndicator />
       ) : (
         <KeyboardAvoidingView
