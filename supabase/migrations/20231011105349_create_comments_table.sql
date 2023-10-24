@@ -18,28 +18,6 @@ on comments (post_id);
 create index comments_parent_comment_id_idx
 on comments (parent_comment_id);
 
--- Functions
-create function private.get_nested_comments(post_id int)
-returns setof comments
-language sql
-security definer
-set search_path = public
-stable
-as $$
-  with recursive nested_comments as (
-    select c1.*
-    from comments c1
-    where c1.post_id = post_id
-    union
-    select c2.*
-    from comments c2
-    inner join nested_comments c1 on c2.parent_comment_id = c1.id
-  )
-
-  select *
-  from nested_comments;
-$$;
-
 -- Utility functions
 create function private.is_post_private(post_id int)
 returns boolean

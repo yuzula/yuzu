@@ -42,13 +42,34 @@ create view comments_with_vote_count
 with (security_invoker) as
 select
   comments.*,
-  sum(case when comment_votes.is_upvote = true then 1 else -1 end) as vote_count
+  sum(case
+    when comment_votes.is_upvote = true then 1
+    when comment_votes.is_upvote = false then -1
+    else 0 end) as vote_count
 from comments
 left join comment_votes
 on comments.id = comment_votes.comment_id
 group by comments.id;
 
 -- Triggers
+create function private.self_upvote_on_comment_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into comment_votes (user_id, comment_id, is_upvote)
+  values (new.user_id, new.id, true);
+
+  return new;
+end;
+$$;
+
+create trigger self_upvote_on_comment_created
+  after insert on comments
+  for each row execute procedure private.self_upvote_on_comment_created();
+
 create function private.set_default_values_on_comment_vote_created()
 returns trigger
 language plpgsql
