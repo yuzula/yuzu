@@ -443,7 +443,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </View>
 
                 <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-4">
-                  <Text>
+                  <Text className="text-apple-gray-light">
                     <AntDesign
                       name="back"
                       size={16}
@@ -452,8 +452,12 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     &nbsp;
                     <Text className="font-Poppins_400Regular">Reply</Text>
                   </Text>
-                  <AntDesign name="arrowup" size={16} />
-                  <AntDesign name="arrowdown" size={16} />
+                  <Text className="text-apple-gray-light">
+                    <AntDesign name="arrowup" size={16} />
+                  </Text>
+                  <Text className="text-apple-gray-light">
+                    <AntDesign name="arrowdown" size={16} />
+                  </Text>
                 </View>
               </View>
             )}
