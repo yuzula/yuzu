@@ -9,3 +9,13 @@ export const reportPost = async (postId: number) => {
     throw response.error
   }
 }
+
+export const reportComment = async (commentId: number) => {
+  const response = await supabase
+    .from('reported_comments')
+    .insert({ comment_id: commentId })
+
+  if (response.error) {
+    throw response.error
+  }
+}

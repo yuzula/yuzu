@@ -337,7 +337,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         setIsCreatePostLoading(true)
 
         try {
-          await postService.create({
+          const postId = await postService.create({
             communityDomainName: profile.community_domain_name,
             content,
             userId: profile.id,
@@ -347,6 +347,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           reset()
 
           bottomSheetModalRef.current?.close()
+
+          navigation.navigate('Post', { postId })
         } catch (error) {
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         } finally {
@@ -354,7 +356,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         }
       }
     },
-    [profile, reset]
+    [navigation, profile, reset]
   )
 
   const handlePostPress = useCallback(

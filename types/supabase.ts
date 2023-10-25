@@ -321,6 +321,46 @@ export interface Database {
           }
         ]
       }
+      reported_comments: {
+        Row: {
+          comment_id: number
+          created_at: string
+          id: number
+          is_flagged: boolean
+          is_pending: boolean
+          updated_at: string | null
+        }
+        Insert: {
+          comment_id: number
+          created_at?: string
+          id?: number
+          is_flagged?: boolean
+          is_pending?: boolean
+          updated_at?: string | null
+        }
+        Update: {
+          comment_id?: number
+          created_at?: string
+          id?: number
+          is_flagged?: boolean
+          is_pending?: boolean
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reported_comments_comment_id_fkey'
+            columns: ['comment_id']
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_comments_comment_id_fkey'
+            columns: ['comment_id']
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       reported_posts: {
         Row: {
           created_at: string

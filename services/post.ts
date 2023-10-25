@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
 import * as postModel from '../models/post'
@@ -85,16 +87,21 @@ export const create = async ({
   content,
   isPrivate
 }: CreateParams) => {
-  const response = await supabase.from('posts').insert({
-    community_domain_name: communityDomainName,
-    content,
-    user_id: userId,
-    is_private: isPrivate
-  })
+  const response = await supabase
+    .from('posts')
+    .insert({
+      community_domain_name: communityDomainName,
+      content,
+      user_id: userId,
+      is_private: isPrivate
+    })
+    .select()
 
   if (response.error) {
     throw response.error
   }
+
+  return z.number().parse(response.data[0]?.id)
 }
 
 interface GetPostVotesParams {
