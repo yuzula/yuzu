@@ -416,16 +416,21 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   username={item.item.username}
                   voteCount={item.item.vote_count}
                 />
-                {item.item.children.map(child => (
-                  <Comment
-                    key={child.id}
-                    content={child.content}
-                    createdAt={child.created_at}
-                    id={child.id}
-                    username={child.username}
-                    variant="child"
-                    voteCount={child.vote_count}
-                  />
+                {item.item.children.map((child, index) => (
+                  <>
+                    <Comment
+                      key={child.id}
+                      content={child.content}
+                      createdAt={child.created_at}
+                      id={child.id}
+                      username={child.username}
+                      variant="child"
+                      voteCount={child.vote_count}
+                    />
+                    {index !== item.item.children.length - 1 && (
+                      <View className="w-full border-t border-gray-200" />
+                    )}
+                  </>
                 ))}
               </View>
             )}

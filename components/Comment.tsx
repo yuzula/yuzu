@@ -33,7 +33,7 @@ const Comment: FunctionComponent<CommentProps> = ({
   <View
     className={clsx(
       {
-        'pl-4 bg-gray-100': variant === 'child'
+        'pl-6 bg-gray-100': variant === 'child'
       },
       'space-y-1 py-2'
     )}
