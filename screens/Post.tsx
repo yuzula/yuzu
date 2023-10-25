@@ -407,7 +407,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </>
             }
             renderItem={item => (
-              <View className="space-y-1 py-4">
+              <View className="space-y-1 py-2">
                 <View className="mx-auto w-5/6 flex-row items-center justify-between">
                   <View className="flex-row items-center space-x-2">
                     <Text className="font-Poppins_500Medium">
