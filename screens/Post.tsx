@@ -546,20 +546,23 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             onRefresh={handleRefresh}
           />
 
-          <View className="mx-auto w-5/6 space-y-2 border-t border-gray-200 py-2">
-            {/* {replyParentCommentId && (
-              <Text className="font-Poppins_400Regular">
-                Replying to&nbsp;
-                <Text className="font-Poppins_500Medium">
-                  {
-                    comments.find(
-                      comment => (comment.id = replyParentCommentId)
-                    )?.username
-                  }
+          <View className="space-y-2 border-t border-gray-200 py-2">
+            {replyParentCommentId && (
+              <View className="mx-auto w-5/6">
+                <Text className="font-Poppins_400Regular">
+                  Replying to&nbsp;
+                  <Text className="font-Poppins_500Medium">
+                    {
+                      comments.find(
+                        comment => comment.id === replyParentCommentId
+                      )?.username
+                    }
+                  </Text>
                 </Text>
-              </Text>
-            )} */}
-            <View className="flex-row space-x-2">
+              </View>
+            )}
+
+            <View className="mx-auto w-5/6 flex-row space-x-2">
               <Controller
                 control={control}
                 name="content"
