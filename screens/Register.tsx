@@ -89,7 +89,7 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
           <View className="w-full space-y-4">
             <View className="w-full">
               <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
-                Email
+                School or workplace email
               </Text>
               <Controller
                 control={control}
@@ -103,6 +103,7 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                     className="h-10 w-full border-b border-apple-gray-light font-Poppins_400Regular"
                     editable={!isLoading}
                     inputMode="email"
+                    placeholder="mark@harvard.edu"
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
