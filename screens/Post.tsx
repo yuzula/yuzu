@@ -318,8 +318,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     replyTextFieldRef.current?.focus()
   }, [])
 
-  const handleReplyButtonPress = useCallback((parentCommentId?: number) => {
-    setReplyParentCommentId(parentCommentId)
+  const handleReplyButtonPress = useCallback(() => {
+    setReplyParentCommentId(undefined)
 
     replyTextFieldRef.current?.focus()
   }, [])
@@ -469,7 +469,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </Pressable>
                     <Pressable
                       className="rounded-lg p-2 active:bg-gray-200"
-                      onPress={() => handleReplyButtonPress()}
+                      onPress={handleReplyButtonPress}
                     >
                       <Text className="text-apple-gray-light">
                         <AntDesign name="message1" size={20} />
@@ -480,71 +480,86 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </>
             }
             renderItem={item => (
-              <View>
-                <Comment
-                  content={item.item.content}
-                  createdAt={item.item.created_at}
-                  currentUserVote={item.item.current_user_vote}
-                  id={item.item.id}
-                  username={item.item.username}
-                  voteCount={item.item.vote_count}
-                  onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
-                  onDownvoteButtonPress={() =>
-                    handleCommentVoteButtonPress({
-                      commentId: item.item.id,
-                      userId: user.id,
-                      vote: 'downvote',
-                      parentCommentId: item.item.parent_comment_id
-                    })
-                  }
-                  onUpvoteButtonPress={() =>
-                    handleCommentVoteButtonPress({
-                      commentId: item.item.id,
-                      userId: user.id,
-                      vote: 'upvote',
-                      parentCommentId: item.item.parent_comment_id
-                    })
-                  }
-                />
-                {item.item.children.map((child, index) => (
-                  <View key={child.id}>
-                    <Comment
-                      content={child.content}
-                      createdAt={child.created_at}
-                      currentUserVote={child.current_user_vote}
-                      id={child.id}
-                      username={child.username}
-                      variant="child"
-                      voteCount={child.vote_count}
-                      onDownvoteButtonPress={() =>
-                        handleCommentVoteButtonPress({
-                          commentId: child.id,
-                          userId: user.id,
-                          vote: 'downvote',
-                          parentCommentId: child.parent_comment_id
-                        })
-                      }
-                      onUpvoteButtonPress={() =>
-                        handleCommentVoteButtonPress({
-                          commentId: child.id,
-                          userId: user.id,
-                          vote: 'upvote',
-                          parentCommentId: child.parent_comment_id
-                        })
-                      }
-                    />
-                    {index !== item.item.children.length - 1 && (
-                      <View className="w-full border-t border-gray-200" />
-                    )}
-                  </View>
-                ))}
-              </View>
+              <FlatList
+                data={item.item.children}
+                keyExtractor={item => item.id.toString()}
+                scrollEnabled={false}
+                ItemSeparatorComponent={() => (
+                  <View className="w-full border-t border-gray-200" />
+                )}
+                ListHeaderComponent={() => (
+                  <Comment
+                    content={item.item.content}
+                    createdAt={item.item.created_at}
+                    currentUserVote={item.item.current_user_vote}
+                    id={item.item.id}
+                    username={item.item.username}
+                    voteCount={item.item.vote_count}
+                    onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
+                    onDownvoteButtonPress={() =>
+                      handleCommentVoteButtonPress({
+                        commentId: item.item.id,
+                        userId: user.id,
+                        vote: 'downvote',
+                        parentCommentId: item.item.parent_comment_id
+                      })
+                    }
+                    onUpvoteButtonPress={() =>
+                      handleCommentVoteButtonPress({
+                        commentId: item.item.id,
+                        userId: user.id,
+                        vote: 'upvote',
+                        parentCommentId: item.item.parent_comment_id
+                      })
+                    }
+                  />
+                )}
+                renderItem={item => (
+                  <Comment
+                    content={item.item.content}
+                    createdAt={item.item.created_at}
+                    currentUserVote={item.item.current_user_vote}
+                    id={item.item.id}
+                    username={item.item.username}
+                    variant="child"
+                    voteCount={item.item.vote_count}
+                    onDownvoteButtonPress={() =>
+                      handleCommentVoteButtonPress({
+                        commentId: item.item.id,
+                        userId: user.id,
+                        vote: 'downvote',
+                        parentCommentId: item.item.parent_comment_id
+                      })
+                    }
+                    onUpvoteButtonPress={() =>
+                      handleCommentVoteButtonPress({
+                        commentId: item.item.id,
+                        userId: user.id,
+                        vote: 'upvote',
+                        parentCommentId: item.item.parent_comment_id
+                      })
+                    }
+                  />
+                )}
+              />
             )}
             onRefresh={handleRefresh}
           />
 
-          <View className="border-t border-gray-200 py-2">
-            <View className="mx-auto w-5/6 flex-row space-x-2">
+          <View className="mx-auto w-5/6 space-y-2 border-t border-gray-200 py-2">
+            {/* {replyParentCommentId && (
+              <Text className="font-Poppins_400Regular">
+                Replying to&nbsp;
+                <Text className="font-Poppins_500Medium">
+                  {
+                    comments.find(
+                      comment => (comment.id = replyParentCommentId)
+                    )?.username
+                  }
+                </Text>
+              </Text>
+            )} */}
+            <View className="flex-row space-x-2">
               <Controller
                 control={control}
                 name="content"
@@ -558,8 +573,11 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     maxLength={600}
                     placeholder="Add a comment"
                     value={value}
-                    onBlur={onBlur}
                     onChangeText={onChange}
+                    onBlur={() => {
+                      setReplyParentCommentId(undefined)
+                      onBlur()
+                    }}
                   />
                 )}
               />
