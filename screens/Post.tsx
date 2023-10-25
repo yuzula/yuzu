@@ -6,6 +6,7 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useRef,
   useState
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -66,9 +67,14 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const { showActionSheetWithOptions } = useActionSheet()
 
+  const replyTextFieldRef = useRef<TextInput>(null)
+
   const user = useCurrentUser()
   const [post, setPost] = useState<postModel.Schema>()
   const [comments, setComments] = useState<commentModel.Schema[]>()
+  const [replyParentCommentId, setReplyParentCommentId] = useState<
+    number | undefined
+  >()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
 
@@ -241,8 +247,11 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           await commentService.create({
             postId: post.id,
             userId: user.id,
-            content
+            content,
+            parentCommentId: replyParentCommentId
           })
+          await getPost()
+          await getComments()
         } catch (error) {
           Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         } finally {
@@ -252,7 +261,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         }
       }
     },
-    [post, reset, user]
+    [getComments, getPost, post, replyParentCommentId, reset, user]
   )
 
   const handleCommentVoteButtonPress = useCallback(
@@ -302,6 +311,18 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     },
     [comments]
   )
+
+  const handleCommentReplyButtonPress = useCallback((commentId: number) => {
+    setReplyParentCommentId(commentId)
+
+    replyTextFieldRef.current?.focus()
+  }, [])
+
+  const handleReplyButtonPress = useCallback((parentCommentId?: number) => {
+    setReplyParentCommentId(parentCommentId)
+
+    replyTextFieldRef.current?.focus()
+  }, [])
 
   useEffect(() => {
     getPost()
@@ -446,7 +467,10 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         <AntDesign name="arrowdown" size={20} />
                       </Text>
                     </Pressable>
-                    <Pressable className="rounded-lg p-2 active:bg-gray-200">
+                    <Pressable
+                      className="rounded-lg p-2 active:bg-gray-200"
+                      onPress={() => handleReplyButtonPress()}
+                    >
                       <Text className="text-apple-gray-light">
                         <AntDesign name="message1" size={20} />
                       </Text>
@@ -464,6 +488,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   id={item.item.id}
                   username={item.item.username}
                   voteCount={item.item.vote_count}
+                  onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
                   onDownvoteButtonPress={() =>
                     handleCommentVoteButtonPress({
                       commentId: item.item.id,
@@ -526,6 +551,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 rules={{ required: true }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
+                    ref={replyTextFieldRef}
                     multiline
                     className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_400Regular"
                     editable={!isCreateCommentLoading}
