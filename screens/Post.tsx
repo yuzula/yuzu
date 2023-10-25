@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { z } from 'zod'
 
 import Button from '../components/Button'
+import Comment from '../components/Comment'
 import {
   GENERIC_ACTION_ERROR_TITLE,
   GENERIC_ERROR_MESSAGE,
@@ -407,63 +408,12 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </>
             }
             renderItem={item => (
-              <View className="space-y-1 py-2">
-                <View className="mx-auto w-5/6 flex-row items-center justify-between">
-                  <View className="flex-row items-center space-x-2">
-                    <Text className="font-Poppins_500Medium">
-                      {item.item.username}
-                    </Text>
-                    <View className="flex-row items-center">
-                      <Text className="text-apple-gray-light">
-                        <AntDesign name="arrowup" size={16} />
-                      </Text>
-                      <Text className="font-Poppins_400Regular text-apple-gray-light">
-                        &nbsp;
-                        {item.item.vote_count}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View className="flex-row items-center space-x-1">
-                    <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                      <Text className="text-apple-gray-light">
-                        <AntDesign name="ellipsis1" size={16} />
-                      </Text>
-                    </Pressable>
-                    <Text className="font-Poppins_400Regular text-apple-gray-light">
-                      {formatDuration(
-                        Date.now() - item.item.created_at.getTime()
-                      )}
-                    </Text>
-                  </View>
-                </View>
-
-                <View className="mx-auto w-5/6">
-                  <Text className="font-Poppins_400Regular">
-                    {item.item.content}
-                  </Text>
-                </View>
-
-                <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-1">
-                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                    <Text className="text-apple-gray-light">
-                      <AntDesign name="back" size={16} />
-                      &nbsp;
-                      <Text className="font-Poppins_400Regular">Reply</Text>
-                    </Text>
-                  </Pressable>
-                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                    <Text className="text-apple-gray-light">
-                      <AntDesign name="arrowup" size={16} />
-                    </Text>
-                  </Pressable>
-                  <Pressable className="rounded-lg p-2 active:bg-gray-200">
-                    <Text className="text-apple-gray-light">
-                      <AntDesign name="arrowdown" size={16} />
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
+              <Comment
+                content={item.item.content}
+                createdAt={item.item.created_at}
+                username={item.item.username}
+                voteCount={item.item.vote_count}
+              />
             )}
             onRefresh={handleRefresh}
           />
