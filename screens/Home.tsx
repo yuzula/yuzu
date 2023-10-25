@@ -218,7 +218,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       if (posts) {
         const newPosts = [...posts]
 
-        const newPost = newPosts[newPosts.findIndex(post => post.id === postId)]
+        const newPost = newPosts.find(post => post.id === postId)
 
         if (!newPost) {
           return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)

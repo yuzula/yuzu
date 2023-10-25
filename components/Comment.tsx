@@ -11,6 +11,7 @@ interface CommentProps {
   voteCount: number
   createdAt: Date
   content: string
+  currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
@@ -24,6 +25,7 @@ const Comment: FunctionComponent<CommentProps> = ({
   voteCount,
   createdAt,
   content,
+  currentUserVote,
   variant = 'parent',
   onEllipsisButtonPress,
   onReplyButtonPress,
@@ -85,18 +87,41 @@ const Comment: FunctionComponent<CommentProps> = ({
         </Pressable>
       )}
       <Pressable
-        className="rounded-lg p-2 active:bg-gray-200"
+        className={clsx(
+          {
+            'bg-primary active:bg-primary-darker': currentUserVote === 'upvote',
+            'active:bg-gray-200': currentUserVote !== 'upvote'
+          },
+          'rounded-lg p-2'
+        )}
         onPress={() => onUpvoteButtonPress?.(id)}
       >
-        <Text className="text-apple-gray-light">
+        <Text
+          className={clsx({
+            'text-black': currentUserVote === 'upvote',
+            'text-apple-gray-light': currentUserVote !== 'upvote'
+          })}
+        >
           <AntDesign name="arrowup" size={16} />
         </Text>
       </Pressable>
       <Pressable
-        className="rounded-lg p-2 active:bg-gray-200"
+        className={clsx(
+          {
+            'bg-apple-blue-light active:opacity-90':
+              currentUserVote === 'downvote',
+            'active:bg-gray-200': currentUserVote !== 'downvote'
+          },
+          'rounded-lg p-2'
+        )}
         onPress={() => onDownvoteButtonPress?.(id)}
       >
-        <Text className="text-apple-gray-light">
+        <Text
+          className={clsx({
+            'text-white': currentUserVote === 'downvote',
+            'text-apple-gray-light': currentUserVote !== 'downvote'
+          })}
+        >
           <AntDesign name="arrowdown" size={16} />
         </Text>
       </Pressable>
