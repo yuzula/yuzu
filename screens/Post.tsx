@@ -408,12 +408,26 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               </>
             }
             renderItem={item => (
-              <Comment
-                content={item.item.content}
-                createdAt={item.item.created_at}
-                username={item.item.username}
-                voteCount={item.item.vote_count}
-              />
+              <View>
+                <Comment
+                  content={item.item.content}
+                  createdAt={item.item.created_at}
+                  id={item.item.id}
+                  username={item.item.username}
+                  voteCount={item.item.vote_count}
+                />
+                {item.item.children.map(child => (
+                  <Comment
+                    key={child.id}
+                    content={child.content}
+                    createdAt={child.created_at}
+                    id={child.id}
+                    username={child.username}
+                    variant="child"
+                    voteCount={child.vote_count}
+                  />
+                ))}
+              </View>
             )}
             onRefresh={handleRefresh}
           />

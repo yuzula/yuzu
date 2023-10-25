@@ -1,31 +1,43 @@
 import { AntDesign } from '@expo/vector-icons'
+import clsx from 'clsx'
 import React, { FunctionComponent } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import { formatDuration } from '../helpers/time'
 
 interface CommentProps {
+  id: number
   username: string
   voteCount: number
   createdAt: Date
   content: string
-  onEllipsisButtonPress?: () => void
-  onReplyButtonPress?: () => void
-  onUpvoteButtonPress?: () => void
-  onDownvoteButtonPress?: () => void
+  variant?: 'parent' | 'child'
+  onEllipsisButtonPress?: (id: number) => void
+  onReplyButtonPress?: (id: number) => void
+  onUpvoteButtonPress?: (id: number) => void
+  onDownvoteButtonPress?: (id: number) => void
 }
 
 const Comment: FunctionComponent<CommentProps> = ({
+  id,
   username,
   voteCount,
   createdAt,
   content,
+  variant = 'parent',
   onEllipsisButtonPress,
   onReplyButtonPress,
   onUpvoteButtonPress,
   onDownvoteButtonPress
 }) => (
-  <View className="space-y-1 py-2">
+  <View
+    className={clsx(
+      {
+        'pl-4 bg-gray-100': variant === 'child'
+      },
+      'space-y-1 py-2'
+    )}
+  >
     <View className="mx-auto w-5/6 flex-row items-center justify-between">
       <View className="flex-row items-center space-x-2">
         <Text className="font-Poppins_500Medium">{username}</Text>
@@ -43,7 +55,7 @@ const Comment: FunctionComponent<CommentProps> = ({
       <View className="flex-row items-center space-x-1">
         <Pressable
           className="rounded-lg p-2 active:bg-gray-200"
-          onPress={onEllipsisButtonPress}
+          onPress={() => onEllipsisButtonPress?.(id)}
         >
           <Text className="text-apple-gray-light">
             <AntDesign name="ellipsis1" size={16} />
@@ -60,19 +72,21 @@ const Comment: FunctionComponent<CommentProps> = ({
     </View>
 
     <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-1">
+      {variant === 'parent' && (
+        <Pressable
+          className="rounded-lg p-2 active:bg-gray-200"
+          onPress={() => onReplyButtonPress?.(id)}
+        >
+          <Text className="text-apple-gray-light">
+            <AntDesign name="back" size={16} />
+            &nbsp;
+            <Text className="font-Poppins_400Regular">Reply</Text>
+          </Text>
+        </Pressable>
+      )}
       <Pressable
         className="rounded-lg p-2 active:bg-gray-200"
-        onPress={onReplyButtonPress}
-      >
-        <Text className="text-apple-gray-light">
-          <AntDesign name="back" size={16} />
-          &nbsp;
-          <Text className="font-Poppins_400Regular">Reply</Text>
-        </Text>
-      </Pressable>
-      <Pressable
-        className="rounded-lg p-2 active:bg-gray-200"
-        onPress={onUpvoteButtonPress}
+        onPress={() => onUpvoteButtonPress?.(id)}
       >
         <Text className="text-apple-gray-light">
           <AntDesign name="arrowup" size={16} />
@@ -80,7 +94,7 @@ const Comment: FunctionComponent<CommentProps> = ({
       </Pressable>
       <Pressable
         className="rounded-lg p-2 active:bg-gray-200"
-        onPress={onDownvoteButtonPress}
+        onPress={() => onDownvoteButtonPress?.(id)}
       >
         <Text className="text-apple-gray-light">
           <AntDesign name="arrowdown" size={16} />
