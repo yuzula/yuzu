@@ -11,13 +11,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import useCurrentUser from '../hooks/useCurrentUser'
+import useAuth from '../hooks/useAuth'
 import * as profileModel from '../models/profile'
 import * as profileService from '../services/profile'
 
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
-  const user = useCurrentUser()
+  const { user } = useAuth()
 
   const [profile, setProfile] = useState<profileModel.Schema>()
 
