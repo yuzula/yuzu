@@ -27,7 +27,7 @@ import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import useCurrentUser from '../hooks/useCurrentUser'
+import useAuth from '../hooks/useAuth'
 import * as postModel from '../models/post'
 import * as profileModel from '../models/profile'
 import * as blockService from '../services/block'
@@ -63,7 +63,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
   const { showActionSheetWithOptions } = useActionSheet()
-  const user = useCurrentUser()
+
+  const { user } = useAuth()
 
   const [profile, setProfile] = useState<profileModel.Schema>()
   const [posts, setPosts] = useState<postModel.Schema[]>()

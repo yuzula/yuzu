@@ -1,25 +1,16 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState
-} from 'react'
-import { ActivityIndicator, Alert, Text, View } from 'react-native'
+import React, { FunctionComponent, useCallback } from 'react'
+import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import useAuth from '../hooks/useAuth'
-import * as profileModel from '../models/profile'
-import * as profileService from '../services/profile'
 
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
   const { user } = useAuth()
-
-  const [profile, setProfile] = useState<profileModel.Schema>()
 
   const handleLogOutButtonPress = useCallback(async () => {
     showActionSheetWithOptions(
@@ -44,33 +35,19 @@ const Me: FunctionComponent = () => {
     )
   }, [showActionSheetWithOptions])
 
-  useEffect(() => {
-    ;(async () => {
-      if (user) {
-        try {
-          setProfile(await profileService.get(user.id))
-        } catch (error) {
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-      }
-    })()
-  }, [user])
-
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white py-6"
       edges={['top']}
     >
-      {!user || !profile ? (
-        <ActivityIndicator />
-      ) : (
+      {user && (
         <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
           <View className="space-y-4">
             <Text
               className="text-center font-Poppins_600SemiBold text-2xl underline decoration-primary"
               style={{ textDecorationStyle: 'double' }}
             >
-              {profile.username}
+              {user.user_metadata.username}
             </Text>
           </View>
           <View className="space-y-2">
