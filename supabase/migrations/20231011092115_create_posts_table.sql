@@ -28,6 +28,16 @@ as $$
   where id = auth.uid();
 $$;
 
+create function count_posts_by_user(post_user_id uuid)
+returns int
+language sql
+stable
+as $$
+  select coalesce(count(id), 0)
+  from posts
+  where user_id = post_user_id;
+$$;
+
 -- RLS
 alter table posts enable row level security;
 

@@ -64,6 +64,16 @@ begin
 end;
 $$;
 
+create function count_comments_by_user(comment_user_id uuid)
+returns int
+language sql
+stable
+as $$
+  select coalesce(count(id), 0)
+  from comments
+  where user_id = comment_user_id;
+$$;
+
 -- RLS
 alter table comments enable row level security;
 

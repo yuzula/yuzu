@@ -1,7 +1,8 @@
-import { User } from '@supabase/supabase-js'
+import { AuthError, User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
+import { supabase } from '../clients/supabase'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import * as userService from '../services/user'
 
@@ -13,6 +14,12 @@ const useCurrentUser = () => {
       try {
         setUser(await userService.getCurrentUser())
       } catch (error) {
+        if (error instanceof AuthError) {
+          if (error.status === 404) {
+            await supabase.auth.signOut()
+            return
+          }
+        }
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     })()

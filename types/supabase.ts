@@ -597,9 +597,21 @@ export interface Database {
       }
     }
     Functions: {
+      count_comments_by_user: {
+        Args: {
+          comment_user_id: string
+        }
+        Returns: number
+      }
       count_community_members: {
         Args: {
           domain_name: string
+        }
+        Returns: number
+      }
+      count_posts_by_user: {
+        Args: {
+          post_user_id: string
         }
         Returns: number
       }

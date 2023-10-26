@@ -18,6 +18,7 @@ import * as profileService from '../services/profile'
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
   const user = useCurrentUser()
+
   const [profile, setProfile] = useState<profileModel.Schema>()
 
   const handleLogOutButtonPress = useCallback(async () => {
@@ -66,21 +67,10 @@ const Me: FunctionComponent = () => {
         <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
           <View className="space-y-4">
             <Text
-              className="font-Poppins_600SemiBold text-2xl underline decoration-primary"
+              className="text-center font-Poppins_600SemiBold text-2xl underline decoration-primary"
               style={{ textDecorationStyle: 'double' }}
             >
-              Logged in as:&nbsp;
-              <Text>{profile.username}</Text>
-            </Text>
-
-            <Text className="font-Poppins_600SemiBold text-2xl">
-              Number of posts: 13
-            </Text>
-            <Text className="font-Poppins_600SemiBold text-2xl">
-              Number of replies: 15
-            </Text>
-            <Text className="font-Poppins_600SemiBold text-2xl">
-              Total upvotes: 19
+              {profile.username}
             </Text>
           </View>
           <View className="space-y-2">
