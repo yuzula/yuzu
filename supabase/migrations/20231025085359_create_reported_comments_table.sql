@@ -14,7 +14,7 @@ create index reported_comments_is_pending_idx
 on reported_comments (is_pending);
 
 -- Utility functions
-create function private.get_comment_is_flagged(comment_id int)
+create function private.get_comment_is_flagged(reported_comment_id int)
 returns boolean
 language sql
 security definer
@@ -23,10 +23,10 @@ stable
 as $$
   select is_flagged
   from reported_comments
-  where reported_comments.comment_id = comment_id;
+  where reported_comments.comment_id = reported_comment_id;
 $$;
 
-create function private.get_reported_comment_exists(comment_id int)
+create function private.get_reported_comment_exists(reported_comment_id int)
 returns boolean
 language sql
 security definer
@@ -36,7 +36,7 @@ as $$
   select exists (
     select 1
     from reported_comments
-    where reported_comments.comment_id = comment_id
+    where reported_comments.comment_id = reported_comment_id
   );
 $$;
 

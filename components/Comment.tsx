@@ -13,6 +13,7 @@ interface CommentProps {
   content: string
   currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
+  isCurrentUserAuthor?: boolean
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
   onUpvoteButtonPress?: (id: number) => void
@@ -27,6 +28,7 @@ const Comment: FunctionComponent<CommentProps> = ({
   content,
   currentUserVote,
   variant = 'parent',
+  isCurrentUserAuthor = false,
   onEllipsisButtonPress,
   onReplyButtonPress,
   onUpvoteButtonPress,
@@ -55,14 +57,19 @@ const Comment: FunctionComponent<CommentProps> = ({
       </View>
 
       <View className="flex-row items-center space-x-1">
-        <Pressable
-          className="rounded-lg p-2 active:bg-gray-200"
-          onPress={() => onEllipsisButtonPress?.(id)}
-        >
-          <Text className="text-apple-gray-light">
-            <AntDesign name="ellipsis1" size={16} />
-          </Text>
-        </Pressable>
+        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
+        since right now it only contains report and block actions, both of which the user can't
+        perform on themselves */}
+        {!isCurrentUserAuthor && (
+          <Pressable
+            className="rounded-lg p-2 active:bg-gray-200"
+            onPress={() => onEllipsisButtonPress?.(id)}
+          >
+            <Text className="text-apple-gray-light">
+              <AntDesign name="ellipsis1" size={16} />
+            </Text>
+          </Pressable>
+        )}
         <Text className="font-Poppins_400Regular text-apple-gray-light">
           {formatDuration(Date.now() - createdAt.getTime())}
         </Text>

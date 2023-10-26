@@ -25,7 +25,7 @@ create policy "Users can report private posts in the same community"
   with check (private.get_community_domain_name_from_post(post_id) = private.get_community_domain_name_from_profile());
 
 -- Utility functions
-create function private.get_post_is_flagged(post_id int)
+create function private.get_post_is_flagged(reported_post_id int)
 returns boolean
 language sql
 security definer
@@ -34,10 +34,10 @@ stable
 as $$
   select is_flagged
   from reported_posts
-  where reported_posts.post_id = post_id;
+  where reported_posts.post_id = reported_post_id;
 $$;
 
-create function private.get_reported_post_exists(post_id int)
+create function private.get_reported_post_exists(reported_post_id int)
 returns boolean
 language sql
 security definer
@@ -47,7 +47,7 @@ as $$
   select exists (
     select 1
     from reported_posts
-    where reported_posts.post_id = post_id
+    where reported_posts.post_id = reported_post_id
   );
 $$;
 

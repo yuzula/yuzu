@@ -86,6 +86,28 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [navigation])
 
+  const getPost = useCallback(async () => {
+    if (user) {
+      try {
+        setPost(await postService.get({ postId, userId: user.id }))
+      } catch (error) {
+        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [postId, user])
+
+  const getComments = useCallback(async () => {
+    if (user && post) {
+      try {
+        setComments(
+          await commentService.getAllRoot({ postId: post.id, userId: user.id })
+        )
+      } catch (error) {
+        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    }
+  }, [post, user])
+
   const handlePostVoteButtonPress = useCallback(
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
       if (post) {
@@ -121,16 +143,21 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
       try {
-        if (user) {
+        if (user && post) {
           await blockService.blockUser({
             blockerId: user.id,
             blockeeId: authorId
           })
 
-          navigation.navigate('Tabs', {
-            screen: 'Home',
-            params: { shouldRefresh: true }
-          })
+          if (authorId === post.user_id) {
+            navigation.navigate('Tabs', {
+              screen: 'Home',
+              params: { shouldRefresh: true }
+            })
+          } else {
+            await getPost()
+            await getComments()
+          }
         } else {
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
@@ -138,7 +165,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [navigation, user]
+    [getComments, getPost, navigation, post, user]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -160,6 +187,42 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     {
                       text: 'Yes',
                       onPress: () => handleBlockAuthorButtonPress(post.user_id)
+                    }
+                  ]
+                )
+              }
+            }
+          ])
+        } else {
+          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
+        }
+      } catch (error) {
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+    },
+    [handleBlockAuthorButtonPress, user]
+  )
+
+  const handleReportCommentButtonPress = useCallback(
+    async (comment: commentModel.BaseSchema) => {
+      try {
+        if (user) {
+          await reportService.reportComment(comment.id)
+
+          Alert.alert('Comment has been reported for moderation', undefined, [
+            {
+              onPress: () => {
+                Alert.alert(
+                  'Would you like to block the author of the comment?',
+                  undefined,
+                  [
+                    {
+                      text: 'No'
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () =>
+                        handleBlockAuthorButtonPress(comment.user_id)
                     }
                   ]
                 )
@@ -207,27 +270,34 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     showActionSheetWithOptions
   ])
 
-  const getPost = useCallback(async () => {
-    if (user) {
-      try {
-        setPost(await postService.get({ postId, userId: user.id }))
-      } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [postId, user])
+  const handleCommentEllipsisButtonPress = useCallback(
+    (comment: commentModel.BaseSchema) => {
+      showActionSheetWithOptions(
+        {
+          title: 'More actions',
+          options: ['Report this comment', 'Block the author', 'Cancel'],
+          destructiveButtonIndex: 1,
+          cancelButtonIndex: 2
+        },
+        async index => {
+          if (index === 2) {
+            return
+          }
 
-  const getComments = useCallback(async () => {
-    if (user && post) {
-      try {
-        setComments(
-          await commentService.getAllRoot({ postId: post.id, userId: user.id })
-        )
-      } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [post, user])
+          if (index === 0) {
+            await handleReportCommentButtonPress(comment)
+          } else if (index === 1) {
+            await handleBlockAuthorButtonPress(comment.user_id)
+          }
+        }
+      )
+    },
+    [
+      handleBlockAuthorButtonPress,
+      handleReportCommentButtonPress,
+      showActionSheetWithOptions
+    ]
+  )
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
@@ -493,6 +563,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
+                    isCurrentUserAuthor={item.item.user_id === user.id}
                     username={item.item.username}
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
@@ -503,6 +574,9 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         vote: 'downvote',
                         parentCommentId: item.item.parent_comment_id
                       })
+                    }
+                    onEllipsisButtonPress={() =>
+                      handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
                       handleCommentVoteButtonPress({
@@ -520,6 +594,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
+                    isCurrentUserAuthor={item.item.user_id === user.id}
                     username={item.item.username}
                     variant="child"
                     voteCount={item.item.vote_count}
@@ -530,6 +605,9 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         vote: 'downvote',
                         parentCommentId: item.item.parent_comment_id
                       })
+                    }
+                    onEllipsisButtonPress={() =>
+                      handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
                       handleCommentVoteButtonPress({

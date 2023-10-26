@@ -60,7 +60,9 @@ create policy "Posts are viewable if their creators are not blocked by the viewe
 
 -- Comments RLS
 create policy "Comments are viewable if their creators are not blocked by the viewee"
-  on comments for select
+  on comments
+  as restrictive
+  for select
   to authenticated
   using (not private.is_user_blocked_by_current_user(user_id));
 
