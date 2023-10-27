@@ -22,6 +22,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import Button from '../components/Button'
@@ -87,6 +88,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       try {
         setPost(await postService.get({ postId, userId: user.id }))
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
@@ -99,6 +102,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           await commentService.getAllRoot({ postId: post.id, userId: user.id })
         )
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
@@ -108,10 +113,6 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
       if (post) {
         const newPost = { ...post }
-
-        if (!newPost) {
-          return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
 
         const oldVote = newPost.current_user_vote
 
@@ -158,6 +159,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
@@ -197,6 +200,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
@@ -236,6 +241,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
@@ -326,6 +333,8 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           await getPost()
           await getComments()
         } catch (error) {
+          Sentry.Native.captureException(error)
+
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         } finally {
           reset()
@@ -359,6 +368,10 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           : newComments.find(comment => comment.id === commentId)
 
         if (!newComment) {
+          Sentry.Native.captureException(
+            new Error('Could not find voted comment')
+          )
+
           return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
 

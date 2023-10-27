@@ -1,6 +1,7 @@
 import { AuthError, User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
@@ -20,6 +21,9 @@ const useCurrentUser = () => {
             return
           }
         }
+
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     })()

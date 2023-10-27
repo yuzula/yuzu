@@ -36,6 +36,18 @@
       "eas": {
         "projectId": "3c83602b-b346-4829-887e-b639a4fbe8c0"
       }
+    },
+    "plugins": ["sentry-expo"],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "yuzula",
+            "project": "yuzu"
+          }
+        }
+      ]
     }
   }
 }

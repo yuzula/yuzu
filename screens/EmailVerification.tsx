@@ -10,6 +10,7 @@ import {
   TextInput,
   View
 } from 'react-native'
+import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
@@ -58,6 +59,8 @@ const EmailVerification: FunctionComponent<
           return Alert.alert(result.error.message)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       } finally {
         setIsLoading(false)

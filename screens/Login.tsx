@@ -10,6 +10,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
@@ -58,6 +59,8 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
           return Alert.alert(error.message)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       } finally {
         setIsLoading(false)

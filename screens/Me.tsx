@@ -2,6 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
@@ -41,6 +42,8 @@ const Me: FunctionComponent = () => {
       await userService.deleteCurrentUser()
       await userService.logout()
     } catch (error) {
+      Sentry.Native.captureException(error)
+
       Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     }
   }, [])

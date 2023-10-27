@@ -21,6 +21,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import Button from '../components/Button'
@@ -115,6 +116,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           })
         )
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
@@ -131,6 +134,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           })
         )
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
@@ -147,6 +152,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           })
         )
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
@@ -222,6 +229,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         const newPost = newPosts.find(post => post.id === postId)
 
         if (!newPost) {
+          Sentry.Native.captureException(new Error('Could not find voted post'))
+
           return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
 
@@ -262,6 +271,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
@@ -301,6 +312,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
       } catch (error) {
+        Sentry.Native.captureException(error)
+
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
@@ -355,6 +368,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           navigation.navigate('Post', { postId })
         } catch (error) {
+          Sentry.Native.captureException(error)
+
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         } finally {
           setIsCreatePostLoading(false)
@@ -387,6 +402,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         try {
           setProfile(await profileService.get(user.id))
         } catch (error) {
+          Sentry.Native.captureException(error)
+
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
       }
@@ -401,6 +418,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             await communityService.getMemberCount(profile.community_domain_name)
           )
         } catch (error) {
+          Sentry.Native.captureException(error)
+
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         }
       }
