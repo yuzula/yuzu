@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
@@ -13,6 +13,8 @@ import * as userService from '../services/user'
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
   const { user } = useAuth()
+
+  const [isDeleteAccountLoading, setIsDeleteAccountLoading] = useState(false)
 
   const handleLogOutButtonPress = useCallback(async () => {
     showActionSheetWithOptions(
@@ -38,14 +40,30 @@ const Me: FunctionComponent = () => {
   }, [showActionSheetWithOptions])
 
   const handleDeleteAccountButtonPress = useCallback(async () => {
-    try {
-      await userService.deleteCurrentUser()
-      await userService.logout()
-    } catch (error) {
-      Sentry.Native.captureException(error)
+    Alert.alert('Are you sure you want to delete your account?', undefined, [
+      {
+        text: 'Yes',
+        style: 'destructive',
+        onPress: async () => {
+          setIsDeleteAccountLoading(true)
 
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    }
+          try {
+            await userService.deleteCurrentUser()
+            await userService.logout()
+          } catch (error) {
+            Sentry.Native.captureException(error)
+
+            Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+          } finally {
+            setIsDeleteAccountLoading(false)
+          }
+        }
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      }
+    ])
   }, [])
 
   return (
@@ -65,12 +83,18 @@ const Me: FunctionComponent = () => {
           </View>
           <View className="space-y-2">
             <Button
+              isLoading={isDeleteAccountLoading}
               variant="secondary"
               onPress={handleDeleteAccountButtonPress}
             >
               Delete my account
             </Button>
-            <Button onPress={handleLogOutButtonPress}>Log Out</Button>
+            <Button
+              isDisabled={isDeleteAccountLoading}
+              onPress={handleLogOutButtonPress}
+            >
+              Log Out
+            </Button>
           </View>
         </View>
       )}
