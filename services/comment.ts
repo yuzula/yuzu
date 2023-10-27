@@ -49,6 +49,8 @@ const getAllChildren = async ({ commentId, userId }: GetAllChildrenParams) => {
       ...data,
       username: data.profiles?.username,
       parent_comment_id: commentId,
+      user_id: data.user_id ?? undefined,
+      content: data.content ?? undefined,
       current_user_vote: !data.comment_votes[0]
         ? undefined
         : data.comment_votes[0].is_upvote
@@ -80,7 +82,9 @@ export const getAllRoot = async ({ postId, userId }: GetAllRootParams) => {
     response.data.map(data => ({
       ...data,
       username: data.profiles?.username,
-      parent_comment_id: null,
+      parent_comment_id: undefined,
+      user_id: data.user_id ?? undefined,
+      content: data.content ?? undefined,
       current_user_vote: !data.comment_votes[0]
         ? undefined
         : data.comment_votes[0].is_upvote

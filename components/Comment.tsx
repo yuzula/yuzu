@@ -11,7 +11,7 @@ interface CommentProps {
   voteCount: number
   createdAt: Date
   isDeleted: boolean
-  content: string | null
+  content?: string
   currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
   isCurrentUserAuthor?: boolean

@@ -24,6 +24,8 @@ export const get = async ({ postId, userId }: GetParams) => {
   return postModel.schema.parse({
     ...response.data,
     username: response.data.profiles?.username,
+    user_id: response.data.user_id ?? undefined,
+    content: response.data.content ?? undefined,
     current_user_vote: !response.data.post_votes[0]
       ? undefined
       : response.data.post_votes[0].is_upvote
@@ -65,6 +67,8 @@ export const getAll = async ({
     response.data.map(data => ({
       ...data,
       username: data.profiles?.username,
+      user_id: data.user_id ?? undefined,
+      content: data.content ?? undefined,
       current_user_vote: !data.post_votes[0]
         ? undefined
         : data.post_votes[0].is_upvote

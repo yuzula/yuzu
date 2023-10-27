@@ -350,7 +350,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }: {
       commentId: number
       userId: string
-      parentCommentId: number | null
+      parentCommentId?: number
       vote: 'upvote' | 'downvote'
     }) => {
       if (comments) {
