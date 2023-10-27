@@ -5,10 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
-import {
-  GENERIC_ACTION_ERROR_TITLE,
-  GENERIC_ERROR_MESSAGE
-} from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import useAuth from '../hooks/useAuth'
 import * as userService from '../services/user'
 
@@ -44,7 +41,7 @@ const Me: FunctionComponent = () => {
       await userService.deleteCurrentUser()
       await userService.logout()
     } catch (error) {
-      Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     }
   }, [])
 

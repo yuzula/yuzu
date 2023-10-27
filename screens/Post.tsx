@@ -26,11 +26,7 @@ import { z } from 'zod'
 
 import Button from '../components/Button'
 import Comment from '../components/Comment'
-import {
-  GENERIC_ACTION_ERROR_TITLE,
-  GENERIC_ERROR_MESSAGE,
-  GENERIC_ERROR_TITLE
-} from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
@@ -91,7 +87,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       try {
         setPost(await postService.get({ postId, userId: user.id }))
       } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
   }, [postId, user])
@@ -103,7 +99,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           await commentService.getAllRoot({ postId: post.id, userId: user.id })
         )
       } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     }
   }, [post, user])
@@ -330,7 +326,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           await getPost()
           await getComments()
         } catch (error) {
-          Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
         } finally {
           reset()
 

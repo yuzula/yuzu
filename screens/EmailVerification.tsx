@@ -14,10 +14,7 @@ import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
-import {
-  GENERIC_ACTION_ERROR_TITLE,
-  GENERIC_ERROR_MESSAGE
-} from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
 const emailVerificationSchema = z.object({
@@ -61,7 +58,7 @@ const EmailVerification: FunctionComponent<
           return Alert.alert(result.error.message)
         }
       } catch (error) {
-        Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       } finally {
         setIsLoading(false)
       }
