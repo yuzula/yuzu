@@ -24,6 +24,14 @@ create policy "Users can report private posts in the same community"
   to authenticated
   with check (private.get_community_domain_name_from_post(post_id) = private.get_community_domain_name_from_profile());
 
+-- Utility views
+create view posts_with_hotness_with_flagged
+with (security_invoker) as
+select posts_with_hotness.*, coalesce(reported_posts.is_flagged, false) as is_flagged
+from posts_with_hotness
+left join reported_posts
+on posts_with_hotness.id = reported_posts.post_id;
+
 -- Utility functions
 create function private.get_post_is_flagged(reported_post_id int)
 returns boolean
@@ -50,14 +58,6 @@ as $$
     where reported_posts.post_id = reported_post_id
   );
 $$;
-
--- Posts RLS
-create policy "Posts are viewable if they are not flagged"
-  on posts
-  as restrictive
-  for select
-  to authenticated
-  using (not private.get_reported_post_exists(id) or private.get_post_is_flagged(id) = false);
 
 -- Triggers
 create function private.set_default_values_on_reported_post_created()

@@ -40,14 +40,6 @@ as $$
   );
 $$;
 
--- Comments RLS
-create policy "Comments are viewable if they are not flagged"
-  on comments
-  as restrictive
-  for select
-  to authenticated
-  using (not private.get_reported_comment_exists(id) or private.get_comment_is_flagged(id) = false);
-
 -- Triggers
 create function private.set_default_values_on_reported_comment_created()
 returns trigger

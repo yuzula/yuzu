@@ -10,6 +10,7 @@ export const baseSchema = z.object({
   parent_comment_id: z.number().optional(),
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),
   is_deleted: z.boolean(),
+  is_flagged: z.boolean(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date().optional()
 })

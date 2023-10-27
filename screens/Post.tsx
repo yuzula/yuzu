@@ -433,14 +433,19 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               {formatCount(post.comment_count)} Comments
             </Text>
             <View className="basis-1/3 items-end pr-2">
-              <Pressable
-                className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
-                onPress={handlePostEllipsisButtonPress}
-              >
-                <Text className="text-apple-gray-light">
-                  <FontAwesome5 name="ellipsis-h" size={16} />
-                </Text>
-              </Pressable>
+              {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
+              since right now it only contains report and block actions, both of which the user can't
+              perform on themselves */}
+              {post.user_id !== user.id && (
+                <Pressable
+                  className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
+                  onPress={handlePostEllipsisButtonPress}
+                >
+                  <Text className="text-apple-gray-light">
+                    <FontAwesome5 name="ellipsis-h" size={16} />
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
 
@@ -457,8 +462,17 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               <>
                 <View className="w-full border-b border-gray-200">
                   <View className="mx-auto w-5/6 space-y-2 py-4">
-                    <Text className="font-Poppins_500Medium text-base">
-                      {post.content}
+                    <Text
+                      className={clsx('font-Poppins_500Medium text-base', {
+                        'font-Poppins_500Medium_Italic':
+                          post.is_deleted || post.is_flagged
+                      })}
+                    >
+                      {post.is_deleted
+                        ? 'Deleted'
+                        : post.is_flagged
+                        ? 'Flagged'
+                        : post.content}
                     </Text>
 
                     <View className="space-y-1">
@@ -572,6 +586,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     id={item.item.id}
                     isCurrentUserAuthor={item.item.user_id === user.id}
                     isDeleted={item.item.is_deleted}
+                    isFlagged={item.item.is_flagged}
                     username={item.item.username}
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
@@ -604,6 +619,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     id={item.item.id}
                     isCurrentUserAuthor={item.item.user_id === user.id}
                     isDeleted={item.item.is_deleted}
+                    isFlagged={item.item.is_flagged}
                     username={item.item.username}
                     variant="child"
                     voteCount={item.item.vote_count}

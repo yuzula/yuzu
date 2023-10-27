@@ -466,10 +466,15 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       ellipsizeMode="tail"
                       numberOfLines={4}
                       className={clsx('font-Poppins_500Medium', {
-                        'font-Poppins_500Medium_Italic': item.item.is_deleted
+                        'font-Poppins_500Medium_Italic':
+                          item.item.is_deleted || item.item.is_flagged
                       })}
                     >
-                      {item.item.is_deleted ? 'Deleted' : item.item.content}
+                      {item.item.is_deleted
+                        ? 'Deleted'
+                        : item.item.is_flagged
+                        ? 'Flagged'
+                        : item.item.content}
                     </Text>
 
                     <View className="flex flex-row items-center justify-between">

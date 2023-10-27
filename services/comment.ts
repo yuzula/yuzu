@@ -35,7 +35,14 @@ interface GetAllChildrenParams {
 const getAllChildren = async ({ commentId, userId }: GetAllChildrenParams) => {
   const response = await supabase
     .from('comments_with_vote_count')
-    .select('*, comment_votes(user_id, is_upvote), profiles(username)')
+    .select(
+      `
+        *,
+        comment_votes(user_id, is_upvote),
+        profiles(username),
+        reported_comments(is_flagged)
+      `
+    )
     .eq('parent_comment_id', commentId)
     .eq('comment_votes.user_id', userId)
     .order('vote_count', { ascending: false })
@@ -51,6 +58,8 @@ const getAllChildren = async ({ commentId, userId }: GetAllChildrenParams) => {
       parent_comment_id: commentId,
       user_id: data.user_id ?? undefined,
       content: data.content ?? undefined,
+      // @ts-expect-error weird TypeScript error. This is the right type
+      is_flagged: !!data.reported_comments?.is_flagged,
       current_user_vote: !data.comment_votes[0]
         ? undefined
         : data.comment_votes[0].is_upvote
@@ -68,7 +77,14 @@ interface GetAllRootParams {
 export const getAllRoot = async ({ postId, userId }: GetAllRootParams) => {
   const response = await supabase
     .from('comments_with_vote_count')
-    .select('*, comment_votes(user_id, is_upvote), profiles(username)')
+    .select(
+      `
+        *,
+        comment_votes(user_id, is_upvote),
+        profiles(username),
+        reported_comments(is_flagged)
+      `
+    )
     .is('parent_comment_id', null)
     .eq('post_id', postId)
     .eq('comment_votes.user_id', userId)
@@ -85,6 +101,8 @@ export const getAllRoot = async ({ postId, userId }: GetAllRootParams) => {
       parent_comment_id: undefined,
       user_id: data.user_id ?? undefined,
       content: data.content ?? undefined,
+      // @ts-expect-error weird TypeScript error. This is the right type
+      is_flagged: !!data.reported_comments?.is_flagged,
       current_user_vote: !data.comment_votes[0]
         ? undefined
         : data.comment_votes[0].is_upvote

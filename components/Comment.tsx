@@ -11,6 +11,7 @@ interface CommentProps {
   voteCount: number
   createdAt: Date
   isDeleted: boolean
+  isFlagged: boolean
   content?: string
   currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
@@ -30,6 +31,7 @@ const Comment: FunctionComponent<CommentProps> = ({
   currentUserVote,
   variant = 'parent',
   isDeleted,
+  isFlagged,
   isCurrentUserAuthor = false,
   onEllipsisButtonPress,
   onReplyButtonPress,
@@ -87,10 +89,10 @@ const Comment: FunctionComponent<CommentProps> = ({
     <View className="mx-auto w-5/6">
       <Text
         className={clsx('font-Poppins_400Regular', {
-          'font-Poppins_400Regular_Italic': isDeleted
+          'font-Poppins_400Regular_Italic': isDeleted || isFlagged
         })}
       >
-        {isDeleted ? 'Deleted' : content}
+        {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}
       </Text>
     </View>
 

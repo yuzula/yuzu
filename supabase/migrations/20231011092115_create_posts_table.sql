@@ -15,6 +15,9 @@ on posts (user_id);
 create index posts_community_domain_name_idx
 on posts (community_domain_name);
 
+create index posts_is_deleted_idx
+on posts (is_deleted);
+
 -- Utility functions
 create function private.get_community_domain_name_from_profile()
 returns text

@@ -12,7 +12,14 @@ interface GetParams {
 export const get = async ({ postId, userId }: GetParams) => {
   const response = await supabase
     .from('posts_with_vote_and_comment_count')
-    .select('*, post_votes(user_id, is_upvote), profiles(username)')
+    .select(
+      `
+        *,
+        post_votes(user_id, is_upvote),
+        profiles(username),
+        reported_posts(is_flagged)
+      `
+    )
     .eq('id', postId)
     .eq('post_votes.user_id', userId)
     .single()
@@ -26,6 +33,8 @@ export const get = async ({ postId, userId }: GetParams) => {
     username: response.data.profiles?.username,
     user_id: response.data.user_id ?? undefined,
     content: response.data.content ?? undefined,
+    // @ts-expect-error weird TypeScript error. This is the right type
+    is_flagged: !!response.data.reported_posts?.is_flagged,
     current_user_vote: !response.data.post_votes[0]
       ? undefined
       : response.data.post_votes[0].is_upvote
@@ -46,9 +55,17 @@ export const getAll = async ({
   sortBy = 'hot'
 }: GetAllParams) => {
   const response = await supabase
-    .from('posts_with_hotness')
-    .select('*, post_votes(user_id, is_upvote), profiles(username)')
+    .from('posts_with_hotness_with_flagged')
+    .select(
+      `
+        *,
+        post_votes(user_id, is_upvote),
+        profiles(username)
+      `
+    )
     .eq('community_domain_name', communityDomainName)
+    .eq('is_deleted', false)
+    .eq('is_flagged', false)
     .eq('post_votes.user_id', userId)
     .order(
       sortBy === 'hot'
@@ -69,6 +86,8 @@ export const getAll = async ({
       username: data.profiles?.username,
       user_id: data.user_id ?? undefined,
       content: data.content ?? undefined,
+      // @ts-expect-error weird TypeScript error. This is the right type
+      is_flagged: !!data.reported_posts?.is_flagged,
       current_user_vote: !data.post_votes[0]
         ? undefined
         : data.post_votes[0].is_upvote
