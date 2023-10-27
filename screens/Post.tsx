@@ -186,7 +186,11 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     },
                     {
                       text: 'Yes',
-                      onPress: () => handleBlockAuthorButtonPress(post.user_id)
+                      onPress: () => {
+                        if (post.user_id) {
+                          handleBlockAuthorButtonPress(post.user_id)
+                        }
+                      }
                     }
                   ]
                 )
@@ -221,8 +225,11 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     },
                     {
                       text: 'Yes',
-                      onPress: () =>
-                        handleBlockAuthorButtonPress(comment.user_id)
+                      onPress: () => {
+                        if (comment.user_id) {
+                          handleBlockAuthorButtonPress(comment.user_id)
+                        }
+                      }
                     }
                   ]
                 )
@@ -255,7 +262,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           if (index === 0) {
             await handleReportPostButtonPress(post)
-          } else if (index === 1) {
+          } else if (index === 1 && post.user_id) {
             await handleBlockAuthorButtonPress(post.user_id)
           }
         }
@@ -286,7 +293,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           if (index === 0) {
             await handleReportCommentButtonPress(comment)
-          } else if (index === 1) {
+          } else if (index === 1 && comment.user_id) {
             await handleBlockAuthorButtonPress(comment.user_id)
           }
         }
@@ -343,7 +350,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }: {
       commentId: number
       userId: string
-      parentCommentId?: number
+      parentCommentId: number | null
       vote: 'upvote' | 'downvote'
     }) => {
       if (comments) {
@@ -564,6 +571,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
                     isCurrentUserAuthor={item.item.user_id === user.id}
+                    isDeleted={item.item.is_deleted}
                     username={item.item.username}
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
@@ -595,6 +603,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
                     isCurrentUserAuthor={item.item.user_id === user.id}
+                    isDeleted={item.item.is_deleted}
                     username={item.item.username}
                     variant="child"
                     voteCount={item.item.vote_count}

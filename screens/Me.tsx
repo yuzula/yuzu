@@ -5,8 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
-import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
+import {
+  GENERIC_ACTION_ERROR_TITLE,
+  GENERIC_ERROR_MESSAGE
+} from '../constants/alert'
 import useAuth from '../hooks/useAuth'
+import * as userService from '../services/user'
 
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
@@ -35,6 +39,15 @@ const Me: FunctionComponent = () => {
     )
   }, [showActionSheetWithOptions])
 
+  const handleDeleteAccountButtonPress = useCallback(async () => {
+    try {
+      await userService.deleteCurrentUser()
+      await userService.logout()
+    } catch (error) {
+      Alert.alert(GENERIC_ACTION_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    }
+  }, [])
+
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white py-6"
@@ -51,7 +64,12 @@ const Me: FunctionComponent = () => {
             </Text>
           </View>
           <View className="space-y-2">
-            <Button variant="secondary">Delete my account</Button>
+            <Button
+              variant="secondary"
+              onPress={handleDeleteAccountButtonPress}
+            >
+              Delete my account
+            </Button>
             <Button onPress={handleLogOutButtonPress}>Log Out</Button>
           </View>
         </View>

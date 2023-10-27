@@ -2,10 +2,10 @@ import { z } from 'zod'
 
 export const schema = z.object({
   id: z.number(),
-  user_id: z.string(),
-  username: z.string(),
+  user_id: z.string().nullable(),
+  username: z.string().optional(),
   community_domain_name: z.string(),
-  content: z.string(),
+  content: z.string().nullable(),
   vote_count: z.number(),
   comment_count: z.number(),
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),

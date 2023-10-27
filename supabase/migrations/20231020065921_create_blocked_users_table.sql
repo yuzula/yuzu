@@ -81,5 +81,5 @@ end;
 $$;
 
 create trigger set_default_values_on_blocked_user_created
-  after insert on blocked_users
+  before insert on blocked_users
   for each row execute procedure private.set_default_values_on_blocked_user_created();

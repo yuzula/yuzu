@@ -88,34 +88,34 @@ export interface Database {
       }
       comments: {
         Row: {
-          content: string
+          content: string | null
           created_at: string
           id: number
           is_deleted: boolean
           parent_comment_id: number | null
           post_id: number
           updated_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
-          content: string
+          content?: string | null
           created_at?: string
           id?: number
           is_deleted?: boolean
           parent_comment_id?: number | null
           post_id: number
           updated_at?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
-          content?: string
+          content?: string | null
           created_at?: string
           id?: number
           is_deleted?: boolean
           parent_comment_id?: number | null
           post_id?: number
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -247,33 +247,33 @@ export interface Database {
       posts: {
         Row: {
           community_domain_name: string
-          content: string
+          content: string | null
           created_at: string
           id: number
           is_deleted: boolean
           is_private: boolean
           updated_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           community_domain_name: string
-          content: string
+          content?: string | null
           created_at?: string
           id?: number
           is_deleted?: boolean
           is_private: boolean
           updated_at?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           community_domain_name?: string
-          content?: string
+          content?: string | null
           created_at?: string
           id?: number
           is_deleted?: boolean
           is_private?: boolean
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {

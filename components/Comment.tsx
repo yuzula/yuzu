@@ -7,10 +7,11 @@ import { formatDuration } from '../helpers/time'
 
 interface CommentProps {
   id: number
-  username: string
+  username?: string
   voteCount: number
   createdAt: Date
-  content: string
+  isDeleted: boolean
+  content: string | null
   currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
   isCurrentUserAuthor?: boolean
@@ -28,6 +29,7 @@ const Comment: FunctionComponent<CommentProps> = ({
   content,
   currentUserVote,
   variant = 'parent',
+  isDeleted,
   isCurrentUserAuthor = false,
   onEllipsisButtonPress,
   onReplyButtonPress,
@@ -44,7 +46,13 @@ const Comment: FunctionComponent<CommentProps> = ({
   >
     <View className="mx-auto w-5/6 flex-row items-center justify-between">
       <View className="flex-row items-center space-x-2">
-        <Text className="font-Poppins_500Medium">{username}</Text>
+        <Text
+          className={clsx('font-Poppins_500Medium', {
+            'font-Poppins_500Medium_Italic': isDeleted
+          })}
+        >
+          {isDeleted ? 'Deleted' : username}
+        </Text>
         <View className="flex-row items-center">
           <Text className="text-apple-gray-light">
             <AntDesign name="arrowup" size={16} />
@@ -77,7 +85,13 @@ const Comment: FunctionComponent<CommentProps> = ({
     </View>
 
     <View className="mx-auto w-5/6">
-      <Text className="font-Poppins_400Regular">{content}</Text>
+      <Text
+        className={clsx('font-Poppins_400Regular', {
+          'font-Poppins_400Regular_Italic': isDeleted
+        })}
+      >
+        {isDeleted ? 'Deleted' : content}
+      </Text>
     </View>
 
     <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-1">

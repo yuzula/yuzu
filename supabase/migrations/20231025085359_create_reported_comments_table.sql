@@ -65,5 +65,5 @@ end;
 $$;
 
 create trigger set_default_values_on_reported_comment_created
-  after insert on reported_comments
+  before insert on reported_comments
   for each row execute procedure private.set_default_values_on_reported_comment_created();

@@ -1,8 +1,8 @@
 create table posts (
   id serial primary key,
-  user_id uuid not null references profiles (id) on delete cascade,
+  user_id uuid references profiles (id) on delete set null,
   community_domain_name text not null references communities (domain_name),
-  content varchar(300) not null,
+  content varchar(300),
   is_private boolean not null,
   is_deleted boolean not null default false,
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
@@ -56,12 +56,60 @@ create policy "Users can create their own post"
   to authenticated
   with check (auth.uid() = user_id);
 
+create policy "Post content must not be null"
+  on posts
+  as restrictive
+  for insert
+  to authenticated
+  with check (content is not null);
+
 create policy "Users can delete their own post"
   on posts for delete
   to authenticated
   using (auth.uid() = user_id);
 
 -- Triggers
+create function private.set_post_values_on_user_deleted()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.user_id is null then
+    new.is_deleted = true;
+    new.content = null;
+    new.updated_at = current_timestamp at time zone 'UTC';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger set_post_values_on_user_deleted
+  before update on posts
+  for each row execute procedure private.set_post_values_on_user_deleted();
+
+create function private.set_post_values_on_post_deleted()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.is_deleted = true then
+    new.content = null;
+    new.updated_at = current_timestamp at time zone 'UTC';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger set_post_values_on_post_deleted
+  before update on posts
+  for each row execute procedure private.set_post_values_on_post_deleted();
+
 create function private.set_default_values_on_post_created()
 returns trigger
 language plpgsql
@@ -77,5 +125,5 @@ end;
 $$;
 
 create trigger set_default_values_on_post_created
-  after insert on posts
+  before insert on posts
   for each row execute procedure private.set_default_values_on_post_created();

@@ -126,5 +126,5 @@ end;
 $$;
 
 create trigger set_default_values_on_post_vote_created
-  after insert on post_votes
+  before insert on post_votes
   for each row execute procedure private.set_default_values_on_post_vote_created();

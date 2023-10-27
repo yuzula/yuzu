@@ -1,8 +1,8 @@
 create table comments (
   id serial primary key,
-  user_id uuid not null references profiles (id) on delete cascade,
+  user_id uuid references profiles (id) on delete set null,
   post_id int not null references posts (id),
-  content varchar(600) not null,
+  content varchar(600),
   is_deleted boolean not null default false,
   parent_comment_id int references comments (id),
   created_at timestamp with time zone not null default (current_timestamp at time zone 'UTC'),
@@ -92,6 +92,13 @@ create policy "Users can create their own comment"
   to authenticated
   with check (auth.uid() = user_id);
 
+create policy "Comment content must not be null"
+  on comments
+  as restrictive
+  for insert
+  to authenticated
+  with check (content is not null);
+
 create policy "Comments can be at most 2 levels deep"
   on comments
   as restrictive
@@ -104,6 +111,47 @@ create policy "Users can delete their own comment"
   using (auth.uid() = user_id);
 
 -- Triggers
+create function private.set_comment_values_on_user_deleted()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.user_id is null then
+    new.is_deleted = true;
+    new.content = null;
+    new.updated_at = current_timestamp at time zone 'UTC';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger set_comment_values_on_user_deleted
+  before update on comments
+  for each row execute procedure private.set_comment_values_on_user_deleted();
+
+create function private.set_comment_values_on_comment_deleted()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.is_deleted = true then
+    new.content = null;
+    new.updated_at = current_timestamp at time zone 'UTC';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger set_comment_values_on_comment_deleted
+  before update on comments
+  for each row execute procedure private.set_comment_values_on_comment_deleted();
+
 create function private.set_default_values_on_comment_created()
 returns trigger
 language plpgsql
@@ -119,5 +167,5 @@ end;
 $$;
 
 create trigger set_default_values_on_comment_created
-  after insert on comments
+  before insert on comments
   for each row execute procedure private.set_default_values_on_comment_created();

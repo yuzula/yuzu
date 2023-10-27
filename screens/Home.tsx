@@ -286,7 +286,11 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                     },
                     {
                       text: 'Yes',
-                      onPress: () => handleBlockAuthorButtonPress(post.user_id)
+                      onPress: () => {
+                        if (post.user_id) {
+                          handleBlockAuthorButtonPress(post.user_id)
+                        }
+                      }
                     }
                   ]
                 )
@@ -319,7 +323,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           if (index === 0) {
             await handleReportPostButtonPress(post)
-          } else if (index === 1) {
+          } else if (index === 1 && post.user_id) {
             await handleBlockAuthorButtonPress(post.user_id)
           }
         }
@@ -459,19 +463,28 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 >
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
-                      className="font-Poppins_500Medium"
                       ellipsizeMode="tail"
                       numberOfLines={4}
+                      className={clsx('font-Poppins_500Medium', {
+                        'font-Poppins_500Medium_Italic': item.item.is_deleted
+                      })}
                     >
-                      {item.item.content}
+                      {item.item.is_deleted ? 'Deleted' : item.item.content}
                     </Text>
 
                     <View className="flex flex-row items-center justify-between">
                       <View className="space-y-1">
                         <Text className="font-Poppins_400Regular text-apple-gray-light">
                           by&nbsp;
-                          <Text className="font-Poppins_500Medium">
-                            {item.item.username}
+                          <Text
+                            className={clsx('font-Poppins_500Medium', {
+                              'font-Poppins_500Medium_Italic':
+                                item.item.is_deleted
+                            })}
+                          >
+                            {item.item.is_deleted
+                              ? 'Deleted'
+                              : item.item.username}
                           </Text>
                         </Text>
                         <View className="flex flex-row space-x-2">

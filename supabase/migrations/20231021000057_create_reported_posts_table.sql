@@ -76,5 +76,5 @@ end;
 $$;
 
 create trigger set_default_values_on_reported_post_created
-  after insert on reported_posts
+  before insert on reported_posts
   for each row execute procedure private.set_default_values_on_reported_post_created();

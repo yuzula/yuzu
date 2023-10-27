@@ -28,6 +28,11 @@ create policy "Users can create their own profile"
   to authenticated
   with check (auth.uid() = id);
 
+create policy "Users can delete their own profile"
+  on profiles for delete
+  to authenticated
+  using (auth.uid() = id);
+
 -- Communities RLS
 alter table communities enable row level security;
 
@@ -78,6 +83,24 @@ end;
 $$;
 
 -- Triggers
+create function private.delete_user_on_profile_deletion()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from auth.users
+  where auth.users.id = old.id;
+
+  return old;
+end;
+$$;
+
+create trigger delete_user_on_profile_deletion
+  after delete on profiles
+  for each row execute procedure private.delete_user_on_profile_deletion();
+
 create function private.create_profile_and_community_on_auth_user_created()
 returns trigger
 language plpgsql

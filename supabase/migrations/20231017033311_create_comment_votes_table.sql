@@ -84,5 +84,5 @@ end;
 $$;
 
 create trigger set_default_values_on_comment_vote_created
-  after insert on comment_votes
+  before insert on comment_votes
   for each row execute procedure private.set_default_values_on_comment_vote_created();

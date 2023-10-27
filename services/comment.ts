@@ -80,7 +80,7 @@ export const getAllRoot = async ({ postId, userId }: GetAllRootParams) => {
     response.data.map(data => ({
       ...data,
       username: data.profiles?.username,
-      parent_comment_id: undefined,
+      parent_comment_id: null,
       current_user_vote: !data.comment_votes[0]
         ? undefined
         : data.comment_votes[0].is_upvote
