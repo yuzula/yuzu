@@ -75,6 +75,7 @@ export const getAll = async ({
         : 'comment_count',
       { ascending: false }
     )
+    .limit(40)
 
   if (response.error) {
     throw response.error
