@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import * as Linking from 'expo-linking'
 import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -81,6 +82,18 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
     },
     [navigation]
   )
+
+  const handlePrivacyPolicyPress = useCallback(async () => {
+    const url = 'https://yuzu.la/privacy'
+
+    if (await Linking.canOpenURL(url)) {
+      await Linking.openURL(url)
+    } else {
+      Sentry.Native.captureException(new Error('Could not open Privacy Policy'))
+
+      Alert.alert('Could not open Privacy Policy', GENERIC_ERROR_MESSAGE)
+    }
+  }, [])
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -179,6 +192,15 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             >
               Cancel
             </Button>
+            <Text className="text-center font-Poppins_400Regular text-apple-gray-light">
+              By signing up, you agree to our&nbsp;
+              <Text
+                className="font-Poppins_500Medium"
+                onPress={handlePrivacyPolicyPress}
+              >
+                Privacy Policy
+              </Text>
+            </Text>
           </View>
         </View>
       </KeyboardAvoidingView>
