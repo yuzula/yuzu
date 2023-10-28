@@ -39,7 +39,7 @@ import * as reportService from '../services/report'
 import { RootTabScreenProps } from '../types'
 
 const createPostSchema = z.object({
-  content: z.string().min(1).max(300)
+  content: z.string().trim().min(1).max(300)
 })
 
 type CreatePostSchema = z.infer<typeof createPostSchema>

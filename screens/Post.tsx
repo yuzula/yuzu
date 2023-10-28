@@ -41,7 +41,7 @@ import * as reportService from '../services/report'
 import { RootStackScreenProps } from '../types'
 
 const createCommentSchema = z.object({
-  content: z.string().min(1).max(600)
+  content: z.string().trim().min(1).max(600)
 })
 
 type CreateCommentSchema = z.infer<typeof createCommentSchema>
