@@ -21,7 +21,7 @@ import { RootStackScreenProps } from '../types'
 
 const registerSchema = z.object({
   email: z.string().email(),
-  username: z.string().min(1).max(20),
+  username: z.string().regex(/^\w+$/).min(1).max(20),
   password: z.string().min(6).max(60)
 })
 
