@@ -34,3 +34,6 @@ yarn-error.*
 .eslintcache
 .node_repl_history
 .yarn-integrity
+
+# Service account
+google_service_account.json
