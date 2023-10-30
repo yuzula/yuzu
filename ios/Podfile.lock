@@ -23,6 +23,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - ExpoSystemUI (2.4.0):
     - ExpoModulesCore
+  - ExpoTrackingTransparency (3.1.0):
+    - ExpoModulesCore
   - ExpoWebBrowser (12.3.2):
     - ExpoModulesCore
   - EXSplashScreen (0.20.5):
@@ -518,6 +520,7 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - ExpoTrackingTransparency (from `../node_modules/expo-tracking-transparency/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -598,6 +601,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoTrackingTransparency:
+    :path: "../node_modules/expo-tracking-transparency/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   EXSplashScreen:
@@ -704,6 +709,7 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
   ExpoModulesCore: 51cb2e7ab4c8da14be3f40b66d54c1781002e99d
   ExpoSystemUI: fa4854e3226e87f86d3383570264c6e4e90bc782
+  ExpoTrackingTransparency: 28cb4ba43e61231c4173507ba05b3ce8c777f173
   ExpoWebBrowser: 2c788f9c07718a780fe6d8bf2f6195c47609faaa
   EXSplashScreen: c0e7f2d4a640f3b875808ed0b88575538daf6d82
   FBLazyVector: 71803c074f6325f10b5ec891c443b6bbabef0ca7
@@ -758,4 +764,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: db32a73755e1e68df007ece82971525b019cf4d3
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.14.2

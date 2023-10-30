@@ -9,6 +9,7 @@ import * as Sentry from 'sentry-expo'
 import AuthContextProvider from './contexts/AuthContext'
 import useFonts from './hooks/useFonts'
 import useSession from './hooks/useSession'
+import useTrackingTransparency from './hooks/useTrackingTransparency'
 import Navigation from './navigation'
 
 Sentry.init({
@@ -20,11 +21,14 @@ SplashScreen.preventAutoHideAsync()
 
 const App: FunctionComponent = memo(() => {
   const { isLoading: areFontsLoading, error: fontsError } = useFonts()
+
   const {
     session,
     isLoading: isSessionLoading,
     error: sessionError
   } = useSession()
+
+  useTrackingTransparency()
 
   const areResourcesLoading = areFontsLoading || isSessionLoading
   const areResourcesErroring = fontsError || sessionError
