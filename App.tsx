@@ -7,7 +7,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import * as Sentry from 'sentry-expo'
 
 import AuthContextProvider from './contexts/AuthContext'
+import ProfileContextProvider from './contexts/ProfileContext'
 import useFonts from './hooks/useFonts'
+import useProfile from './hooks/useProfile'
 import useSession from './hooks/useSession'
 import useTrackingTransparency from './hooks/useTrackingTransparency'
 import Navigation from './navigation'
@@ -28,10 +30,17 @@ const App: FunctionComponent = memo(() => {
     error: sessionError
   } = useSession()
 
+  const {
+    profile,
+    isLoading: isProfileLoading,
+    error: profileError
+  } = useProfile(session?.user)
+
   useTrackingTransparency()
 
-  const areResourcesLoading = areFontsLoading || isSessionLoading
-  const areResourcesErroring = fontsError || sessionError
+  const areResourcesLoading =
+    areFontsLoading || isSessionLoading || isProfileLoading
+  const areResourcesErroring = fontsError || sessionError || profileError
 
   const handleNavigationReady = useCallback(() => {
     if (!areResourcesLoading && !areResourcesErroring) {
@@ -44,14 +53,16 @@ const App: FunctionComponent = memo(() => {
   } else {
     return (
       <AuthContextProvider session={session ?? undefined}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar />
-          <BottomSheetModalProvider>
-            <ActionSheetProvider>
-              <Navigation onReady={handleNavigationReady} />
-            </ActionSheetProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
+        <ProfileContextProvider profile={profile}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <StatusBar />
+            <BottomSheetModalProvider>
+              <ActionSheetProvider>
+                <Navigation onReady={handleNavigationReady} />
+              </ActionSheetProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </ProfileContextProvider>
       </AuthContextProvider>
     )
   }

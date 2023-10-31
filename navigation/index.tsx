@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FunctionComponent } from 'react'
 
-import useAuth from '../hooks/useAuth'
+import useAuthContext from '../hooks/useAuthContext'
 import EmailVerification from '../screens/EmailVerification'
 import Home from '../screens/Home'
 import Login from '../screens/Login'
@@ -60,7 +60,7 @@ const BottomTabNavigator: FunctionComponent = () => {
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const RootNavigator: FunctionComponent = () => {
-  const { session } = useAuth()
+  const { session } = useAuthContext()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

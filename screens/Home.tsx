@@ -28,13 +28,12 @@ import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import useAuth from '../hooks/useAuth'
+import useAuthContext from '../hooks/useAuthContext'
+import useProfileContext from '../hooks/useProfileContext'
 import * as postModel from '../models/post'
-import * as profileModel from '../models/profile'
 import * as blockService from '../services/block'
 import * as communityService from '../services/community'
 import * as postService from '../services/post'
-import * as profileService from '../services/profile'
 import * as reportService from '../services/report'
 import { RootTabScreenProps } from '../types'
 
@@ -65,9 +64,9 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const { showActionSheetWithOptions } = useActionSheet()
 
-  const { user } = useAuth()
+  const { user } = useAuthContext()
+  const { profile } = useProfileContext()
 
-  const [profile, setProfile] = useState<profileModel.Schema>()
   const [posts, setPosts] = useState<postModel.Schema[]>()
   const [memberCount, setMemberCount] = useState<number>()
   const [sortBy, setSortBy] = useState<'hot' | 'new' | 'controversial'>('hot')
@@ -397,20 +396,6 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       handlePostsRefresh()
     }
   }, [handlePostsRefresh, route.params?.shouldRefresh])
-
-  useEffect(() => {
-    ;(async () => {
-      if (user) {
-        try {
-          setProfile(await profileService.get(user.id))
-        } catch (error) {
-          Sentry.Native.captureException(error)
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-      }
-    })()
-  }, [user])
 
   useEffect(() => {
     ;(async () => {

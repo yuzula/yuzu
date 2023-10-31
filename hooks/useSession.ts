@@ -1,5 +1,6 @@
 import { AuthError, Session } from '@supabase/supabase-js'
 import { useCallback, useEffect, useState } from 'react'
+import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
 
@@ -13,6 +14,8 @@ const useSession = () => {
     const result = await supabase.auth.getSession()
 
     if (result.error) {
+      Sentry.Native.captureException(result.error)
+
       setError(result.error)
     } else {
       setSession(result.data.session)

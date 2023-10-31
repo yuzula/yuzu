@@ -31,7 +31,7 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import useAuth from '../hooks/useAuth'
+import useAuthContext from '../hooks/useAuthContext'
 import * as commentModel from '../models/comment'
 import * as postModel from '../models/post'
 import * as blockService from '../services/block'
@@ -66,7 +66,7 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const replyTextFieldRef = useRef<TextInput>(null)
 
-  const { user } = useAuth()
+  const { user } = useAuthContext()
   const [post, setPost] = useState<postModel.Schema>()
   const [comments, setComments] = useState<commentModel.Schema[]>()
   const [replyParentCommentId, setReplyParentCommentId] = useState<
