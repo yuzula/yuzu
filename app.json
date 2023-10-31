@@ -13,12 +13,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#fcf951"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.yuzu.ios",
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +43,10 @@
         "projectId": "3c83602b-b346-4829-887e-b639a4fbe8c0"
       }
     },
-    "plugins": ["sentry-expo", "expo-tracking-transparency"],
+    "plugins": [
+      "sentry-expo",
+      "expo-tracking-transparency"
+    ],
     "hooks": {
       "postPublish": [
         {
