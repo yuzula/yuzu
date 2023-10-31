@@ -45,7 +45,7 @@ const App: FunctionComponent = memo(() => {
     return (
       <AuthContextProvider session={session ?? undefined}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar />
+          <StatusBar style="dark" />
           <BottomSheetModalProvider>
             <ActionSheetProvider>
               <Navigation onReady={handleNavigationReady} />
