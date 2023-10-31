@@ -366,6 +366,8 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           bottomSheetModalRef.current?.close()
 
+          handlePostsRefresh()
+
           navigation.navigate('Post', { postId })
         } catch (error) {
           Sentry.Native.captureException(error)
@@ -376,7 +378,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         }
       }
     },
-    [navigation, profile, reset]
+    [handlePostsRefresh, navigation, profile, reset]
   )
 
   const handlePostPress = useCallback(
