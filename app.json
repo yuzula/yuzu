@@ -20,7 +20,8 @@
       "bundleIdentifier": "com.yuzu.ios",
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
