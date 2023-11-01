@@ -76,7 +76,7 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-
+      } finally {
         setIsLoading(false)
       }
     },

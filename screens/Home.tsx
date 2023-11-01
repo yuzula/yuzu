@@ -454,12 +454,20 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
 
             <FlatList
-              className="w-full grow border-t border-gray-200"
+              className="w-full border-t border-gray-200"
+              contentContainerStyle={{ flexGrow: 1 }}
               data={posts}
               keyExtractor={item => item.id.toString()}
               refreshing={arePostsRefreshing}
               ItemSeparatorComponent={() => (
                 <View className="w-full border-t border-gray-200" />
+              )}
+              ListEmptyComponent={() => (
+                <View className="flex-1 items-center justify-center">
+                  <Text className="font-Poppins_500Medium text-apple-gray-light">
+                    No posts yet!
+                  </Text>
+                </View>
               )}
               renderItem={item => (
                 <Pressable

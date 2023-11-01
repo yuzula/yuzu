@@ -56,13 +56,15 @@ const EmailVerification: FunctionComponent<
         })
 
         if (result.error) {
+          setIsLoading(false)
+
           return Alert.alert(result.error.message)
         }
       } catch (error) {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
+
         setIsLoading(false)
       }
     },
