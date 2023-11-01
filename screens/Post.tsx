@@ -459,13 +459,21 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           </View>
 
           <FlatList
-            className="w-full grow"
+            className="w-full"
+            contentContainerStyle={{ flexGrow: 1 }}
             data={comments}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
             refreshing={isRefreshing}
             ItemSeparatorComponent={() => (
               <View className="w-full border-t border-gray-200" />
+            )}
+            ListEmptyComponent={() => (
+              <View className="flex-1 items-center justify-center">
+                <Text className="font-Poppins_500Medium text-apple-gray-light">
+                  Be the first to comment!
+                </Text>
+              </View>
             )}
             ListHeaderComponent={
               <>
