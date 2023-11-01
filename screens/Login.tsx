@@ -62,7 +62,7 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
+
         setIsLoading(false)
       }
     },

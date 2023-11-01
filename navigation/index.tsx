@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FunctionComponent } from 'react'
 
 import useAuthContext from '../hooks/useAuthContext'
+import useProfileContext from '../hooks/useProfileContext'
 import EmailVerification from '../screens/EmailVerification'
 import Home from '../screens/Home'
 import Login from '../screens/Login'
@@ -61,10 +62,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const RootNavigator: FunctionComponent = () => {
   const { session } = useAuthContext()
+  const { profile } = useProfileContext()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {session ? (
+      {session && profile ? (
         <>
           <Stack.Screen component={BottomTabNavigator} name="Tabs" />
           <Stack.Screen component={Post} name="Post" />
