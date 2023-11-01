@@ -96,8 +96,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             text: 'Cancel',
             style: 'cancel'
           }
-        ],
-        { cancelable: false }
+        ]
       )
     } else {
       bottomSheetModalRef.current?.close()
