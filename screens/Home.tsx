@@ -465,7 +465,7 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               ListEmptyComponent={() => (
                 <View className="flex-1 items-center justify-center">
                   <Text className="font-Poppins_500Medium text-apple-gray-light">
-                    No posts yet!
+                    Be the first to post!
                   </Text>
                 </View>
               )}
