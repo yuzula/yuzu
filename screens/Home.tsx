@@ -69,6 +69,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const {
     posts,
+    isLoadingOnMount: arePostsLoadingOnMount,
     isLoading: arePostsLoading,
     sortPosts,
     refreshPosts,
@@ -329,7 +330,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               </View>
             </View>
 
-            {arePostsLoading ? (
+            {arePostsLoadingOnMount ? (
               <View className="grow items-center justify-center">
                 <ActivityIndicator />
               </View>

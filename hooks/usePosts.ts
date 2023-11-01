@@ -20,6 +20,7 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
 
   const [posts, setPosts] = useState<postModel.Schema[]>([])
   const [sortBy, setSortBy] = useState<'hot' | 'new' | 'controversial'>('hot')
+  const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
 
   const getPosts = useCallback(async () => {
@@ -53,6 +54,7 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
       Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     } finally {
       setIsLoading(false)
+      setIsLoadingOnMount(false)
     }
   }, [communityDomainName, profile, sortBy])
 
@@ -122,5 +124,12 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
     getPosts()
   }, [getPosts])
 
-  return { posts, isLoading, sortPosts, refreshPosts, votePost }
+  return {
+    posts,
+    isLoadingOnMount,
+    isLoading,
+    sortPosts,
+    refreshPosts,
+    votePost
+  }
 }
