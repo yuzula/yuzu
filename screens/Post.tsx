@@ -470,6 +470,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             )}
             ListEmptyComponent={() => (
               <View className="flex-1 items-center justify-center">
+                <Text className="font-Poppins_600SemiBold text-apple-gray-light">
+                  No comments yet
+                </Text>
                 <Text className="font-Poppins_500Medium text-apple-gray-light">
                   Be the first to comment!
                 </Text>

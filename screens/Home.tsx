@@ -27,12 +27,12 @@ import { z } from 'zod'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useMemberCount } from '../hooks/useMemberCount'
+import { usePosts } from '../hooks/usePosts'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
-import { communityService } from '../services/community'
 import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { RootTabScreenProps } from '../types'
@@ -67,13 +67,19 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const { user } = useAuthContext()
   const { profile } = useProfileContext()
 
-  const [posts, setPosts] = useState<postModel.Schema[]>()
-  const [memberCount, setMemberCount] = useState<number>()
-  const [sortBy, setSortBy] = useState<'hot' | 'new' | 'controversial'>('hot')
+  const {
+    posts,
+    isLoading: arePostsLoading,
+    sortPosts,
+    refreshPosts,
+    votePost
+  } = usePosts({
+    communityDomainName: profile?.community_domain_name
+  })
+
+  const { memberCount, isLoading: isMemberCountLoading } = useMemberCount()
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
-
-  const [arePostsRefreshing, setArePostsRefreshing] = useState(false)
 
   const handleCreatePostButtonPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -103,60 +109,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     }
   }, [isDirty, reset])
 
-  const getPostsSortByHot = useCallback(async () => {
-    if (profile) {
-      try {
-        setPosts(
-          await postService.getAll({
-            communityDomainName: profile.community_domain_name,
-            userId: profile.id,
-            sortBy: 'hot'
-          })
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [profile])
-
-  const getPostsSortByNew = useCallback(async () => {
-    if (profile) {
-      try {
-        setPosts(
-          await postService.getAll({
-            communityDomainName: profile.community_domain_name,
-            userId: profile.id,
-            sortBy: 'new'
-          })
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [profile])
-
-  const getPostsSortByControversial = useCallback(async () => {
-    if (profile) {
-      try {
-        setPosts(
-          await postService.getAll({
-            communityDomainName: profile.community_domain_name,
-            userId: profile.id,
-            sortBy: 'controversial'
-          })
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [profile])
-
   const handleSortButtonPress = useCallback(() => {
     showActionSheetWithOptions(
       {
@@ -169,90 +121,30 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           return
         }
 
-        setArePostsRefreshing(true)
-
         switch (index) {
           case 0:
-            setSortBy('hot')
-            await getPostsSortByHot()
+            await sortPosts('hot')
             break
           case 1:
-            setSortBy('new')
-            await getPostsSortByNew()
+            await sortPosts('new')
             break
           case 2:
-            setSortBy('controversial')
-            await getPostsSortByControversial()
+            await sortPosts('controversial')
             break
         }
-
-        setArePostsRefreshing(false)
       }
     )
-  }, [
-    getPostsSortByControversial,
-    getPostsSortByHot,
-    getPostsSortByNew,
-    showActionSheetWithOptions
-  ])
+  }, [showActionSheetWithOptions, sortPosts])
 
   const handlePostsRefresh = useCallback(async () => {
-    setArePostsRefreshing(true)
-
-    switch (sortBy) {
-      case 'hot':
-        await getPostsSortByHot()
-        break
-      case 'new':
-        await getPostsSortByNew()
-        break
-      case 'controversial':
-        await getPostsSortByControversial()
-        break
-    }
-
-    setArePostsRefreshing(false)
-  }, [
-    getPostsSortByControversial,
-    getPostsSortByHot,
-    getPostsSortByNew,
-    sortBy
-  ])
+    refreshPosts()
+  }, [refreshPosts])
 
   const handlePostVoteButtonPress = useCallback(
-    async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
-      if (posts) {
-        const newPosts = [...posts]
-
-        const newPost = newPosts.find(post => post.id === postId)
-
-        if (!newPost) {
-          Sentry.Native.captureException(new Error('Could not find voted post'))
-
-          return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-
-        const oldVote = newPost.current_user_vote
-
-        const resultingVote = getResultingVote({
-          oldVote,
-          vote
-        })
-
-        newPost.current_user_vote = resultingVote.newVote
-        newPost.vote_count += resultingVote.delta
-
-        setPosts(newPosts)
-
-        await postService.registerVote({
-          postId,
-          userId,
-          oldVote,
-          vote
-        })
-      }
+    async (postId: number, vote: 'upvote' | 'downvote') => {
+      votePost({ postId, vote })
     },
-    [posts]
+    [votePost]
   )
 
   const handleBlockAuthorButtonPress = useCallback(
@@ -387,37 +279,21 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   )
 
   useEffect(() => {
-    getPostsSortByHot()
-  }, [getPostsSortByHot, profile])
-
-  useEffect(() => {
     if (route.params?.shouldRefresh) {
       handlePostsRefresh()
     }
   }, [handlePostsRefresh, route.params?.shouldRefresh])
 
-  useEffect(() => {
-    ;(async () => {
-      if (profile) {
-        try {
-          setMemberCount(
-            await communityService.getMemberCount(profile.community_domain_name)
-          )
-        } catch (error) {
-          Sentry.Native.captureException(error)
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-      }
-    })()
-  }, [profile])
+  if (!user || !profile) {
+    return null
+  }
 
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      {!user || !profile || !memberCount || !posts ? (
+      {isMemberCountLoading ? (
         <ActivityIndicator />
       ) : (
         <View className="w-full flex-1 pt-6">
@@ -453,164 +329,165 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               </View>
             </View>
 
-            <FlatList
-              className="w-full border-t border-gray-200"
-              contentContainerStyle={{ flexGrow: 1 }}
-              data={posts}
-              keyExtractor={item => item.id.toString()}
-              refreshing={arePostsRefreshing}
-              ItemSeparatorComponent={() => (
-                <View className="w-full border-t border-gray-200" />
-              )}
-              ListEmptyComponent={() => (
-                <View className="flex-1 items-center justify-center">
-                  <Text className="font-Poppins_500Medium text-apple-gray-light">
-                    Be the first to post!
-                  </Text>
-                </View>
-              )}
-              renderItem={item => (
-                <Pressable
-                  className="active:bg-gray-200"
-                  onPress={() => handlePostPress(item.item.id)}
-                >
-                  <View className="mx-auto w-5/6 space-y-2 py-4">
-                    <Text
-                      ellipsizeMode="tail"
-                      numberOfLines={4}
-                      className={clsx('font-Poppins_500Medium', {
-                        'font-Poppins_500Medium_Italic':
-                          item.item.is_deleted || item.item.is_flagged
-                      })}
-                    >
-                      {item.item.is_deleted
-                        ? 'Deleted'
-                        : item.item.is_flagged
-                        ? 'Flagged'
-                        : item.item.content}
+            {arePostsLoading ? (
+              <View className="grow items-center justify-center">
+                <ActivityIndicator />
+              </View>
+            ) : (
+              <FlatList
+                className="w-full border-t border-gray-200"
+                contentContainerStyle={{ flexGrow: 1 }}
+                data={posts}
+                keyExtractor={item => item.id.toString()}
+                refreshing={arePostsLoading}
+                ItemSeparatorComponent={() => (
+                  <View className="w-full border-t border-gray-200" />
+                )}
+                ListEmptyComponent={() => (
+                  <View className="flex-1 items-center justify-center">
+                    <Text className="font-Poppins_500Medium text-apple-gray-light">
+                      Be the first to post!
                     </Text>
+                  </View>
+                )}
+                renderItem={item => (
+                  <Pressable
+                    className="active:bg-gray-200"
+                    onPress={() => handlePostPress(item.item.id)}
+                  >
+                    <View className="mx-auto w-5/6 space-y-2 py-4">
+                      <Text
+                        ellipsizeMode="tail"
+                        numberOfLines={4}
+                        className={clsx('font-Poppins_500Medium', {
+                          'font-Poppins_500Medium_Italic':
+                            item.item.is_deleted || item.item.is_flagged
+                        })}
+                      >
+                        {item.item.is_deleted
+                          ? 'Deleted'
+                          : item.item.is_flagged
+                          ? 'Flagged'
+                          : item.item.content}
+                      </Text>
 
-                    <View className="flex flex-row items-center justify-between">
-                      <View className="space-y-1">
-                        <Text className="font-Poppins_400Regular text-apple-gray-light">
-                          by&nbsp;
-                          <Text
-                            className={clsx('font-Poppins_500Medium', {
-                              'font-Poppins_500Medium_Italic':
-                                item.item.is_deleted
-                            })}
-                          >
-                            {item.item.is_deleted
-                              ? 'Deleted'
-                              : item.item.username}
+                      <View className="flex flex-row items-center justify-between">
+                        <View className="space-y-1">
+                          <Text className="font-Poppins_400Regular text-apple-gray-light">
+                            by&nbsp;
+                            <Text
+                              className={clsx('font-Poppins_500Medium', {
+                                'font-Poppins_500Medium_Italic':
+                                  item.item.is_deleted
+                              })}
+                            >
+                              {item.item.is_deleted
+                                ? 'Deleted'
+                                : item.item.username}
+                            </Text>
                           </Text>
-                        </Text>
-                        <View className="flex flex-row space-x-2">
-                          <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="arrowup" size={14} />
-                              &nbsp;{item.item.vote_count}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="message1" size={14} />
-                              &nbsp;{item.item.comment_count}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="clockcircleo" size={14} />
-                              &nbsp;
-                              {formatDuration(
-                                Date.now() - item.item.created_at.getTime()
-                              )}
-                            </Text>
+                          <View className="flex flex-row space-x-2">
+                            <View>
+                              <Text className="font-Poppins_400Regular text-apple-gray-light">
+                                <AntDesign name="arrowup" size={14} />
+                                &nbsp;{item.item.vote_count}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text className="font-Poppins_400Regular text-apple-gray-light">
+                                <AntDesign name="message1" size={14} />
+                                &nbsp;{item.item.comment_count}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text className="font-Poppins_400Regular text-apple-gray-light">
+                                <AntDesign name="clockcircleo" size={14} />
+                                &nbsp;
+                                {formatDuration(
+                                  Date.now() - item.item.created_at.getTime()
+                                )}
+                              </Text>
+                            </View>
                           </View>
                         </View>
-                      </View>
 
-                      <View className="flex flex-row items-center space-x-1">
-                        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
+                        <View className="flex flex-row items-center space-x-1">
+                          {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
                         since right now it only contains report and block actions, both of which the user can't
                         perform on themselves */}
-                        {user.id !== item.item.user_id && (
+                          {user.id !== item.item.user_id && (
+                            <Pressable
+                              className="rounded-lg p-2 active:bg-gray-200"
+                              onPress={() =>
+                                handlePostEllipsisButtonPress(item.item)
+                              }
+                            >
+                              <Text className="text-apple-gray-light">
+                                <AntDesign name="ellipsis1" size={20} />
+                              </Text>
+                            </Pressable>
+                          )}
                           <Pressable
-                            className="rounded-lg p-2 active:bg-gray-200"
+                            className={clsx(
+                              {
+                                'bg-primary active:bg-primary-darker':
+                                  item.item.current_user_vote === 'upvote',
+                                'active:bg-gray-200':
+                                  item.item.current_user_vote !== 'upvote'
+                              },
+                              'rounded-lg p-2'
+                            )}
                             onPress={() =>
-                              handlePostEllipsisButtonPress(item.item)
+                              handlePostVoteButtonPress(item.item.id, 'upvote')
                             }
                           >
-                            <Text className="text-apple-gray-light">
-                              <AntDesign name="ellipsis1" size={20} />
+                            <Text
+                              className={clsx({
+                                'text-black':
+                                  item.item.current_user_vote === 'upvote',
+                                'text-apple-gray-light':
+                                  item.item.current_user_vote !== 'upvote'
+                              })}
+                            >
+                              <AntDesign name="arrowup" size={20} />
                             </Text>
                           </Pressable>
-                        )}
-                        <Pressable
-                          className={clsx(
-                            {
-                              'bg-primary active:bg-primary-darker':
-                                item.item.current_user_vote === 'upvote',
-                              'active:bg-gray-200':
-                                item.item.current_user_vote !== 'upvote'
-                            },
-                            'rounded-lg p-2'
-                          )}
-                          onPress={() =>
-                            handlePostVoteButtonPress(
-                              item.item.id,
-                              user.id,
-                              'upvote'
-                            )
-                          }
-                        >
-                          <Text
-                            className={clsx({
-                              'text-black':
-                                item.item.current_user_vote === 'upvote',
-                              'text-apple-gray-light':
-                                item.item.current_user_vote !== 'upvote'
-                            })}
+                          <Pressable
+                            className={clsx(
+                              {
+                                'bg-apple-blue-light active:opacity-90':
+                                  item.item.current_user_vote === 'downvote',
+                                'active:bg-gray-200':
+                                  item.item.current_user_vote !== 'downvote'
+                              },
+                              'rounded-lg p-2'
+                            )}
+                            onPress={() =>
+                              handlePostVoteButtonPress(
+                                item.item.id,
+                                'downvote'
+                              )
+                            }
                           >
-                            <AntDesign name="arrowup" size={20} />
-                          </Text>
-                        </Pressable>
-                        <Pressable
-                          className={clsx(
-                            {
-                              'bg-apple-blue-light active:opacity-90':
-                                item.item.current_user_vote === 'downvote',
-                              'active:bg-gray-200':
-                                item.item.current_user_vote !== 'downvote'
-                            },
-                            'rounded-lg p-2'
-                          )}
-                          onPress={() =>
-                            handlePostVoteButtonPress(
-                              item.item.id,
-                              user.id,
-                              'downvote'
-                            )
-                          }
-                        >
-                          <Text
-                            className={clsx({
-                              'text-white':
-                                item.item.current_user_vote === 'downvote',
-                              'text-apple-gray-light':
-                                item.item.current_user_vote !== 'downvote'
-                            })}
-                          >
-                            <AntDesign name="arrowdown" size={20} />
-                          </Text>
-                        </Pressable>
+                            <Text
+                              className={clsx({
+                                'text-white':
+                                  item.item.current_user_vote === 'downvote',
+                                'text-apple-gray-light':
+                                  item.item.current_user_vote !== 'downvote'
+                              })}
+                            >
+                              <AntDesign name="arrowdown" size={20} />
+                            </Text>
+                          </Pressable>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </Pressable>
-              )}
-              onRefresh={handlePostsRefresh}
-            />
+                  </Pressable>
+                )}
+                onRefresh={handlePostsRefresh}
+              />
+            )}
           </View>
         </View>
       )}
