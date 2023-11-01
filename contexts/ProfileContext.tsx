@@ -8,8 +8,8 @@ import {
 import * as Sentry from 'sentry-expo'
 
 import useAuthContext from '../hooks/useAuthContext'
-import * as profileModel from '../models/profile'
-import * as profileService from '../services/profile'
+import { profileModel } from '../models/profile'
+import { profileService } from '../services/profile'
 
 export interface ProfileContextValues {
   profile?: profileModel.Schema

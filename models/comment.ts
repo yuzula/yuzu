@@ -22,3 +22,5 @@ export const schema = baseSchema.extend({
 })
 
 export type Schema = z.infer<typeof schema>
+
+export * as commentModel from './comment'

@@ -19,3 +19,5 @@ export const reportComment = async (commentId: number) => {
     throw response.error
   }
 }
+
+export * as reportService from './report'

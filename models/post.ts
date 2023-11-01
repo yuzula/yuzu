@@ -17,3 +17,5 @@ export const schema = z.object({
 })
 
 export type Schema = z.infer<typeof schema>
+
+export * as postModel from './post'

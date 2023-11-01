@@ -1,6 +1,6 @@
 import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
-import * as commentModel from '../models/comment'
+import { commentModel } from '../models/comment'
 
 interface CreateParams {
   postId: number
@@ -194,3 +194,5 @@ export const registerVote = async ({
     }
   }
 }
+
+export * as commentService from './comment'

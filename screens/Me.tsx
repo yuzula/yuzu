@@ -8,7 +8,7 @@ import { supabase } from '../clients/supabase'
 import Button from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import useAuthContext from '../hooks/useAuthContext'
-import * as userService from '../services/user'
+import { userService } from '../services/user'
 
 const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()

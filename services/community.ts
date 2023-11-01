@@ -13,3 +13,5 @@ export const getMemberCount = async (domainName: string) => {
 
   return z.number().parse(response.data)
 }
+
+export * as communityService from './community'

@@ -5,7 +5,7 @@ import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import * as userService from '../services/user'
+import { userService } from '../services/user'
 
 const useCurrentUser = () => {
   const [user, setUser] = useState<User>()

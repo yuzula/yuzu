@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import { getResultingVote } from '../helpers/vote'
-import * as postModel from '../models/post'
+import { postModel } from '../models/post'
 
 interface GetParams {
   postId: number
@@ -201,3 +201,5 @@ export const registerVote = async ({
     }
   }
 }
+
+export * as postService from './post'

@@ -29,3 +29,5 @@ export const unblockUser = async ({
     throw response.error
   }
 }
+
+export * as blockService from './block'

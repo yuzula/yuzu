@@ -30,3 +30,5 @@ export const logout = async () => {
     throw error
   }
 }
+
+export * as userService from './user'

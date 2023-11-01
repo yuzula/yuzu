@@ -1,5 +1,5 @@
 import { supabase } from '../clients/supabase'
-import { schema } from '../models/profile'
+import { profileModel } from '../models/profile'
 
 export const get = async (id: string) => {
   const response = await supabase
@@ -12,5 +12,7 @@ export const get = async (id: string) => {
     throw response.error
   }
 
-  return schema.parse(response.data)
+  return profileModel.schema.parse(response.data)
 }
+
+export * as profileService from './profile'
