@@ -22,7 +22,7 @@ interface CommentProps {
   onDownvoteButtonPress?: (id: number) => void
 }
 
-const Comment: FunctionComponent<CommentProps> = ({
+export const Comment: FunctionComponent<CommentProps> = ({
   id,
   username,
   voteCount,
@@ -151,5 +151,3 @@ const Comment: FunctionComponent<CommentProps> = ({
     </View>
   </View>
 )
-
-export default Comment

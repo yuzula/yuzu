@@ -4,7 +4,7 @@ import * as Sentry from 'sentry-expo'
 import { profileModel } from '../models/profile'
 import { profileService } from '../services/profile'
 
-const useProfile = (id: string) => {
+export const useProfile = (id: string) => {
   const [profile, setProfile] = useState<profileModel.Schema>()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error>()
@@ -26,5 +26,3 @@ const useProfile = (id: string) => {
 
   return { profile, isLoading, error }
 }
-
-export default useProfile

@@ -14,7 +14,7 @@ import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
@@ -24,7 +24,7 @@ const emailVerificationSchema = z.object({
 
 type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>
 
-const EmailVerification: FunctionComponent<
+export const EmailVerification: FunctionComponent<
   RootStackScreenProps<'EmailVerification'>
 > = ({ navigation, route: { params } }) => {
   const {
@@ -125,5 +125,3 @@ const EmailVerification: FunctionComponent<
     </SafeAreaView>
   )
 }
-
-export default EmailVerification

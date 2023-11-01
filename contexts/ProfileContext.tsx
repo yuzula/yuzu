@@ -7,7 +7,7 @@ import {
 } from 'react'
 import * as Sentry from 'sentry-expo'
 
-import useAuthContext from '../hooks/useAuthContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 import { profileModel } from '../models/profile'
 import { profileService } from '../services/profile'
 
@@ -19,7 +19,7 @@ export interface ProfileContextValues {
 
 export const ProfileContext = createContext<ProfileContextValues | null>(null)
 
-const ProfileContextProvider: FunctionComponent<PropsWithChildren> = ({
+export const ProfileContextProvider: FunctionComponent<PropsWithChildren> = ({
   children
 }) => {
   const { user, isLoading: isAuthLoading } = useAuthContext()
@@ -58,5 +58,3 @@ const ProfileContextProvider: FunctionComponent<PropsWithChildren> = ({
     </ProfileContext.Provider>
   )
 }
-
-export default ProfileContextProvider

@@ -9,7 +9,7 @@ import * as Linking from 'expo-linking'
 
 import { RootStackParamList } from '../types'
 
-const linking: LinkingOptions<RootStackParamList> = {
+export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [Linking.createURL('/'), 'https://yuzu.la'],
   config: {
     screens: {
@@ -35,5 +35,3 @@ const linking: LinkingOptions<RootStackParamList> = {
     }
   }
 }
-
-export default linking

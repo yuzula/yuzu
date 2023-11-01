@@ -24,12 +24,12 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import useAuthContext from '../hooks/useAuthContext'
-import useProfileContext from '../hooks/useProfileContext'
+import { useAuthContext } from '../hooks/useAuthContext'
+import { useProfileContext } from '../hooks/useProfileContext'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
 import { communityService } from '../services/community'
@@ -43,7 +43,7 @@ const createPostSchema = z.object({
 
 type CreatePostSchema = z.infer<typeof createPostSchema>
 
-const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
+export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   navigation,
   route
 }) => {
@@ -671,5 +671,3 @@ const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     </SafeAreaView>
   )
 }
-
-export default Home

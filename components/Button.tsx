@@ -14,7 +14,7 @@ interface ButtonProps extends PropsWithChildren<PressableProps> {
   variant?: 'primary' | 'secondary'
 }
 
-const Button: FunctionComponent<ButtonProps> = ({
+export const Button: FunctionComponent<ButtonProps> = ({
   isDisabled = false,
   isLoading = false,
   variant = 'primary',
@@ -57,5 +57,3 @@ const Button: FunctionComponent<ButtonProps> = ({
     )}
   </Pressable>
 )
-
-export default Button

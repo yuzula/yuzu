@@ -5,12 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import useAuthContext from '../hooks/useAuthContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 import { userService } from '../services/user'
 
-const Me: FunctionComponent = () => {
+export const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
   const { user } = useAuthContext()
 
@@ -101,5 +101,3 @@ const Me: FunctionComponent = () => {
     </SafeAreaView>
   )
 }
-
-export default Me

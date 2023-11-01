@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native'
 
 import { RootStackScreenProps } from '../types'
 
-const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
+export const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
   navigation
 }) => {
   const handleHomeButtonPress = useCallback(() => {
@@ -32,5 +32,3 @@ const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
     </View>
   )
 }
-
-export default NotFound

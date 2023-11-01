@@ -2,10 +2,10 @@ import React, { FunctionComponent, useCallback } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import Logo from '../components/Logo'
+import { Logo } from '../components/Logo'
 import { RootStackScreenProps } from '../types'
 
-const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
+export const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
   navigation
 }) => {
   const handleLoginButtonPress = useCallback(() => {
@@ -52,5 +52,3 @@ const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
     </SafeAreaView>
   )
 }
-
-export default Root

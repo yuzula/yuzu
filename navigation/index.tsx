@@ -4,17 +4,18 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FunctionComponent } from 'react'
 
-import useAuthContext from '../hooks/useAuthContext'
-import useProfileContext from '../hooks/useProfileContext'
-import EmailVerification from '../screens/EmailVerification'
-import Home from '../screens/Home'
-import Login from '../screens/Login'
-import Me from '../screens/Me'
-import Post from '../screens/Post'
-import Register from '../screens/Register'
-import Root from '../screens/Root'
+import { useAuthContext } from '../hooks/useAuthContext'
+import { useProfileContext } from '../hooks/useProfileContext'
+import { EmailVerification } from '../screens/EmailVerification'
+import { Home } from '../screens/Home'
+import { Login } from '../screens/Login'
+import { Me } from '../screens/Me'
+import { NotFound } from '../screens/NotFound'
+import { Post } from '../screens/Post'
+import { Register } from '../screens/Register'
+import { Root } from '../screens/Root'
 import { RootStackParamList, RootTabParamList } from '../types'
-import linking from './linking'
+import { linking } from './linking'
 
 const BottomTab = createBottomTabNavigator<RootTabParamList>()
 
@@ -80,6 +81,7 @@ const RootNavigator: FunctionComponent = () => {
             component={EmailVerification}
             name="EmailVerification"
           />
+          <Stack.Screen component={NotFound} name="NotFound" />
         </>
       )}
     </Stack.Navigator>
@@ -90,10 +92,8 @@ interface NavigationProps {
   onReady?: () => void
 }
 
-const Navigation: FunctionComponent<NavigationProps> = ({ onReady }) => (
+export const Navigation: FunctionComponent<NavigationProps> = ({ onReady }) => (
   <NavigationContainer linking={linking} onReady={onReady}>
     <RootNavigator />
   </NavigationContainer>
 )
-
-export default Navigation

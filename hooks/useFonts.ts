@@ -21,7 +21,7 @@ import {
 } from '@expo-google-fonts/poppins'
 import { useFonts as useExpoFonts } from 'expo-font'
 
-const useFonts = () => {
+export const useFonts = () => {
   const [isLoaded, error] = useExpoFonts({
     Poppins_100Thin,
     Poppins_100Thin_Italic,
@@ -50,5 +50,3 @@ const useFonts = () => {
     error
   }
 }
-
-export default useFonts

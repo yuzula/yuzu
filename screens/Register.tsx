@@ -15,7 +15,7 @@ import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
@@ -27,7 +27,7 @@ const registerSchema = z.object({
 
 type RegisterSchema = z.infer<typeof registerSchema>
 
-const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
+export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
   navigation
 }) => {
   const {
@@ -207,5 +207,3 @@ const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
     </SafeAreaView>
   )
 }
-
-export default Register

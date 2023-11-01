@@ -25,13 +25,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
-import Button from '../components/Button'
-import Comment from '../components/Comment'
+import { Button } from '../components/Button'
+import { Comment } from '../components/Comment'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import useAuthContext from '../hooks/useAuthContext'
+import { useAuthContext } from '../hooks/useAuthContext'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
@@ -46,7 +46,7 @@ const createCommentSchema = z.object({
 
 type CreateCommentSchema = z.infer<typeof createCommentSchema>
 
-const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
+export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   navigation,
   route: {
     params: { postId }
@@ -720,5 +720,3 @@ const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     </SafeAreaView>
   )
 }
-
-export default Post

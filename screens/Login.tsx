@@ -14,7 +14,7 @@ import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { RootStackScreenProps } from '../types'
 
@@ -25,7 +25,7 @@ const loginSchema = z.object({
 
 type LoginSchema = z.infer<typeof loginSchema>
 
-const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
+export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
   navigation
 }) => {
   const {
@@ -147,5 +147,3 @@ const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
     </SafeAreaView>
   )
 }
-
-export default Login

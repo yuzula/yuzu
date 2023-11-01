@@ -1,11 +1,12 @@
 import { useContext } from 'react'
 
-import ProfileContextProvider, {
-  ProfileContext
+import {
+  ProfileContext,
+  ProfileContextProvider
 } from '../contexts/ProfileContext'
-import HookOutOfProviderError from '../errors/HookOutOfProviderError'
+import { HookOutOfProviderError } from '../errors/HookOutOfProviderError'
 
-const useProfileContext = () => {
+export const useProfileContext = () => {
   const context = useContext(ProfileContext)
 
   if (!context) {
@@ -17,5 +18,3 @@ const useProfileContext = () => {
 
   return context
 }
-
-export default useProfileContext

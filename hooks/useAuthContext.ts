@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 
-import AuthContextProvider, { AuthContext } from '../contexts/AuthContext'
-import HookOutOfProviderError from '../errors/HookOutOfProviderError'
+import { AuthContext, AuthContextProvider } from '../contexts/AuthContext'
+import { HookOutOfProviderError } from '../errors/HookOutOfProviderError'
 
-const useAuthContext = () => {
+export const useAuthContext = () => {
   const context = useContext(AuthContext)
 
   if (!context) {
@@ -15,5 +15,3 @@ const useAuthContext = () => {
 
   return context
 }
-
-export default useAuthContext

@@ -19,7 +19,7 @@ export interface AuthContextValues {
 
 export const AuthContext = createContext<AuthContextValues | null>(null)
 
-const AuthContextProvider: FunctionComponent<PropsWithChildren> = ({
+export const AuthContextProvider: FunctionComponent<PropsWithChildren> = ({
   children
 }) => {
   const [session, setSession] = useState<Session>()
@@ -58,5 +58,3 @@ const AuthContextProvider: FunctionComponent<PropsWithChildren> = ({
     </AuthContext.Provider>
   )
 }
-
-export default AuthContextProvider

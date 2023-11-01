@@ -23,6 +23,7 @@
     "prefer-promise-reject-errors": "error",
     "react-hooks/exhaustive-deps": "error",
     "import/order": "off",
+    "import/no-default-export": "error",
     "react/jsx-sort-props": [
       "error",
       {
