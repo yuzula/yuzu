@@ -31,15 +31,14 @@ const BaseApp: FunctionComponent = memo(() => {
 
   useTrackingTransparency()
 
+  const handleNavigationReady = useCallback(() => {
+    SplashScreen.hideAsync()
+  }, [])
+
   const areResourcesLoading =
     areFontsLoading || isAuthLoading || isProfileLoading
-  const areResourcesErroring = fontsError || authError || profileError
 
-  const handleNavigationReady = useCallback(() => {
-    if (!areResourcesLoading && !areResourcesErroring) {
-      SplashScreen.hideAsync()
-    }
-  }, [areResourcesErroring, areResourcesLoading])
+  const areResourcesErroring = fontsError || authError || profileError
 
   if (areResourcesLoading || areResourcesErroring) {
     return null
