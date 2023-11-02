@@ -33,11 +33,11 @@ import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { usePost } from '../hooks/usePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
 import { commentService } from '../services/comment'
-import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
 
@@ -68,7 +68,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const replyTextFieldRef = useRef<TextInput>(null)
 
   const { user } = useAuthContext()
-  const [post, setPost] = useState<postModel.Schema>()
+  const { post, refresh: refreshPost, votePost } = usePost(postId)
+
   const [comments, setComments] = useState<commentModel.Schema[]>()
   const [replyParentCommentId, setReplyParentCommentId] = useState<
     number | undefined
@@ -83,20 +84,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       navigation.navigate('Tabs')
     }
   }, [navigation])
-
-  const getPost = useCallback(async () => {
-    if (user) {
-      try {
-        setPost(
-          await retryPromise(() => postService.get({ postId, userId: user.id }))
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [postId, user])
 
   const getComments = useCallback(async () => {
     if (user && post) {
@@ -113,36 +100,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       }
     }
   }, [post, user])
-
-  const handlePostVoteButtonPress = useCallback(
-    async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
-      if (post) {
-        const newPost = { ...post }
-
-        const oldVote = newPost.current_user_vote
-
-        const resultingVote = getResultingVote({
-          oldVote,
-          vote
-        })
-
-        newPost.current_user_vote = resultingVote.newVote
-        newPost.vote_count += resultingVote.delta
-
-        setPost(newPost)
-
-        await retryPromise(() =>
-          postService.registerVote({
-            postId,
-            userId,
-            oldVote,
-            vote
-          })
-        )
-      }
-    },
-    [post]
-  )
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
@@ -161,7 +118,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               params: { shouldRefresh: true }
             })
           } else {
-            await getPost()
+            await refreshPost()
             await getComments()
           }
         } else {
@@ -173,7 +130,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [getComments, getPost, navigation, post, user]
+    [getComments, navigation, post, refreshPost, user]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -321,11 +278,11 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
 
-    await getPost()
+    await refreshPost()
     await getComments()
 
     setIsRefreshing(false)
-  }, [getComments, getPost])
+  }, [getComments, refreshPost])
 
   const handleCreateCommentSendButtonPress = useCallback(
     async ({ content }: CreateCommentSchema) => {
@@ -341,7 +298,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               parentCommentId: replyParentCommentId
             })
           )
-          await getPost()
+          await refreshPost()
           await getComments()
         } catch (error) {
           Sentry.Native.captureException(error)
@@ -354,7 +311,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         }
       }
     },
-    [getComments, getPost, post, replyParentCommentId, reset, user]
+    [getComments, post, refreshPost, replyParentCommentId, reset, user]
   )
 
   const handleCommentVoteButtonPress = useCallback(
@@ -422,10 +379,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
     replyTextFieldRef.current?.focus()
   }, [])
-
-  useEffect(() => {
-    getPost()
-  }, [getPost])
 
   useEffect(() => {
     getComments()
@@ -553,9 +506,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         },
                         'rounded-lg p-2'
                       )}
-                      onPress={() =>
-                        handlePostVoteButtonPress(post.id, user.id, 'upvote')
-                      }
+                      onPress={() => votePost(post.id, user.id, 'upvote')}
                     >
                       <Text
                         className={clsx({
@@ -577,9 +528,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         },
                         'rounded-lg p-2'
                       )}
-                      onPress={() =>
-                        handlePostVoteButtonPress(post.id, user.id, 'downvote')
-                      }
+                      onPress={() => votePost(post.id, user.id, 'downvote')}
                     >
                       <Text
                         className={clsx({
