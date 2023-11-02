@@ -28,7 +28,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#fcf951"
       },
-      "package": "com.yuzu.android"
+      "package": "com.yuzu.android",
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
