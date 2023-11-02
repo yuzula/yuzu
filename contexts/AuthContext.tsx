@@ -9,6 +9,7 @@ import {
 import * as Sentry from 'sentry-expo'
 
 import { supabase } from '../clients/supabase'
+import { retryPromise } from '../helpers/promise'
 
 export interface AuthContextValues {
   user?: User
@@ -30,7 +31,7 @@ export const AuthContextProvider: FunctionComponent<PropsWithChildren> = ({
     ;(async () => {
       setIsLoading(true)
 
-      const result = await supabase.auth.getSession()
+      const result = await retryPromise(() => supabase.auth.getSession())
 
       if (result.error) {
         Sentry.Native.captureException(result.error)

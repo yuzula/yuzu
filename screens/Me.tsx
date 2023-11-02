@@ -28,7 +28,7 @@ export const Me: FunctionComponent = () => {
       async index => {
         switch (index) {
           case 0:
-            const result = await supabase.auth.signOut()
+            const result = await retryPromise(() => supabase.auth.signOut())
 
             if (result.error) {
               Alert.alert(result.error.message, GENERIC_ERROR_MESSAGE)

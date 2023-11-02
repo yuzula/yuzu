@@ -16,6 +16,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { retryPromise } from '../helpers/promise'
 import { RootStackScreenProps } from '../types'
 
 const loginSchema = z.object({
@@ -50,10 +51,12 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
       setIsLoading(true)
 
       try {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        })
+        const { error } = await retryPromise(() =>
+          supabase.auth.signInWithPassword({
+            email,
+            password
+          })
+        )
 
         if (error) {
           setIsLoading(false)
