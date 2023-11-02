@@ -29,6 +29,7 @@ import { Button } from '../components/Button'
 import { Comment } from '../components/Comment'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
+import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
@@ -86,7 +87,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const getPost = useCallback(async () => {
     if (user) {
       try {
-        setPost(await postService.get({ postId, userId: user.id }))
+        setPost(
+          await retryPromise(() => postService.get({ postId, userId: user.id }))
+        )
       } catch (error) {
         Sentry.Native.captureException(error)
 
@@ -99,7 +102,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     if (user && post) {
       try {
         setComments(
-          await commentService.getAllRoot({ postId: post.id, userId: user.id })
+          await retryPromise(() =>
+            commentService.getAllRoot({ postId: post.id, userId: user.id })
+          )
         )
       } catch (error) {
         Sentry.Native.captureException(error)
@@ -126,12 +131,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
         setPost(newPost)
 
-        await postService.registerVote({
-          postId,
-          userId,
-          oldVote,
-          vote
-        })
+        await retryPromise(() =>
+          postService.registerVote({
+            postId,
+            userId,
+            oldVote,
+            vote
+          })
+        )
       }
     },
     [post]
@@ -141,10 +148,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (authorId: string) => {
       try {
         if (user && post) {
-          await blockService.blockUser({
-            blockerId: user.id,
-            blockeeId: authorId
-          })
+          await retryPromise(() =>
+            blockService.blockUser({
+              blockerId: user.id,
+              blockeeId: authorId
+            })
+          )
 
           if (authorId === post.user_id) {
             navigation.navigate('Tabs', {
@@ -171,7 +180,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (post: postModel.Schema) => {
       try {
         if (user) {
-          await reportService.reportPost(post.id)
+          await retryPromise(() => reportService.reportPost(post.id))
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -212,7 +221,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (comment: commentModel.BaseSchema) => {
       try {
         if (user) {
-          await reportService.reportComment(comment.id)
+          await retryPromise(() => reportService.reportComment(comment.id))
 
           Alert.alert('Comment has been reported for moderation', undefined, [
             {
@@ -324,12 +333,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         setIsCreateCommentLoading(true)
 
         try {
-          await commentService.create({
-            postId: post.id,
-            userId: user.id,
-            content,
-            parentCommentId: replyParentCommentId
-          })
+          await retryPromise(() =>
+            commentService.create({
+              postId: post.id,
+              userId: user.id,
+              content,
+              parentCommentId: replyParentCommentId
+            })
+          )
           await getPost()
           await getComments()
         } catch (error) {
@@ -387,12 +398,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
         setComments(newComments)
 
-        await commentService.registerVote({
-          commentId,
-          userId,
-          oldVote,
-          vote
-        })
+        await retryPromise(() =>
+          commentService.registerVote({
+            commentId,
+            userId,
+            oldVote,
+            vote
+          })
+        )
       }
     },
     [comments]

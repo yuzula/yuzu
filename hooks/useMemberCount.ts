@@ -4,6 +4,7 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
+import { retryPromise } from '../helpers/promise'
 import { communityService } from '../services/community'
 import { useProfileContext } from './useProfileContext'
 
@@ -25,7 +26,9 @@ export const useMemberCount = () => {
 
       try {
         setMemberCount(
-          await communityService.getMemberCount(profile.community_domain_name)
+          await retryPromise(() =>
+            communityService.getMemberCount(profile.community_domain_name)
+          )
         )
       } catch (error) {
         Sentry.Native.captureException(error)

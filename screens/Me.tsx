@@ -7,6 +7,7 @@ import * as Sentry from 'sentry-expo'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { retryPromise } from '../helpers/promise'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { userService } from '../services/user'
 
@@ -48,8 +49,8 @@ export const Me: FunctionComponent = () => {
           setIsDeleteAccountLoading(true)
 
           try {
-            await userService.deleteCurrentUser()
-            await userService.logout()
+            await retryPromise(() => userService.deleteCurrentUser())
+            await retryPromise(() => userService.logout())
           } catch (error) {
             Sentry.Native.captureException(error)
 

@@ -19,6 +19,7 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useMemberCount } from '../hooks/useMemberCount'
@@ -148,10 +149,12 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     async (authorId: string) => {
       try {
         if (user) {
-          await blockService.blockUser({
-            blockerId: user.id,
-            blockeeId: authorId
-          })
+          await retryPromise(() =>
+            blockService.blockUser({
+              blockerId: user.id,
+              blockeeId: authorId
+            })
+          )
 
           await handlePostsRefresh()
         } else {
@@ -170,7 +173,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     async (post: postModel.Schema) => {
       try {
         if (user) {
-          await reportService.reportPost(post.id)
+          await retryPromise(() => reportService.reportPost(post.id))
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -242,12 +245,14 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         setIsCreatePostLoading(true)
 
         try {
-          const postId = await postService.create({
-            communityDomainName: profile.community_domain_name,
-            content,
-            userId: profile.id,
-            isPrivate: true
-          })
+          const postId = await retryPromise(() =>
+            postService.create({
+              communityDomainName: profile.community_domain_name,
+              content,
+              userId: profile.id,
+              isPrivate: true
+            })
+          )
 
           reset()
 
