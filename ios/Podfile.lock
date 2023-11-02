@@ -15,6 +15,8 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (12.3.0):
     - ExpoModulesCore
+  - ExpoLinearGradient (12.3.0):
+    - ExpoModulesCore
   - ExpoModulesCore (1.5.11):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -518,6 +520,7 @@ DEPENDENCIES:
   - Expo (from `../node_modules/expo`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
+  - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoTrackingTransparency (from `../node_modules/expo-tracking-transparency/ios`)
@@ -597,6 +600,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-device/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
+  ExpoLinearGradient:
+    :path: "../node_modules/expo-linear-gradient/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   ExpoSystemUI:
@@ -707,6 +712,7 @@ SPEC CHECKSUMS:
   Expo: e7d2116b947e2e6fdeb09ee4f2754f819426d1b6
   ExpoDevice: 1c1b0c9cad96c292c1de73948649cfd654b2b3c0
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
+  ExpoLinearGradient: 5966dd5d49872cc9c104fedc8bbc298b6049b2e8
   ExpoModulesCore: 51cb2e7ab4c8da14be3f40b66d54c1781002e99d
   ExpoSystemUI: fa4854e3226e87f86d3383570264c6e4e90bc782
   ExpoTrackingTransparency: 28cb4ba43e61231c4173507ba05b3ce8c777f173

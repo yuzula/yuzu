@@ -3,6 +3,7 @@ import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
+import { Skeleton } from 'moti/skeleton'
 import React, {
   FunctionComponent,
   useCallback,
@@ -11,15 +12,7 @@ import React, {
   useState
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Pressable,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
+import { Alert, FlatList, Pressable, Text, TextInput, View } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
@@ -81,6 +74,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const { memberCount, isLoading: isMemberCountLoading } = useMemberCount()
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
+
+  const areResourcesLoadingOnMount =
+    arePostsLoadingOnMount || isMemberCountLoading
 
   const handleCreatePostButtonPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -294,204 +290,220 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      {isMemberCountLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <View className="w-full flex-1 pt-6">
-          <View className="w-full flex-1 items-center justify-center space-y-4">
-            <View className="w-5/6 space-y-2">
-              <Text className="font-Poppins_700Bold text-xl">
-                {profile.community_domain_name}
-              </Text>
-              <Text className="font-Poppins_500Medium text-apple-gray-light">
-                {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
-              </Text>
+      <View className="w-full flex-1 pt-6">
+        <View className="w-full flex-1 items-center justify-center space-y-4">
+          <View className="w-5/6 space-y-2">
+            <Text className="font-Poppins_700Bold text-xl">
+              {profile.community_domain_name}
+            </Text>
+            <View>
+              <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
+                <Text className="font-Poppins_500Medium text-apple-gray-light">
+                  {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
+                </Text>
+              </Skeleton>
             </View>
+          </View>
 
-            <View className="w-5/6 flex-row space-x-2">
-              <View className="grow">
-                <Button
-                  className="h-9 rounded-lg"
-                  onPress={handleCreatePostButtonPress}
-                >
-                  <FontAwesome5 name="pen" />
-                  &nbsp;Post
-                </Button>
-              </View>
-              <View className="grow">
-                <Button
-                  className="h-9 rounded-lg"
-                  variant="secondary"
-                  onPress={handleSortButtonPress}
-                >
-                  <FontAwesome5 name="sort" />
-                  &nbsp;Sort
-                </Button>
-              </View>
+          <View className="w-5/6 flex-row space-x-2">
+            <View className="grow">
+              <Button
+                className="h-9 rounded-lg"
+                onPress={handleCreatePostButtonPress}
+              >
+                <FontAwesome5 name="pen" />
+                &nbsp;Post
+              </Button>
             </View>
+            <View className="grow">
+              <Button
+                className="h-9 rounded-lg"
+                variant="secondary"
+                onPress={handleSortButtonPress}
+              >
+                <FontAwesome5 name="sort" />
+                &nbsp;Sort
+              </Button>
+            </View>
+          </View>
 
-            {arePostsLoadingOnMount ? (
-              <View className="grow items-center justify-center">
-                <ActivityIndicator />
-              </View>
-            ) : (
-              <FlatList
-                className="w-full border-t border-gray-200"
-                contentContainerStyle={{ flexGrow: 1 }}
-                data={posts}
-                keyExtractor={item => item.id.toString()}
-                refreshing={arePostsLoading}
-                ItemSeparatorComponent={() => (
-                  <View className="w-full border-t border-gray-200" />
-                )}
-                ListEmptyComponent={() => (
-                  <View className="flex-1 items-center justify-center">
-                    <Text className="font-Poppins_500Medium text-apple-gray-light">
-                      Be the first to post!
-                    </Text>
+          {areResourcesLoadingOnMount ? (
+            <View className="w-full grow">
+              {[...Array(4).keys()].map(i => (
+                <View key={i}>
+                  <View className="mx-auto w-5/6 space-y-2 py-4">
+                    <View>
+                      <Skeleton colorMode="light" radius="round" />
+                    </View>
+                    <View>
+                      <Skeleton colorMode="light" height={10} width="60%" />
+                    </View>
+                    <View>
+                      <Skeleton colorMode="light" height={10} width="80%" />
+                    </View>
+                    <View>
+                      <Skeleton colorMode="light" height={10} width="90%" />
+                    </View>
                   </View>
-                )}
-                renderItem={item => (
-                  <Pressable
-                    className="active:bg-gray-200"
-                    onPress={() => handlePostPress(item.item.id)}
-                  >
-                    <View className="mx-auto w-5/6 space-y-2 py-4">
-                      <Text
-                        ellipsizeMode="tail"
-                        numberOfLines={4}
-                        className={clsx('font-Poppins_500Medium', {
-                          'font-Poppins_500Medium_Italic':
-                            item.item.is_deleted || item.item.is_flagged
-                        })}
-                      >
-                        {item.item.is_deleted
-                          ? 'Deleted'
-                          : item.item.is_flagged
-                          ? 'Flagged'
-                          : item.item.content}
-                      </Text>
+                  <View className="w-full border-t border-gray-200" />
+                </View>
+              ))}
+            </View>
+          ) : (
+            <FlatList
+              className="w-full border-t border-gray-200"
+              contentContainerStyle={{ flexGrow: 1 }}
+              data={posts}
+              keyExtractor={item => item.id.toString()}
+              refreshing={arePostsLoading}
+              ItemSeparatorComponent={() => (
+                <View className="w-full border-t border-gray-200" />
+              )}
+              ListEmptyComponent={() => (
+                <View className="flex-1 items-center justify-center">
+                  <Text className="font-Poppins_500Medium text-apple-gray-light">
+                    Be the first to post!
+                  </Text>
+                </View>
+              )}
+              renderItem={item => (
+                <Pressable
+                  className="active:bg-gray-200"
+                  onPress={() => handlePostPress(item.item.id)}
+                >
+                  <View className="mx-auto w-5/6 space-y-2 py-4">
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={4}
+                      className={clsx('font-Poppins_500Medium', {
+                        'font-Poppins_500Medium_Italic':
+                          item.item.is_deleted || item.item.is_flagged
+                      })}
+                    >
+                      {item.item.is_deleted
+                        ? 'Deleted'
+                        : item.item.is_flagged
+                        ? 'Flagged'
+                        : item.item.content}
+                    </Text>
 
-                      <View className="flex flex-row items-center justify-between">
-                        <View className="space-y-1">
-                          <Text className="font-Poppins_400Regular text-apple-gray-light">
-                            by&nbsp;
-                            <Text
-                              className={clsx('font-Poppins_500Medium', {
-                                'font-Poppins_500Medium_Italic':
-                                  item.item.is_deleted
-                              })}
-                            >
-                              {item.item.is_deleted
-                                ? 'Deleted'
-                                : item.item.username}
-                            </Text>
+                    <View className="flex flex-row items-center justify-between">
+                      <View className="space-y-1">
+                        <Text className="font-Poppins_400Regular text-apple-gray-light">
+                          by&nbsp;
+                          <Text
+                            className={clsx('font-Poppins_500Medium', {
+                              'font-Poppins_500Medium_Italic':
+                                item.item.is_deleted
+                            })}
+                          >
+                            {item.item.is_deleted
+                              ? 'Deleted'
+                              : item.item.username}
                           </Text>
-                          <View className="flex flex-row space-x-2">
-                            <View>
-                              <Text className="font-Poppins_400Regular text-apple-gray-light">
-                                <AntDesign name="arrowup" size={14} />
-                                &nbsp;{item.item.vote_count}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text className="font-Poppins_400Regular text-apple-gray-light">
-                                <AntDesign name="message1" size={14} />
-                                &nbsp;{item.item.comment_count}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text className="font-Poppins_400Regular text-apple-gray-light">
-                                <AntDesign name="clockcircleo" size={14} />
-                                &nbsp;
-                                {formatDuration(
-                                  Date.now() - item.item.created_at.getTime()
-                                )}
-                              </Text>
-                            </View>
+                        </Text>
+                        <View className="flex flex-row space-x-2">
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <AntDesign name="arrowup" size={14} />
+                              &nbsp;{item.item.vote_count}
+                            </Text>
+                          </View>
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <AntDesign name="message1" size={14} />
+                              &nbsp;{item.item.comment_count}
+                            </Text>
+                          </View>
+                          <View>
+                            <Text className="font-Poppins_400Regular text-apple-gray-light">
+                              <AntDesign name="clockcircleo" size={14} />
+                              &nbsp;
+                              {formatDuration(
+                                Date.now() - item.item.created_at.getTime()
+                              )}
+                            </Text>
                           </View>
                         </View>
+                      </View>
 
-                        <View className="flex flex-row items-center space-x-1">
-                          {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
+                      <View className="flex flex-row items-center space-x-1">
+                        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
                         since right now it only contains report and block actions, both of which the user can't
                         perform on themselves */}
-                          {user.id !== item.item.user_id && (
-                            <Pressable
-                              className="rounded-lg p-2 active:bg-gray-200"
-                              onPress={() =>
-                                handlePostEllipsisButtonPress(item.item)
-                              }
-                            >
-                              <Text className="text-apple-gray-light">
-                                <AntDesign name="ellipsis1" size={20} />
-                              </Text>
-                            </Pressable>
+                        {user.id !== item.item.user_id && (
+                          <Pressable
+                            className="rounded-lg p-2 active:bg-gray-200"
+                            onPress={() =>
+                              handlePostEllipsisButtonPress(item.item)
+                            }
+                          >
+                            <Text className="text-apple-gray-light">
+                              <AntDesign name="ellipsis1" size={20} />
+                            </Text>
+                          </Pressable>
+                        )}
+                        <Pressable
+                          className={clsx(
+                            {
+                              'bg-primary active:bg-primary-darker':
+                                item.item.current_user_vote === 'upvote',
+                              'active:bg-gray-200':
+                                item.item.current_user_vote !== 'upvote'
+                            },
+                            'rounded-lg p-2'
                           )}
-                          <Pressable
-                            className={clsx(
-                              {
-                                'bg-primary active:bg-primary-darker':
-                                  item.item.current_user_vote === 'upvote',
-                                'active:bg-gray-200':
-                                  item.item.current_user_vote !== 'upvote'
-                              },
-                              'rounded-lg p-2'
-                            )}
-                            onPress={() =>
-                              handlePostVoteButtonPress(item.item.id, 'upvote')
-                            }
+                          onPress={() =>
+                            handlePostVoteButtonPress(item.item.id, 'upvote')
+                          }
+                        >
+                          <Text
+                            className={clsx({
+                              'text-black':
+                                item.item.current_user_vote === 'upvote',
+                              'text-apple-gray-light':
+                                item.item.current_user_vote !== 'upvote'
+                            })}
                           >
-                            <Text
-                              className={clsx({
-                                'text-black':
-                                  item.item.current_user_vote === 'upvote',
-                                'text-apple-gray-light':
-                                  item.item.current_user_vote !== 'upvote'
-                              })}
-                            >
-                              <AntDesign name="arrowup" size={20} />
-                            </Text>
-                          </Pressable>
-                          <Pressable
-                            className={clsx(
-                              {
-                                'bg-apple-blue-light active:opacity-90':
-                                  item.item.current_user_vote === 'downvote',
-                                'active:bg-gray-200':
-                                  item.item.current_user_vote !== 'downvote'
-                              },
-                              'rounded-lg p-2'
-                            )}
-                            onPress={() =>
-                              handlePostVoteButtonPress(
-                                item.item.id,
-                                'downvote'
-                              )
-                            }
+                            <AntDesign name="arrowup" size={20} />
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          className={clsx(
+                            {
+                              'bg-apple-blue-light active:opacity-90':
+                                item.item.current_user_vote === 'downvote',
+                              'active:bg-gray-200':
+                                item.item.current_user_vote !== 'downvote'
+                            },
+                            'rounded-lg p-2'
+                          )}
+                          onPress={() =>
+                            handlePostVoteButtonPress(item.item.id, 'downvote')
+                          }
+                        >
+                          <Text
+                            className={clsx({
+                              'text-white':
+                                item.item.current_user_vote === 'downvote',
+                              'text-apple-gray-light':
+                                item.item.current_user_vote !== 'downvote'
+                            })}
                           >
-                            <Text
-                              className={clsx({
-                                'text-white':
-                                  item.item.current_user_vote === 'downvote',
-                                'text-apple-gray-light':
-                                  item.item.current_user_vote !== 'downvote'
-                              })}
-                            >
-                              <AntDesign name="arrowdown" size={20} />
-                            </Text>
-                          </Pressable>
-                        </View>
+                            <AntDesign name="arrowdown" size={20} />
+                          </Text>
+                        </Pressable>
                       </View>
                     </View>
-                  </Pressable>
-                )}
-                onRefresh={handlePostsRefresh}
-              />
-            )}
-          </View>
+                  </View>
+                </Pressable>
+              )}
+              onRefresh={handlePostsRefresh}
+            />
+          )}
         </View>
-      )}
+      </View>
+
       <BottomSheetModal
         ref={bottomSheetModalRef}
         enableContentPanningGesture={false}

@@ -1,3 +1,5 @@
+import 'react-native-reanimated'
+
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import * as SplashScreen from 'expo-splash-screen'
