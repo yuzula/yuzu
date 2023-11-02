@@ -56,6 +56,8 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         })
 
         if (error) {
+          setIsLoading(false)
+
           return Alert.alert(error.message)
         }
       } catch (error) {

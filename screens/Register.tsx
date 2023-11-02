@@ -63,6 +63,8 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
         })
 
         if (error) {
+          setIsLoading(false)
+
           switch (error.message) {
             case 'duplicate key value violates unique constraint "profiles_username_key"':
               return Alert.alert('Username is already taken')
