@@ -330,22 +330,19 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           {areResourcesLoadingOnMount ? (
             <View className="w-full grow">
               {[...Array(4).keys()].map(i => (
-                <View key={i}>
-                  <View className="mx-auto w-5/6 space-y-2 py-4">
-                    <View>
-                      <Skeleton colorMode="light" radius="round" />
-                    </View>
-                    <View>
-                      <Skeleton colorMode="light" height={10} width="60%" />
-                    </View>
-                    <View>
-                      <Skeleton colorMode="light" height={10} width="80%" />
-                    </View>
-                    <View>
-                      <Skeleton colorMode="light" height={10} width="90%" />
-                    </View>
+                <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
+                  <View>
+                    <Skeleton colorMode="light" radius="round" />
                   </View>
-                  <View className="w-full border-t border-gray-200" />
+                  <View>
+                    <Skeleton colorMode="light" height={10} width="60%" />
+                  </View>
+                  <View>
+                    <Skeleton colorMode="light" height={10} width="80%" />
+                  </View>
+                  <View>
+                    <Skeleton colorMode="light" height={10} width="90%" />
+                  </View>
                 </View>
               ))}
             </View>
@@ -361,6 +358,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               )}
               ListEmptyComponent={() => (
                 <View className="flex-1 items-center justify-center">
+                  <Text className="font-Poppins_600SemiBold text-apple-gray-light">
+                    No posts yet
+                  </Text>
                   <Text className="font-Poppins_500Medium text-apple-gray-light">
                     Be the first to post!
                   </Text>
