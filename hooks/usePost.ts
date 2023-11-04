@@ -13,13 +13,11 @@ export const usePost = (id: number) => {
   const { profile } = useProfileContext()
 
   const [post, setPost] = useState<postModel.Schema>()
-  const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const getPost = useCallback(async () => {
     if (profile) {
-      setIsLoading(true)
-
       try {
         setPost(
           await retryPromise(() =>
@@ -30,12 +28,17 @@ export const usePost = (id: number) => {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
-        setIsLoadingOnMount(false)
-        setIsLoading(false)
       }
     }
   }, [id, profile])
+
+  const refreshPost = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await getPost()
+
+    setIsRefreshing(false)
+  }, [getPost])
 
   const votePost = useCallback(
     async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
@@ -71,5 +74,5 @@ export const usePost = (id: number) => {
     getPost()
   }, [getPost])
 
-  return { post, refresh: getPost, votePost, isLoading, isLoadingOnMount }
+  return { post, getPost, refreshPost, isRefreshing, votePost }
 }

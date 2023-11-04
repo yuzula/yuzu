@@ -64,15 +64,17 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const { user } = useAuthContext()
   const {
     post,
-    refresh: refreshPost,
-    votePost,
-    isLoading: isPostLoading
+    getPost,
+    refreshPost,
+    isRefreshing: isPostRefreshing,
+    votePost
   } = usePost(postId)
   const {
     comments,
-    refresh: refreshComments,
+    getComments,
+    refreshComments,
     voteComment,
-    isLoading: areCommentsLoading
+    isRefreshing: areCommentsRefreshing
   } = useComments(postId)
 
   const [replyParentCommentId, setReplyParentCommentId] = useState<
@@ -263,7 +265,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   )
 
   const handleRefresh = useCallback(async () => {
-    await Promise.all([refreshPost, refreshComments])
+    await Promise.all([refreshPost(), refreshComments()])
   }, [refreshComments, refreshPost])
 
   const handleCreateCommentSendButtonPress = useCallback(
@@ -280,8 +282,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               parentCommentId: replyParentCommentId
             })
           )
-          await refreshPost()
-          await refreshComments()
+
+          await Promise.all([getPost(), getComments()])
         } catch (error) {
           Sentry.Native.captureException(error)
 
@@ -297,7 +299,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         )
       }
     },
-    [post, refreshComments, refreshPost, replyParentCommentId, reset, user]
+    [getComments, getPost, post, replyParentCommentId, reset, user]
   )
 
   const handleCommentReplyButtonPress = useCallback((commentId: number) => {
@@ -362,7 +364,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             data={comments}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
-            refreshing={isPostLoading || areCommentsLoading}
+            refreshing={isPostRefreshing || areCommentsRefreshing}
             ItemSeparatorComponent={() => (
               <View className="w-full border-t border-gray-200" />
             )}

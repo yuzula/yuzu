@@ -14,13 +14,10 @@ export const useComments = (postId: number) => {
 
   const [comments, setComments] = useState<commentModel.Schema[]>()
 
-  const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const getComments = useCallback(async () => {
     if (profile) {
-      setIsLoading(true)
-
       try {
         setComments(
           await retryPromise(() =>
@@ -31,12 +28,17 @@ export const useComments = (postId: number) => {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
-        setIsLoadingOnMount(false)
-        setIsLoading(false)
       }
     }
   }, [postId, profile])
+
+  const refreshComments = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await getComments()
+
+    setIsRefreshing(false)
+  }, [getComments])
 
   const voteComment = useCallback(
     async ({
@@ -98,9 +100,9 @@ export const useComments = (postId: number) => {
 
   return {
     comments,
-    refresh: getComments,
-    voteComment,
-    isLoadingOnMount,
-    isLoading
+    getComments,
+    refreshComments,
+    isRefreshing,
+    voteComment
   }
 }
