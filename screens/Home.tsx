@@ -303,7 +303,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </Text>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
-                <Text className="font-Poppins_500Medium text-apple-gray-light">
+                <Text className="font-Poppins_600SemiBold text-apple-gray-light">
                   {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
                 </Text>
               </Skeleton>
@@ -312,20 +312,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           <View className="w-5/6 flex-row space-x-2">
             <View className="grow">
-              <Button
-                className="h-9 rounded-lg"
-                onPress={handleCreatePostButtonPress}
-              >
+              <Button onPress={handleCreatePostButtonPress}>
                 <FontAwesome5 name="pen" />
                 &nbsp;Post
               </Button>
             </View>
             <View className="grow">
-              <Button
-                className="h-9 rounded-lg"
-                variant="secondary"
-                onPress={handleSortButtonPress}
-              >
+              <Button variant="secondary" onPress={handleSortButtonPress}>
                 <FontAwesome5 name="sort" />
                 &nbsp;Sort
               </Button>
@@ -380,8 +373,8 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                     <Text
                       ellipsizeMode="tail"
                       numberOfLines={4}
-                      className={clsx('font-Poppins_500Medium', {
-                        'font-Poppins_500Medium_Italic':
+                      className={clsx('font-Poppins_600SemiBold text-base', {
+                        'font-Poppins_600SemiBold_Italic':
                           item.item.is_deleted || item.item.is_flagged
                       })}
                     >
@@ -394,11 +387,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
                     <View className="flex flex-row items-center justify-between">
                       <View className="space-y-1">
-                        <Text className="font-Poppins_400Regular text-apple-gray-light">
+                        <Text className="font-Poppins_500Medium text-apple-gray-light">
                           by&nbsp;
                           <Text
-                            className={clsx('font-Poppins_500Medium', {
-                              'font-Poppins_500Medium_Italic':
+                            className={clsx('font-Poppins_600SemiBold', {
+                              'font-Poppins_600SemiBold_Italic':
                                 item.item.is_deleted
                             })}
                           >
@@ -409,20 +402,20 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         </Text>
                         <View className="flex flex-row space-x-2">
                           <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="arrowup" size={14} />
+                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                              <FontAwesome5 name="arrow-up" size={14} />
                               &nbsp;{item.item.vote_count}
                             </Text>
                           </View>
                           <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="message1" size={14} />
+                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                              <FontAwesome5 name="comment-dots" size={14} />
                               &nbsp;{item.item.comment_count}
                             </Text>
                           </View>
                           <View>
-                            <Text className="font-Poppins_400Regular text-apple-gray-light">
-                              <AntDesign name="clockcircleo" size={14} />
+                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                              <FontAwesome5 name="clock" size={14} />
                               &nbsp;
                               {formatDuration(
                                 Date.now() - item.item.created_at.getTime()
@@ -550,7 +543,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                 <TextInput
                   autoFocus
                   multiline
-                  className="mx-auto w-5/6 font-Poppins_500Medium text-lg"
+                  className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
                   editable={!isCreatePostLoading}
                   maxLength={300}
                   placeholder="What's happening?"
