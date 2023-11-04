@@ -291,6 +291,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           setIsCreateCommentLoading(false)
         }
+      } else {
+        Sentry.Native.captureException(
+          new Error('`post` and `user` are not defined when submitting comment')
+        )
       }
     },
     [post, refreshComments, refreshPost, replyParentCommentId, reset, user]
