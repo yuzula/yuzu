@@ -68,40 +68,42 @@ export const Me: FunctionComponent = () => {
     ])
   }, [deleteCurrentUser, logOut])
 
+  if (!user) {
+    return null
+  }
+
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white py-6"
       edges={['top']}
     >
-      {user && (
-        <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
-          <View className="space-y-4">
-            <Text
-              className="text-center font-Poppins_600SemiBold text-2xl underline decoration-primary"
-              style={{ textDecorationStyle: 'double' }}
-            >
-              {user.user_metadata.username}
-            </Text>
-          </View>
-          <View className="space-y-2">
-            <Button
-              isDisabled={isLogOutLoading}
-              isLoading={isDeleteCurrentUserLoading}
-              variant="secondary"
-              onPress={handleDeleteAccountButtonPress}
-            >
-              Delete my account
-            </Button>
-            <Button
-              isDisabled={isDeleteCurrentUserLoading}
-              isLoading={isLogOutLoading}
-              onPress={handleLogOutButtonPress}
-            >
-              Log Out
-            </Button>
-          </View>
+      <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
+        <View className="space-y-4">
+          <Text
+            className="text-center font-Poppins_600SemiBold text-2xl underline decoration-primary"
+            style={{ textDecorationStyle: 'double' }}
+          >
+            {user.user_metadata.username}
+          </Text>
         </View>
-      )}
+        <View className="space-y-2">
+          <Button
+            isDisabled={isLogOutLoading}
+            isLoading={isDeleteCurrentUserLoading}
+            variant="secondary"
+            onPress={handleDeleteAccountButtonPress}
+          >
+            Delete my account
+          </Button>
+          <Button
+            isDisabled={isDeleteCurrentUserLoading}
+            isLoading={isLogOutLoading}
+            onPress={handleLogOutButtonPress}
+          >
+            Log Out
+          </Button>
+        </View>
+      </View>
     </SafeAreaView>
   )
 }
