@@ -1,21 +1,24 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
-import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { useAuthContext } from '../hooks/useAuthContext'
-import { userService } from '../services/user'
+import { useDeleteCurrentUser } from '../hooks/useDeleteCurrentUser'
+import { useLogOut } from '../hooks/useLogOut'
 
 export const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
+
   const { user } = useAuthContext()
 
-  const [isDeleteAccountLoading, setIsDeleteAccountLoading] = useState(false)
+  const { logOut, isLoading: isLogOutLoading } = useLogOut()
+
+  const { deleteCurrentUser, isLoading: isDeleteCurrentUserLoading } =
+    useDeleteCurrentUser()
 
   const handleLogOutButtonPress = useCallback(async () => {
     showActionSheetWithOptions(
@@ -28,17 +31,19 @@ export const Me: FunctionComponent = () => {
       async index => {
         switch (index) {
           case 0:
-            const result = await retryPromise(() => supabase.auth.signOut())
+            try {
+              await logOut()
+            } catch (error) {
+              Sentry.Native.captureException(error)
 
-            if (result.error) {
-              Alert.alert(result.error.message, GENERIC_ERROR_MESSAGE)
+              Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
             }
             break
           default:
         }
       }
     )
-  }, [showActionSheetWithOptions])
+  }, [logOut, showActionSheetWithOptions])
 
   const handleDeleteAccountButtonPress = useCallback(async () => {
     Alert.alert('Are you sure you want to delete your account?', undefined, [
@@ -46,17 +51,13 @@ export const Me: FunctionComponent = () => {
         text: 'Yes',
         style: 'destructive',
         onPress: async () => {
-          setIsDeleteAccountLoading(true)
-
           try {
-            await retryPromise(() => userService.deleteCurrentUser())
-            await retryPromise(() => userService.logout())
+            await deleteCurrentUser()
+            await logOut()
           } catch (error) {
             Sentry.Native.captureException(error)
 
             Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-          } finally {
-            setIsDeleteAccountLoading(false)
           }
         }
       },
@@ -65,7 +66,7 @@ export const Me: FunctionComponent = () => {
         style: 'cancel'
       }
     ])
-  }, [])
+  }, [deleteCurrentUser, logOut])
 
   return (
     <SafeAreaView
@@ -84,14 +85,16 @@ export const Me: FunctionComponent = () => {
           </View>
           <View className="space-y-2">
             <Button
-              isLoading={isDeleteAccountLoading}
+              isDisabled={isLogOutLoading}
+              isLoading={isDeleteCurrentUserLoading}
               variant="secondary"
               onPress={handleDeleteAccountButtonPress}
             >
               Delete my account
             </Button>
             <Button
-              isDisabled={isDeleteAccountLoading}
+              isDisabled={isDeleteCurrentUserLoading}
+              isLoading={isLogOutLoading}
               onPress={handleLogOutButtonPress}
             >
               Log Out

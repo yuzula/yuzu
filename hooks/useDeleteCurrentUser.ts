@@ -1,0 +1,27 @@
+import { useCallback, useState } from 'react'
+import { Alert } from 'react-native'
+import * as Sentry from 'sentry-expo'
+
+import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { retryPromise } from '../helpers/promise'
+import { userService } from '../services/user'
+
+export const useDeleteCurrentUser = () => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const deleteCurrentUser = useCallback(async () => {
+    setIsLoading(true)
+
+    try {
+      await retryPromise(() => userService.deleteCurrentUser())
+    } catch (error) {
+      Sentry.Native.captureException(error)
+
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { deleteCurrentUser, isLoading }
+}
