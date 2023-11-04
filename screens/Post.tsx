@@ -2,13 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import React, { FunctionComponent, useCallback, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
@@ -31,8 +25,8 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useComments } from '../hooks/useComments'
 import { usePost } from '../hooks/usePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
@@ -68,13 +62,22 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const replyTextFieldRef = useRef<TextInput>(null)
 
   const { user } = useAuthContext()
-  const { post, refresh: refreshPost, votePost } = usePost(postId)
+  const {
+    post,
+    refresh: refreshPost,
+    votePost,
+    isLoading: isPostLoading
+  } = usePost(postId)
+  const {
+    comments,
+    refresh: refreshComments,
+    voteComment,
+    isLoading: areCommentsLoading
+  } = useComments(postId)
 
-  const [comments, setComments] = useState<commentModel.Schema[]>()
   const [replyParentCommentId, setReplyParentCommentId] = useState<
     number | undefined
   >()
-  const [isRefreshing, setIsRefreshing] = useState(false)
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
 
   const handleBackButtonPress = useCallback(() => {
@@ -84,22 +87,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       navigation.navigate('Tabs')
     }
   }, [navigation])
-
-  const getComments = useCallback(async () => {
-    if (user && post) {
-      try {
-        setComments(
-          await retryPromise(() =>
-            commentService.getAllRoot({ postId: post.id, userId: user.id })
-          )
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    }
-  }, [post, user])
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
@@ -119,7 +106,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             })
           } else {
             await refreshPost()
-            await getComments()
+            await refreshComments()
           }
         } else {
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
@@ -130,7 +117,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [getComments, navigation, post, refreshPost, user]
+    [navigation, post, refreshComments, refreshPost, user]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -276,13 +263,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   )
 
   const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true)
-
-    await refreshPost()
-    await getComments()
-
-    setIsRefreshing(false)
-  }, [getComments, refreshPost])
+    await Promise.all([refreshPost, refreshComments])
+  }, [refreshComments, refreshPost])
 
   const handleCreateCommentSendButtonPress = useCallback(
     async ({ content }: CreateCommentSchema) => {
@@ -299,7 +281,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             })
           )
           await refreshPost()
-          await getComments()
+          await refreshComments()
         } catch (error) {
           Sentry.Native.captureException(error)
 
@@ -311,61 +293,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         }
       }
     },
-    [getComments, post, refreshPost, replyParentCommentId, reset, user]
-  )
-
-  const handleCommentVoteButtonPress = useCallback(
-    async ({
-      commentId,
-      userId,
-      parentCommentId,
-      vote
-    }: {
-      commentId: number
-      userId: string
-      parentCommentId?: number
-      vote: 'upvote' | 'downvote'
-    }) => {
-      if (comments) {
-        const newComments = [...comments]
-
-        const newComment = parentCommentId
-          ? newComments
-              .find(comment => comment.id === parentCommentId)
-              ?.children.find(comment => comment.id === commentId)
-          : newComments.find(comment => comment.id === commentId)
-
-        if (!newComment) {
-          Sentry.Native.captureException(
-            new Error('Could not find voted comment')
-          )
-
-          return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
-
-        const oldVote = newComment.current_user_vote
-
-        const resultingVote = getResultingVote({
-          oldVote,
-          vote
-        })
-
-        newComment.current_user_vote = resultingVote.newVote
-        newComment.vote_count += resultingVote.delta
-
-        setComments(newComments)
-
-        await retryPromise(() =>
-          commentService.registerVote({
-            commentId,
-            userId,
-            oldVote,
-            vote
-          })
-        )
-      }
-    },
-    [comments]
+    [post, refreshComments, refreshPost, replyParentCommentId, reset, user]
   )
 
   const handleCommentReplyButtonPress = useCallback((commentId: number) => {
@@ -380,13 +308,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     replyTextFieldRef.current?.focus()
   }, [])
 
-  useEffect(() => {
-    getComments()
-  }, [getComments])
+  if (!user) {
+    return null
+  }
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      {!post || !user || !comments ? (
+      {!post || !comments ? (
         <ActivityIndicator />
       ) : (
         <KeyboardAvoidingView
@@ -430,7 +358,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             data={comments}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
-            refreshing={isRefreshing}
+            refreshing={isPostLoading || areCommentsLoading}
             ItemSeparatorComponent={() => (
               <View className="w-full border-t border-gray-200" />
             )}
@@ -573,7 +501,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
                     onDownvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
+                      voteComment({
                         commentId: item.item.id,
                         userId: user.id,
                         vote: 'downvote',
@@ -584,7 +512,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
+                      voteComment({
                         commentId: item.item.id,
                         userId: user.id,
                         vote: 'upvote',
@@ -606,7 +534,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     variant="child"
                     voteCount={item.item.vote_count}
                     onDownvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
+                      voteComment({
                         commentId: item.item.id,
                         userId: user.id,
                         vote: 'downvote',
@@ -617,7 +545,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
+                      voteComment({
                         commentId: item.item.id,
                         userId: user.id,
                         vote: 'upvote',
