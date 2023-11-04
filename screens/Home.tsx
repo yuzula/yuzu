@@ -451,7 +451,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <Pressable
                           className={clsx(
                             {
-                              'bg-primary active:bg-primary-darker':
+                              'bg-apple-pink-light active:opacity-90':
                                 item.item.current_user_vote === 'upvote',
                               'active:bg-gray-200':
                                 item.item.current_user_vote !== 'upvote'
@@ -464,13 +464,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         >
                           <Text
                             className={clsx({
-                              'text-black':
+                              'text-white':
                                 item.item.current_user_vote === 'upvote',
                               'text-apple-gray-light':
                                 item.item.current_user_vote !== 'upvote'
                             })}
                           >
-                            <AntDesign name="arrowup" size={20} />
+                            <FontAwesome5 name="arrow-up" size={16} />
                           </Text>
                         </Pressable>
                         <Pressable
@@ -495,7 +495,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                                 item.item.current_user_vote !== 'downvote'
                             })}
                           >
-                            <AntDesign name="arrowdown" size={20} />
+                            <FontAwesome5 name="arrow-down" size={16} />
                           </Text>
                         </Pressable>
                       </View>
