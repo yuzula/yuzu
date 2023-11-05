@@ -3,6 +3,7 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
+import * as Haptics from 'expo-haptics'
 import { Skeleton } from 'moti/skeleton'
 import React, {
   FunctionComponent,
@@ -254,6 +255,10 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             })
           )
 
+          await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+          )
+
           reset()
 
           bottomSheetModalRef.current?.close()
@@ -262,6 +267,10 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           navigation.navigate('Post', { postId })
         } catch (error) {
+          await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Error
+          )
+
           Sentry.Native.captureException(error)
 
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)

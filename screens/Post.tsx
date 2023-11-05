@@ -2,6 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
+import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent, useCallback, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -283,8 +284,16 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             })
           )
 
+          await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+          )
+
           await Promise.all([getPost(), getComments()])
         } catch (error) {
+          await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Error
+          )
+
           Sentry.Native.captureException(error)
 
           Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
