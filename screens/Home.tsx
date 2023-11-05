@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
@@ -437,7 +437,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             }
                           >
                             <Text className="text-apple-gray-light">
-                              <AntDesign name="ellipsis1" size={20} />
+                              <FontAwesome5 name="ellipsis-h" size={16} />
                             </Text>
                           </Pressable>
                         )}

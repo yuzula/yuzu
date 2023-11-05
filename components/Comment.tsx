@@ -1,4 +1,4 @@
-import { AntDesign } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
 import React, { FunctionComponent } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -49,17 +49,17 @@ export const Comment: FunctionComponent<CommentProps> = ({
     <View className="mx-auto w-5/6 flex-row items-center justify-between">
       <View className="flex-row items-center space-x-2">
         <Text
-          className={clsx('font-Poppins_500Medium', {
-            'font-Poppins_500Medium_Italic': isDeleted
+          className={clsx('font-Poppins_600SemiBold', {
+            'font-Poppins_600SemiBold_Italic': isDeleted
           })}
         >
           {isDeleted ? 'Deleted' : username}
         </Text>
         <View className="flex-row items-center">
           <Text className="text-apple-gray-light">
-            <AntDesign name="arrowup" size={16} />
+            <FontAwesome5 name="arrow-up" size={14} />
           </Text>
-          <Text className="font-Poppins_400Regular text-apple-gray-light">
+          <Text className="font-Poppins_500Medium text-apple-gray-light">
             &nbsp;
             {voteCount}
           </Text>
@@ -76,11 +76,11 @@ export const Comment: FunctionComponent<CommentProps> = ({
             onPress={() => onEllipsisButtonPress?.(id)}
           >
             <Text className="text-apple-gray-light">
-              <AntDesign name="ellipsis1" size={16} />
+              <FontAwesome5 name="ellipsis-h" size={14} />
             </Text>
           </Pressable>
         )}
-        <Text className="font-Poppins_400Regular text-apple-gray-light">
+        <Text className="font-Poppins_500Medium text-apple-gray-light">
           {formatDuration(Date.now() - createdAt.getTime())}
         </Text>
       </View>
@@ -88,8 +88,8 @@ export const Comment: FunctionComponent<CommentProps> = ({
 
     <View className="mx-auto w-5/6">
       <Text
-        className={clsx('font-Poppins_400Regular', {
-          'font-Poppins_400Regular_Italic': isDeleted || isFlagged
+        className={clsx('font-Poppins_500Medium', {
+          'font-Poppins_500Medium_Italic': isDeleted || isFlagged
         })}
       >
         {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}
@@ -103,16 +103,17 @@ export const Comment: FunctionComponent<CommentProps> = ({
           onPress={() => onReplyButtonPress?.(id)}
         >
           <Text className="text-apple-gray-light">
-            <AntDesign name="back" size={16} />
+            <FontAwesome5 name="reply" size={14} />
             &nbsp;
-            <Text className="font-Poppins_400Regular">Reply</Text>
+            <Text className="font-Poppins_500Medium">Reply</Text>
           </Text>
         </Pressable>
       )}
       <Pressable
         className={clsx(
           {
-            'bg-primary active:bg-primary-darker': currentUserVote === 'upvote',
+            'bg-apple-pink-light active:opacity-90':
+              currentUserVote === 'upvote',
             'active:bg-gray-200': currentUserVote !== 'upvote'
           },
           'rounded-lg p-2'
@@ -121,11 +122,11 @@ export const Comment: FunctionComponent<CommentProps> = ({
       >
         <Text
           className={clsx({
-            'text-black': currentUserVote === 'upvote',
+            'text-white': currentUserVote === 'upvote',
             'text-apple-gray-light': currentUserVote !== 'upvote'
           })}
         >
-          <AntDesign name="arrowup" size={16} />
+          <FontAwesome5 name="arrow-up" size={14} />
         </Text>
       </Pressable>
       <Pressable
@@ -145,7 +146,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
             'text-apple-gray-light': currentUserVote !== 'downvote'
           })}
         >
-          <AntDesign name="arrowdown" size={16} />
+          <FontAwesome5 name="arrow-down" size={14} />
         </Text>
       </Pressable>
     </View>

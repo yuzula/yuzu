@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome } from '@expo/vector-icons'
+import { FontAwesome } from '@expo/vector-icons'
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -41,8 +41,7 @@ export const useFonts = () => {
     Poppins_800ExtraBold_Italic,
     Poppins_900Black,
     Poppins_900Black_Italic,
-    ...FontAwesome.font,
-    ...AntDesign.font
+    ...FontAwesome.font
   })
 
   return {

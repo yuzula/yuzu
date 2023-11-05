@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import React, { FunctionComponent, useCallback, useRef, useState } from 'react'
@@ -383,8 +383,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 <View className="w-full border-b border-gray-200">
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
-                      className={clsx('font-Poppins_500Medium text-base', {
-                        'font-Poppins_500Medium_Italic':
+                      className={clsx('font-Poppins_600SemiBold text-base', {
+                        'font-Poppins_600SemiBold_Italic':
                           post.is_deleted || post.is_flagged
                       })}
                     >
@@ -396,28 +396,32 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </Text>
 
                     <View className="space-y-1">
-                      <Text className="font-Poppins_400Regular text-apple-gray-light">
+                      <Text className="font-Poppins_500Medium text-apple-gray-light">
                         by&nbsp;
-                        <Text className="font-Poppins_500Medium">
-                          {post.username}
+                        <Text
+                          className={clsx('font-Poppins_600SemiBold', {
+                            'font-Poppins_600SemiBold_Italic': post.is_deleted
+                          })}
+                        >
+                          {post.is_deleted ? 'Deleted' : post.username}
                         </Text>
                       </Text>
                       <View className="flex flex-row space-x-2">
                         <View>
-                          <Text className="font-Poppins_400Regular text-apple-gray-light">
-                            <AntDesign name="arrowup" size={14} />
+                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <FontAwesome5 name="arrow-up" size={14} />
                             &nbsp;{post.vote_count}
                           </Text>
                         </View>
                         <View>
-                          <Text className="font-Poppins_400Regular text-apple-gray-light">
-                            <AntDesign name="message1" size={14} />
+                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <FontAwesome5 name="comment-dots" size={14} />
                             &nbsp;{post.comment_count}
                           </Text>
                         </View>
                         <View>
-                          <Text className="font-Poppins_400Regular text-apple-gray-light">
-                            <AntDesign name="clockcircleo" size={14} />
+                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <FontAwesome5 name="clock" size={14} />
                             &nbsp;
                             {formatDuration(
                               Date.now() - post.created_at.getTime()
@@ -433,7 +437,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     <Pressable
                       className={clsx(
                         {
-                          'bg-primary active:bg-primary-darker':
+                          'bg-apple-pink-light active:opacity-90':
                             post.current_user_vote === 'upvote',
                           'active:bg-gray-200':
                             post.current_user_vote !== 'upvote'
@@ -444,12 +448,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     >
                       <Text
                         className={clsx({
-                          'text-black': post.current_user_vote === 'upvote',
+                          'text-white': post.current_user_vote === 'upvote',
                           'text-apple-gray-light':
                             post.current_user_vote !== 'upvote'
                         })}
                       >
-                        <AntDesign name="arrowup" size={20} />
+                        <FontAwesome5 name="arrow-up" size={18} />
                       </Text>
                     </Pressable>
                     <Pressable
@@ -471,7 +475,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                             post.current_user_vote !== 'downvote'
                         })}
                       >
-                        <AntDesign name="arrowdown" size={20} />
+                        <FontAwesome5 name="arrow-down" size={18} />
                       </Text>
                     </Pressable>
                     <Pressable
@@ -479,7 +483,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       onPress={handleReplyButtonPress}
                     >
                       <Text className="text-apple-gray-light">
-                        <AntDesign name="message1" size={20} />
+                        <FontAwesome5 name="comment-dots" size={18} />
                       </Text>
                     </Pressable>
                   </View>
@@ -568,9 +572,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           <View className="space-y-2 border-t border-gray-200 py-2">
             {replyParentCommentId && (
               <View className="mx-auto w-5/6">
-                <Text className="font-Poppins_400Regular">
+                <Text className="font-Poppins_500Medium">
                   Replying to&nbsp;
-                  <Text className="font-Poppins_500Medium">
+                  <Text className="font-Poppins_600SemiBold">
                     {
                       comments.find(
                         comment => comment.id === replyParentCommentId
@@ -590,7 +594,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   <TextInput
                     ref={replyTextFieldRef}
                     multiline
-                    className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_400Regular"
+                    className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_500Medium"
                     editable={!isCreateCommentLoading}
                     maxLength={600}
                     placeholder="Add a comment"
