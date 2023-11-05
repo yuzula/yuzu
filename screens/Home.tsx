@@ -314,13 +314,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             <View className="grow">
               <Button onPress={handleCreatePostButtonPress}>
                 <FontAwesome5 name="pen" />
-                &nbsp;Post
+                &nbsp;&nbsp;Post
               </Button>
             </View>
             <View className="grow">
               <Button variant="secondary" onPress={handleSortButtonPress}>
                 <FontAwesome5 name="sort" />
-                &nbsp;Sort
+                &nbsp;&nbsp;Sort
               </Button>
             </View>
           </View>
