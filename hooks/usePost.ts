@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
@@ -56,6 +57,8 @@ export const usePost = (id: number) => {
         newPost.vote_count += resultingVote.delta
 
         setPost(newPost)
+
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
         await retryPromise(() =>
           postService.registerVote({

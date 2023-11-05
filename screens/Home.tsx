@@ -140,7 +140,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const handlePostVoteButtonPress = useCallback(
     async (postId: number, vote: 'upvote' | 'downvote') => {
-      votePost({ postId, vote })
+      await votePost({ postId, vote })
     },
     [votePost]
   )
