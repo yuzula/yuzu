@@ -308,7 +308,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         <View className="w-full flex-1 items-center justify-center space-y-4">
           <View className="w-5/6 space-y-2">
             <Text className="font-Poppins_700Bold text-xl">
-              {profile.community_domain_name}
+              @{profile.community_domain_name}
             </Text>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
