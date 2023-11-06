@@ -446,7 +446,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             }
                           >
                             <Text className="text-apple-gray-light">
-                              <FontAwesome5 name="ellipsis-h" size={16} />
+                              <FontAwesome5 name="ellipsis-h" size={18} />
                             </Text>
                           </Pressable>
                         )}
@@ -472,7 +472,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                                 item.item.current_user_vote !== 'upvote'
                             })}
                           >
-                            <FontAwesome5 name="arrow-up" size={16} />
+                            <FontAwesome5 name="arrow-up" size={18} />
                           </Text>
                         </Pressable>
                         <Pressable
@@ -497,7 +497,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                                 item.item.current_user_vote !== 'downvote'
                             })}
                           >
-                            <FontAwesome5 name="arrow-down" size={16} />
+                            <FontAwesome5 name="arrow-down" size={18} />
                           </Text>
                         </Pressable>
                       </View>
