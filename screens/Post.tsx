@@ -284,11 +284,11 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             })
           )
 
+          await Promise.all([getPost(), getComments()])
+
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
           )
-
-          await Promise.all([getPost(), getComments()])
         } catch (error) {
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Error
