@@ -79,10 +79,7 @@ export const Me: FunctionComponent = () => {
     >
       <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
         <View className="space-y-4">
-          <Text
-            className="text-center font-Poppins_600SemiBold text-2xl underline decoration-primary"
-            style={{ textDecorationStyle: 'double' }}
-          >
+          <Text className="text-center font-Poppins_600SemiBold text-2xl">
             {user.user_metadata.username}
           </Text>
         </View>
