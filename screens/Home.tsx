@@ -337,7 +337,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   from={
                     <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
                       <Text className="text-gray-600">
-                        <FontAwesome5 name="question" size={10} />
+                        <FontAwesome5 name="question" size={12} />
                       </Text>
                     </Pressable>
                   }
