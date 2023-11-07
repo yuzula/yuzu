@@ -6,7 +6,6 @@ import * as Sentry from 'sentry-expo'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
-import { getResultingVote } from '../helpers/vote'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { useProfileContext } from './useProfileContext'
@@ -73,10 +72,12 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
   const votePost = useCallback(
     async ({
       postId,
-      vote
+      vote,
+      delta
     }: {
       postId: number
-      vote: 'upvote' | 'downvote'
+      vote?: 'upvote' | 'downvote'
+      delta: number
     }) => {
       if (!profile) {
         Sentry.Native.captureException(new NotAuthenticatedError())
@@ -84,35 +85,24 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
         return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
       }
 
-      if (!posts) {
-        Sentry.Native.captureException(
-          new Error('Trying to vote when posts do not exist')
-        )
+      setPosts(prevPosts => {
+        const prevPostsCopy = [...prevPosts]
 
-        return Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-      }
+        const post = prevPostsCopy.find(post => post.id === postId)
 
-      const newPosts = [...posts]
+        if (!post) {
+          Sentry.Native.captureException(new Error('Could not find voted post'))
 
-      const newPost = newPosts.find(post => post.id === postId)
+          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
 
-      if (!newPost) {
-        Sentry.Native.captureException(new Error('Could not find voted post'))
+          return prevPostsCopy
+        }
 
-        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
+        post.current_user_vote = vote
+        post.vote_count += delta
 
-      const oldVote = newPost.current_user_vote
-
-      const resultingVote = getResultingVote({
-        oldVote,
-        vote
+        return prevPostsCopy
       })
-
-      newPost.current_user_vote = resultingVote.newVote
-      newPost.vote_count += resultingVote.delta
-
-      setPosts(newPosts)
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
@@ -120,12 +110,11 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
         postService.registerVote({
           postId,
           userId: profile.id,
-          oldVote,
           vote
         })
       )
     },
-    [posts, profile]
+    [profile]
   )
 
   useEffect(() => {

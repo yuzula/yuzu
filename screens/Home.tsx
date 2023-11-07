@@ -31,6 +31,7 @@ import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
+import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useMemberCount } from '../hooks/useMemberCount'
 import { usePosts } from '../hooks/usePosts'
@@ -149,8 +150,18 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   }, [refreshPosts])
 
   const handlePostVoteButtonPress = useCallback(
-    async (postId: number, vote: 'upvote' | 'downvote') => {
-      await votePost({ postId, vote })
+    async ({
+      postId,
+      oldVote,
+      vote
+    }: {
+      postId: number
+      oldVote?: 'upvote' | 'downvote'
+      vote: 'upvote' | 'downvote'
+    }) => {
+      const { newVote, delta } = getResultingVote({ oldVote, vote })
+
+      await votePost({ postId, vote: newVote, delta })
     },
     [votePost]
   )
@@ -515,7 +526,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handlePostVoteButtonPress(item.item.id, 'upvote')
+                            handlePostVoteButtonPress({
+                              postId: item.item.id,
+                              oldVote: item.item.current_user_vote,
+                              vote: 'upvote'
+                            })
                           }
                         >
                           <Text
@@ -540,7 +555,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             'rounded-lg p-2'
                           )}
                           onPress={() =>
-                            handlePostVoteButtonPress(item.item.id, 'downvote')
+                            handlePostVoteButtonPress({
+                              postId: item.item.id,
+                              oldVote: item.item.current_user_vote,
+                              vote: 'downvote'
+                            })
                           }
                         >
                           <Text

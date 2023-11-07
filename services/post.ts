@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
-import { getResultingVote } from '../helpers/vote'
 import { postModel } from '../models/post'
 
 interface GetParams {
@@ -151,27 +150,19 @@ export const getVote = async ({ postId, userId }: GetPostVotesParams) => {
 interface VoteParams {
   postId: number
   userId: string
-  oldVote?: 'upvote' | 'downvote'
-  vote: 'upvote' | 'downvote'
+  vote?: 'upvote' | 'downvote'
 }
 
-export const registerVote = async ({
-  postId,
-  userId,
-  oldVote,
-  vote
-}: VoteParams) => {
-  const resultingVote = getResultingVote({ oldVote, vote })
-
+export const registerVote = async ({ postId, userId, vote }: VoteParams) => {
   const existingVote = await getVote({ postId, userId })
 
   // User has voted on this post already
   if (existingVote) {
     // The new vote results in an upvote or downvote
-    if (resultingVote.newVote) {
+    if (vote) {
       const response = await supabase
         .from('post_votes')
-        .update({ is_upvote: resultingVote.newVote === 'upvote' })
+        .update({ is_upvote: vote === 'upvote' })
         .eq('id', existingVote.id)
 
       if (response.error) {
@@ -193,7 +184,7 @@ export const registerVote = async ({
     const response = await supabase.from('post_votes').insert({
       user_id: userId,
       post_id: postId,
-      is_upvote: resultingVote.newVote === 'upvote'
+      is_upvote: vote === 'upvote'
     })
 
     if (response.error) {
