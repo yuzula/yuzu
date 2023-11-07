@@ -1,5 +1,4 @@
 import { supabase } from '../clients/supabase'
-import { getResultingVote } from '../helpers/vote'
 import { commentModel } from '../models/comment'
 
 interface CreateParams {
@@ -144,27 +143,19 @@ export const getVote = async ({ commentId, userId }: GetPostVotesParams) => {
 interface VoteParams {
   commentId: number
   userId: string
-  oldVote?: 'upvote' | 'downvote'
-  vote: 'upvote' | 'downvote'
+  vote?: 'upvote' | 'downvote'
 }
 
-export const registerVote = async ({
-  commentId,
-  userId,
-  oldVote,
-  vote
-}: VoteParams) => {
-  const resultingVote = getResultingVote({ oldVote, vote })
-
+export const registerVote = async ({ commentId, userId, vote }: VoteParams) => {
   const existingVote = await getVote({ commentId, userId })
 
   // User has voted on this comment already
   if (existingVote) {
     // The new vote results in an upvote or downvote
-    if (resultingVote.newVote) {
+    if (vote) {
       const response = await supabase
         .from('comment_votes')
-        .update({ is_upvote: resultingVote.newVote === 'upvote' })
+        .update({ is_upvote: vote === 'upvote' })
         .eq('id', existingVote.id)
 
       if (response.error) {
@@ -186,7 +177,7 @@ export const registerVote = async ({
     const response = await supabase.from('comment_votes').insert({
       user_id: userId,
       comment_id: commentId,
-      is_upvote: resultingVote.newVote === 'upvote'
+      is_upvote: vote === 'upvote'
     })
 
     if (response.error) {

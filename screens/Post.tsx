@@ -341,6 +341,25 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     [votePost]
   )
 
+  const handleCommentVoteButtonPress = useCallback(
+    async ({
+      commentId,
+      parentCommentId,
+      oldVote,
+      vote
+    }: {
+      commentId: number
+      parentCommentId?: number
+      oldVote?: 'upvote' | 'downvote'
+      vote: 'upvote' | 'downvote'
+    }) => {
+      const { newVote, delta } = getResultingVote({ oldVote, vote })
+
+      await voteComment({ commentId, parentCommentId, vote: newVote, delta })
+    },
+    [voteComment]
+  )
+
   if (!user) {
     return null
   }
@@ -550,22 +569,22 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
                     onDownvoteButtonPress={() =>
-                      voteComment({
+                      handleCommentVoteButtonPress({
                         commentId: item.item.id,
-                        userId: user.id,
-                        vote: 'downvote',
-                        parentCommentId: item.item.parent_comment_id
+                        parentCommentId: item.item.parent_comment_id,
+                        oldVote: item.item.current_user_vote,
+                        vote: 'downvote'
                       })
                     }
                     onEllipsisButtonPress={() =>
                       handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
-                      voteComment({
+                      handleCommentVoteButtonPress({
                         commentId: item.item.id,
-                        userId: user.id,
-                        vote: 'upvote',
-                        parentCommentId: item.item.parent_comment_id
+                        parentCommentId: item.item.parent_comment_id,
+                        oldVote: item.item.current_user_vote,
+                        vote: 'upvote'
                       })
                     }
                   />
@@ -583,22 +602,22 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     variant="child"
                     voteCount={item.item.vote_count}
                     onDownvoteButtonPress={() =>
-                      voteComment({
+                      handleCommentVoteButtonPress({
                         commentId: item.item.id,
-                        userId: user.id,
-                        vote: 'downvote',
-                        parentCommentId: item.item.parent_comment_id
+                        parentCommentId: item.item.parent_comment_id,
+                        oldVote: item.item.current_user_vote,
+                        vote: 'downvote'
                       })
                     }
                     onEllipsisButtonPress={() =>
                       handleCommentEllipsisButtonPress(item.item)
                     }
                     onUpvoteButtonPress={() =>
-                      voteComment({
+                      handleCommentVoteButtonPress({
                         commentId: item.item.id,
-                        userId: user.id,
-                        vote: 'upvote',
-                        parentCommentId: item.item.parent_comment_id
+                        parentCommentId: item.item.parent_comment_id,
+                        oldVote: item.item.current_user_vote,
+                        vote: 'upvote'
                       })
                     }
                   />

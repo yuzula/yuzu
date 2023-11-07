@@ -4,8 +4,8 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
-import { getResultingVote } from '../helpers/vote'
 import { commentModel } from '../models/comment'
 import { commentService } from '../services/comment'
 import { useProfileContext } from './useProfileContext'
@@ -13,7 +13,7 @@ import { useProfileContext } from './useProfileContext'
 export const useComments = (postId: number) => {
   const { profile } = useProfileContext()
 
-  const [comments, setComments] = useState<commentModel.Schema[]>()
+  const [comments, setComments] = useState<commentModel.Schema[]>([])
 
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -44,57 +44,57 @@ export const useComments = (postId: number) => {
   const voteComment = useCallback(
     async ({
       commentId,
-      userId,
       parentCommentId,
-      vote
+      vote,
+      delta
     }: {
       commentId: number
-      userId: string
       parentCommentId?: number
-      vote: 'upvote' | 'downvote'
+      vote?: 'upvote' | 'downvote'
+      delta: number
     }) => {
-      if (comments) {
-        const newComments = [...comments]
+      if (!profile) {
+        Sentry.Native.captureException(new NotAuthenticatedError())
 
-        const newComment = parentCommentId
-          ? newComments
+        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
+      }
+
+      setComments(prevComments => {
+        const prevCommentsCopy = [...prevComments]
+
+        const comment = parentCommentId
+          ? prevCommentsCopy
               .find(comment => comment.id === parentCommentId)
               ?.children.find(comment => comment.id === commentId)
-          : newComments.find(comment => comment.id === commentId)
+          : prevCommentsCopy.find(comment => comment.id === commentId)
 
-        if (!newComment) {
+        if (!comment) {
           Sentry.Native.captureException(
             new Error('Could not find voted comment')
           )
 
-          return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+
+          return prevCommentsCopy
         }
 
-        const oldVote = newComment.current_user_vote
+        comment.current_user_vote = vote
+        comment.vote_count += delta
 
-        const resultingVote = getResultingVote({
-          oldVote,
+        return prevCommentsCopy
+      })
+
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+
+      await retryPromise(() =>
+        commentService.registerVote({
+          commentId,
+          userId: profile.id,
           vote
         })
-
-        newComment.current_user_vote = resultingVote.newVote
-        newComment.vote_count += resultingVote.delta
-
-        setComments(newComments)
-
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-
-        await retryPromise(() =>
-          commentService.registerVote({
-            commentId,
-            userId,
-            oldVote,
-            vote
-          })
-        )
-      }
+      )
     },
-    [comments]
+    [profile]
   )
 
   useEffect(() => {
