@@ -26,6 +26,7 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
+import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useComments } from '../hooks/useComments'
 import { usePost } from '../hooks/usePost'
@@ -323,6 +324,23 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     replyTextFieldRef.current?.focus()
   }, [])
 
+  const handlePostVoteButtonPress = useCallback(
+    async ({
+      postId,
+      oldVote,
+      vote
+    }: {
+      postId: number
+      oldVote?: 'upvote' | 'downvote'
+      vote: 'upvote' | 'downvote'
+    }) => {
+      const { newVote, delta } = getResultingVote({ oldVote, vote })
+
+      await votePost({ postId, vote: newVote, delta })
+    },
+    [votePost]
+  )
+
   if (!user) {
     return null
   }
@@ -453,7 +471,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         },
                         'rounded-lg p-2'
                       )}
-                      onPress={() => votePost(post.id, user.id, 'upvote')}
+                      onPress={() =>
+                        handlePostVoteButtonPress({
+                          postId: post.id,
+                          oldVote: post.current_user_vote,
+                          vote: 'upvote'
+                        })
+                      }
                     >
                       <Text
                         className={clsx({
@@ -475,7 +499,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         },
                         'rounded-lg p-2'
                       )}
-                      onPress={() => votePost(post.id, user.id, 'downvote')}
+                      onPress={() =>
+                        handlePostVoteButtonPress({
+                          postId: post.id,
+                          oldVote: post.current_user_vote,
+                          vote: 'downvote'
+                        })
+                      }
                     >
                       <Text
                         className={clsx({

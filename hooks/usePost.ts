@@ -4,8 +4,8 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
-import { getResultingVote } from '../helpers/vote'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { useProfileContext } from './useProfileContext'
@@ -42,35 +42,48 @@ export const usePost = (id: number) => {
   }, [getPost])
 
   const votePost = useCallback(
-    async (postId: number, userId: string, vote: 'upvote' | 'downvote') => {
-      if (post) {
-        const newPost = { ...post }
+    async ({
+      postId,
+      vote,
+      delta
+    }: {
+      postId: number
+      vote?: 'upvote' | 'downvote'
+      delta: number
+    }) => {
+      if (!profile) {
+        Sentry.Native.captureException(new NotAuthenticatedError())
 
-        const oldVote = newPost.current_user_vote
+        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
+      }
 
-        const resultingVote = getResultingVote({
-          oldVote,
+      if (!post) {
+        Sentry.Native.captureException(new Error('Voting on non-existent post'))
+
+        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+
+      setPost(prevPost =>
+        prevPost
+          ? {
+              ...prevPost,
+              current_user_vote: vote,
+              vote_count: prevPost.vote_count + delta
+            }
+          : undefined
+      )
+
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+
+      await retryPromise(() =>
+        postService.registerVote({
+          postId,
+          userId: profile.id,
           vote
         })
-
-        newPost.current_user_vote = resultingVote.newVote
-        newPost.vote_count += resultingVote.delta
-
-        setPost(newPost)
-
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-
-        await retryPromise(() =>
-          postService.registerVote({
-            postId,
-            userId,
-            oldVote,
-            vote
-          })
-        )
-      }
+      )
     },
-    [post]
+    [post, profile]
   )
 
   useEffect(() => {
