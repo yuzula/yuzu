@@ -13,7 +13,16 @@ import React, {
   useState
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, FlatList, Pressable, Text, TextInput, View } from 'react-native'
+import {
+  Alert,
+  FlatList,
+  Linking,
+  Pressable,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
+import Popover from 'react-native-popover-view'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
@@ -289,6 +298,18 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     [navigation]
   )
 
+  const handleDomainNamePopoverLearnMorePress = useCallback(async () => {
+    const url = 'https://yuzu.la/about'
+
+    if (await Linking.canOpenURL(url)) {
+      await Linking.openURL(url)
+    } else {
+      Sentry.Native.captureException(new Error('Could not open About page'))
+
+      Alert.alert('Could not open About page', GENERIC_ERROR_MESSAGE)
+    }
+  }, [])
+
   useEffect(() => {
     if (route.params?.shouldRefresh) {
       handlePostsRefresh()
@@ -307,9 +328,42 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       <View className="w-full flex-1 pt-6">
         <View className="w-full flex-1 items-center justify-center space-y-4">
           <View className="w-5/6 space-y-2">
-            <Text className="font-Poppins_700Bold text-xl">
-              @{profile.community_domain_name}
-            </Text>
+            <View className="flex flex-row items-center space-x-2">
+              <Text className="font-Poppins_700Bold text-xl">
+                @{profile.community_domain_name}
+              </Text>
+              <View>
+                <Popover
+                  from={
+                    <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
+                      <Text className="text-gray-600">
+                        <FontAwesome5 name="question" size={10} />
+                      </Text>
+                    </Pressable>
+                  }
+                >
+                  <View className="space-y-2 p-4">
+                    <Text className="font-Poppins_600SemiBold text-base">
+                      What's this?
+                    </Text>
+                    <Text className="font-Poppins_500Medium">
+                      This is your community! Everyone else here also signed up
+                      with a&nbsp;
+                      <Text className="font-Poppins_600SemiBold">
+                        @{profile.community_domain_name}
+                      </Text>
+                      &nbsp;email address.
+                    </Text>
+                    <Text
+                      className="font-Poppins_500Medium text-apple-blue-light"
+                      onPress={handleDomainNamePopoverLearnMorePress}
+                    >
+                      Learn more
+                    </Text>
+                  </View>
+                </Popover>
+              </View>
+            </View>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
                 <Text className="font-Poppins_600SemiBold text-apple-gray-light">
