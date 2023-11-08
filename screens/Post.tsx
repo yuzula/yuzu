@@ -76,7 +76,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     getComments,
     refreshComments,
     voteComment,
-    isRefreshing: areCommentsRefreshing
+    isRefreshing: areCommentsRefreshing,
+    isLoadingOnMount: areCommentsLoadingOnMount
   } = useComments(postId)
 
   const [replyParentCommentId, setReplyParentCommentId] = useState<
@@ -366,7 +367,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      {!post || !comments ? (
+      {!post || !comments || areCommentsLoadingOnMount ? (
         <ActivityIndicator />
       ) : (
         <KeyboardAvoidingView
