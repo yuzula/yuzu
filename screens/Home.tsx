@@ -17,7 +17,9 @@ import {
   Alert,
   FlatList,
   Linking,
+  Platform,
   Pressable,
+  StatusBar,
   Text,
   TextInput,
   View
@@ -351,6 +353,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <FontAwesome5 name="question" size={12} />
                       </Text>
                     </Pressable>
+                  }
+                  verticalOffset={
+                    Platform.OS === 'android' && StatusBar.currentHeight
+                      ? -StatusBar.currentHeight
+                      : 0
                   }
                 >
                   <View className="space-y-2 p-4">
