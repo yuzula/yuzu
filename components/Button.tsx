@@ -49,7 +49,7 @@ export const Button: FunctionComponent<ButtonProps> = ({
             'text-black': variant === 'primary',
             'text-gray-600': variant === 'secondary'
           },
-          'font-Poppins_600SemiBold'
+          'font-Poppins_700Bold'
         )}
       >
         {children}
