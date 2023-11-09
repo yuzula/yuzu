@@ -18,20 +18,14 @@ export const usePost = (id: number) => {
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const getPost = useCallback(async () => {
-    if (profile) {
-      try {
-        setPost(
-          await retryPromise(() =>
-            postService.get({ postId: id, userId: profile.id })
-          )
-        )
-      } catch (error) {
-        Sentry.Native.captureException(error)
+    try {
+      setPost(await retryPromise(() => postService.get({ postId: id })))
+    } catch (error) {
+      Sentry.Native.captureException(error)
 
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     }
-  }, [id, profile])
+  }, [id])
 
   const refreshPost = useCallback(async () => {
     setIsRefreshing(true)

@@ -5,22 +5,13 @@ import { postModel } from '../models/post'
 
 interface GetParams {
   postId: number
-  userId: string
 }
 
-export const get = async ({ postId, userId }: GetParams) => {
+export const get = async ({ postId }: GetParams) => {
   const response = await supabase
-    .from('posts_with_vote_and_comment_count')
-    .select(
-      `
-        *,
-        post_votes(user_id, is_upvote),
-        profiles(username),
-        reported_posts(is_flagged)
-      `
-    )
+    .from('home_screen_posts')
+    .select('*')
     .eq('id', postId)
-    .eq('post_votes.user_id', userId)
     .single()
 
   if (response.error) {
@@ -29,16 +20,9 @@ export const get = async ({ postId, userId }: GetParams) => {
 
   return postModel.schema.parse({
     ...response.data,
-    username: response.data.profiles?.username,
     user_id: response.data.user_id ?? undefined,
     content: response.data.content ?? undefined,
-    // @ts-expect-error weird TypeScript error. This is the right type
-    is_flagged: !!response.data.reported_posts?.is_flagged,
-    current_user_vote: !response.data.post_votes[0]
-      ? undefined
-      : response.data.post_votes[0].is_upvote
-      ? 'upvote'
-      : 'downvote'
+    current_user_vote: response.data.current_user_vote
   })
 }
 
