@@ -83,6 +83,13 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comment_votes_comment_id_fkey'
+            columns: ['comment_id']
+            isOneToOne: false
+            referencedRelation: 'post_screen_comments'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comment_votes_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
@@ -135,6 +142,13 @@ export interface Database {
             columns: ['parent_comment_id']
             isOneToOne: false
             referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'post_screen_comments'
             referencedColumns: ['id']
           },
           {
@@ -411,6 +425,13 @@ export interface Database {
             isOneToOne: true
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_comments_comment_id_fkey'
+            columns: ['comment_id']
+            isOneToOne: true
+            referencedRelation: 'post_screen_comments'
+            referencedColumns: ['id']
           }
         ]
       }
@@ -521,6 +542,13 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'post_screen_comments'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
             isOneToOne: false
@@ -605,6 +633,101 @@ export interface Database {
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      post_screen_comments: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          current_user_vote: string | null
+          id: number | null
+          is_deleted: boolean | null
+          is_flagged: boolean | null
+          parent_comment_id: number | null
+          post_id: number | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'post_screen_comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_hotness_with_flagged'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'profiles'

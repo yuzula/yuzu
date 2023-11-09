@@ -20,11 +20,7 @@ export const useComments = (postId: number) => {
   const getComments = useCallback(async () => {
     if (profile) {
       try {
-        setComments(
-          await retryPromise(() =>
-            commentService.getAllRoot({ postId, userId: profile.id })
-          )
-        )
+        setComments(await retryPromise(() => commentService.getAllRoot(postId)))
       } catch (error) {
         Sentry.Native.captureException(error)
 
