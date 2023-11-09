@@ -30,7 +30,7 @@ export const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
               onPress={handleLoginButtonPress}
             >
               <View className="h-20 items-center justify-center bg-apple-pink-light">
-                <Text className="font-Poppins_600SemiBold text-xl uppercase text-white">
+                <Text className="font-Poppins_700Bold text-xl uppercase text-white">
                   Log In
                 </Text>
               </View>
@@ -41,7 +41,7 @@ export const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
               onPress={handleRegisterButtonPress}
             >
               <View className="h-20 items-center justify-center bg-apple-blue-light">
-                <Text className="font-Poppins_600SemiBold text-xl uppercase text-white">
+                <Text className="font-Poppins_700Bold text-xl uppercase text-white">
                   Sign Up
                 </Text>
               </View>
