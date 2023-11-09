@@ -32,12 +32,14 @@ export interface Database {
           {
             foreignKeyName: 'blocked_users_blockee_id_fkey'
             columns: ['blockee_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'blocked_users_blocker_id_fkey'
             columns: ['blocker_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -69,18 +71,21 @@ export interface Database {
           {
             foreignKeyName: 'comment_votes_comment_id_fkey'
             columns: ['comment_id']
+            isOneToOne: false
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comment_votes_comment_id_fkey'
             columns: ['comment_id']
+            isOneToOne: false
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comment_votes_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -121,54 +126,70 @@ export interface Database {
           {
             foreignKeyName: 'comments_parent_comment_id_fkey'
             columns: ['parent_comment_id']
+            isOneToOne: false
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_parent_comment_id_fkey'
             columns: ['parent_comment_id']
+            isOneToOne: false
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness_with_flagged'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_and_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -215,42 +236,56 @@ export interface Database {
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'post_votes_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness_with_flagged'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_and_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'post_votes_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -291,12 +326,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -322,12 +359,14 @@ export interface Database {
           {
             foreignKeyName: 'profiles_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'profiles_id_fkey'
             columns: ['id']
+            isOneToOne: true
             referencedRelation: 'users'
             referencedColumns: ['id']
           }
@@ -362,12 +401,14 @@ export interface Database {
           {
             foreignKeyName: 'reported_comments_comment_id_fkey'
             columns: ['comment_id']
+            isOneToOne: true
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_comments_comment_id_fkey'
             columns: ['comment_id']
+            isOneToOne: true
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           }
@@ -402,36 +443,49 @@ export interface Database {
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_posts_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts_with_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts_with_hotness_with_flagged'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts_with_vote_and_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'reported_posts_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: true
             referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           }
@@ -455,54 +509,104 @@ export interface Database {
           {
             foreignKeyName: 'comments_parent_comment_id_fkey'
             columns: ['parent_comment_id']
+            isOneToOne: false
             referencedRelation: 'comments'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_parent_comment_id_fkey'
             columns: ['parent_comment_id']
+            isOneToOne: false
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_hotness_with_flagged'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_and_comment_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
+            isOneToOne: false
             referencedRelation: 'posts_with_vote_count'
             referencedColumns: ['id']
           },
           {
             foreignKeyName: 'comments_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      home_screen_posts: {
+        Row: {
+          comment_count: number | null
+          community_domain_name: string | null
+          content: string | null
+          created_at: string | null
+          current_user_vote: string | null
+          hotness: number | null
+          id: number | null
+          is_deleted: boolean | null
+          is_flagged: boolean | null
+          is_private: boolean | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+          vote_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -524,12 +628,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -553,12 +659,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -583,12 +691,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -611,12 +721,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }
@@ -638,12 +750,14 @@ export interface Database {
           {
             foreignKeyName: 'posts_community_domain_name_fkey'
             columns: ['community_domain_name']
+            isOneToOne: false
             referencedRelation: 'communities'
             referencedColumns: ['domain_name']
           },
           {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
+            isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
           }

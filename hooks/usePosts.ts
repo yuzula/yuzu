@@ -46,7 +46,6 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
         await retryPromise(() =>
           postService.getAll({
             communityDomainName,
-            userId: profile.id,
             sortBy
           })
         )
