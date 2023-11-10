@@ -534,11 +534,47 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <FontAwesome5 name="chevron-down" />
                       </Text>
                     </Pressable>
-                    <Text className="font-Poppins_600SemiBold text-gray-light">
-                      What's&nbsp;&nbsp;
-                      <FontAwesome5 name="lock" />
-                      &nbsp;?
-                    </Text>
+                    <Popover
+                      from={
+                        <Pressable>
+                          <Text className="font-Poppins_600SemiBold text-gray-light">
+                            What's&nbsp;&nbsp;
+                            <FontAwesome5 name="lock" />
+                            &nbsp;?
+                          </Text>
+                        </Pressable>
+                      }
+                      verticalOffset={
+                        Platform.OS === 'android' && StatusBar.currentHeight
+                          ? -StatusBar.currentHeight
+                          : 0
+                      }
+                    >
+                      <View className="space-y-2 p-4">
+                        <Text className="font-Poppins_600SemiBold text-base">
+                          Internal posts
+                        </Text>
+                        <Text className="font-Poppins_500Medium">
+                          Internal posts can only be created and viewed by your
+                          peers that also signed up with a&nbsp;
+                          <Text className="font-Poppins_600SemiBold">
+                            @{profile.community_domain_name}
+                          </Text>
+                          &nbsp;email address.
+                        </Text>
+                        <Text className="font-Poppins_500Medium">
+                          They are marked with the special&nbsp;&nbsp;
+                          <Text className="text-yellow-light">
+                            <FontAwesome5 name="lock" />
+                          </Text>
+                          &nbsp;&nbsp;icon.
+                        </Text>
+                        <Text className="font-Poppins_500Medium">
+                          Public posts don't have that icon and can be created &
+                          viewed by everyone.
+                        </Text>
+                      </View>
+                    </Popover>
                   </View>
                 </View>
               }
