@@ -573,7 +573,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                               : item.item.username}
                           </Text>
                         </Text>
-                        <View className="flex flex-row space-x-2">
+                        <View className="flex flex-row items-center space-x-2">
                           <View>
                             <Text className="font-Poppins_500Medium text-apple-gray-light">
                               <FontAwesome5 name="arrow-up" size={14} />
