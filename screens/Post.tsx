@@ -375,7 +375,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="w-full flex-1"
         >
-          <View className="flex-row items-center justify-between border-b border-gray-200 py-2">
+          <View className="flex-row items-center justify-between border-b border-gray-100 py-2">
             <View className="basis-1/3 items-start pl-2">
               <Pressable
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"

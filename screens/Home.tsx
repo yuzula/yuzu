@@ -79,7 +79,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     posts,
     isLoadingOnMount: arePostsLoadingOnMount,
     isLoading: arePostsLoading,
+    sortBy,
     sortPosts,
+    filterPosts,
     refreshPosts,
     votePost
   } = usePosts({
@@ -147,6 +149,33 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       }
     )
   }, [showActionSheetWithOptions, sortPosts])
+
+  const handleFilterButtonPress = useCallback(() => {
+    showActionSheetWithOptions(
+      {
+        title: 'Filter posts by',
+        options: ['All', 'Public', 'Internal', 'Cancel'],
+        cancelButtonIndex: 3
+      },
+      async index => {
+        if (index === 3) {
+          return
+        }
+
+        switch (index) {
+          case 0:
+            await filterPosts('all')
+            break
+          case 1:
+            await filterPosts('public')
+            break
+          case 2:
+            await filterPosts('private')
+            break
+        }
+      }
+    )
+  }, [filterPosts, showActionSheetWithOptions])
 
   const handlePostsRefresh = useCallback(async () => {
     refreshPosts()
@@ -402,7 +431,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               <Button
                 className="h-10"
                 variant="secondary"
-                onPress={handleSortButtonPress}
+                onPress={handleFilterButtonPress}
               >
                 <FontAwesome5 name="filter" />
                 &nbsp;&nbsp;Filter
@@ -432,7 +461,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           ) : (
             <FlatList
               ItemSeparatorComponent={Separator}
-              className="w-full"
+              className="w-full border-t border-gray-100"
               contentContainerStyle={{ flexGrow: 1 }}
               data={posts}
               keyExtractor={item => item.id.toString()}
@@ -449,15 +478,15 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               )}
               ListHeaderComponent={
                 <View className="bg-gray-100 py-4">
-                  <View className="mx-auto flex w-5/6 flex-row items-center justify-between">
-                    <Text className="font-Poppins_700Bold text-gray-600">
-                      <FontAwesome5 name="fire" />
-                      &nbsp;&nbsp;Sort by Hot&nbsp;&nbsp;
-                      <FontAwesome5 name="chevron-down" />
-                    </Text>
-                    <Text className="font-Poppins_600SemiBold text-apple-gray-light">
-                      Public vs Internal?
-                    </Text>
+                  <View className="mx-auto w-5/6">
+                    <Pressable onPress={handleSortButtonPress}>
+                      <Text className="font-Poppins_700Bold text-gray-600">
+                        <FontAwesome5 name="fire" />
+                        &nbsp;&nbsp;Sort by&nbsp;
+                        <Text className="capitalize">{sortBy}</Text>&nbsp;&nbsp;
+                        <FontAwesome5 name="chevron-down" />
+                      </Text>
+                    </Pressable>
                   </View>
                 </View>
               }

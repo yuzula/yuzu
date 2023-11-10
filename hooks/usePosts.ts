@@ -11,6 +11,7 @@ import { postService } from '../services/post'
 import { useProfileContext } from './useProfileContext'
 
 type SortBy = 'hot' | 'new' | 'controversial'
+type FilterBy = 'all' | 'public' | 'private'
 
 interface UsePostsParams {
   communityDomainName?: string
@@ -20,7 +21,8 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
   const { profile } = useProfileContext()
 
   const [posts, setPosts] = useState<postModel.Schema[]>([])
-  const [sortBy, setSortBy] = useState<'hot' | 'new' | 'controversial'>('hot')
+  const [sortBy, setSortBy] = useState<SortBy>('hot')
+  const [filterBy, setFilterBy] = useState<FilterBy>('all')
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -46,7 +48,8 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
         await retryPromise(() =>
           postService.getAll({
             communityDomainName,
-            sortBy
+            sortBy,
+            filterBy
           })
         )
       )
@@ -58,10 +61,14 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
       setIsLoading(false)
       setIsLoadingOnMount(false)
     }
-  }, [communityDomainName, profile, sortBy])
+  }, [communityDomainName, filterBy, profile, sortBy])
 
   const sortPosts = useCallback(async (sortBy: SortBy) => {
     setSortBy(sortBy)
+  }, [])
+
+  const filterPosts = useCallback(async (filterBy: FilterBy) => {
+    setFilterBy(filterBy)
   }, [])
 
   const refreshPosts = useCallback(async () => {
@@ -124,7 +131,9 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
     posts,
     isLoadingOnMount,
     isLoading,
+    sortBy,
     sortPosts,
+    filterPosts,
     refreshPosts,
     votePost
   }

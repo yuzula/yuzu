@@ -29,13 +29,15 @@ export const get = async ({ postId }: GetParams) => {
 interface GetAllParams {
   communityDomainName: string
   sortBy: 'hot' | 'new' | 'controversial'
+  filterBy: 'all' | 'private' | 'public'
 }
 
 export const getAll = async ({
   communityDomainName,
-  sortBy = 'hot'
+  sortBy = 'hot',
+  filterBy = 'all'
 }: GetAllParams) => {
-  const response = await supabase
+  const query = supabase
     .from('home_screen_posts')
     .select('*')
     .eq('community_domain_name', communityDomainName)
@@ -50,6 +52,16 @@ export const getAll = async ({
       { ascending: false }
     )
     .limit(40)
+
+  if (filterBy !== 'all') {
+    query.eq('is_private', filterBy === 'private')
+  }
+
+  // Supabase queries are only executed when `await` or `.then()` is called
+  //
+  // https://github.com/orgs/supabase/discussions/787#discussioncomment-420451
+  // https://github.com/supabase/postgrest-js/blob/2bbc4354ee14895a7eb7b7f4724b8818ab650426/src/lib/types.ts#L61
+  const response = await query
 
   if (response.error) {
     throw response.error
