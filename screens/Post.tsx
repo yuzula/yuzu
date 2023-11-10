@@ -547,7 +547,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                           {post.is_deleted ? 'Deleted' : post.username}
                         </Text>
                       </Text>
-                      <View className="flex flex-row space-x-2">
+                      <View className="flex flex-row items-center space-x-2">
                         <View>
                           <Text className="font-Poppins_500Medium text-apple-gray-light">
                             <FontAwesome5 name="arrow-up" size={14} />
@@ -569,6 +569,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                             )}
                           </Text>
                         </View>
+                        <Text className="text-apple-gray-light">
+                          {post.is_private ? (
+                            <FontAwesome5 name="lock" />
+                          ) : (
+                            <FontAwesome5 name="globe-americas" />
+                          )}
+                        </Text>
                       </View>
                     </View>
                   </View>
