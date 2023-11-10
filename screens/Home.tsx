@@ -552,7 +552,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       ellipsizeMode="tail"
                       numberOfLines={4}
                       className={clsx('font-Poppins_600SemiBold text-base', {
-                        'font-Poppins_600SemiBold_Italic':
+                        'font-Poppins_600SemiBold_Italic text-gray-light':
                           item.item.is_deleted || item.item.is_flagged
                       })}
                     >

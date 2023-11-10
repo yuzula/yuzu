@@ -48,7 +48,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
       <View className="flex-row items-center space-x-2">
         <Text
           className={clsx('font-Poppins_600SemiBold', {
-            'font-Poppins_600SemiBold_Italic': !username
+            'font-Poppins_600SemiBold_Italic text-gray-light': !username
           })}
         >
           {!username ? 'Deleted' : username}
@@ -82,7 +82,8 @@ export const Comment: FunctionComponent<CommentProps> = ({
     <View className="mx-auto w-5/6">
       <Text
         className={clsx('font-Poppins_500Medium', {
-          'font-Poppins_500Medium_Italic': isDeleted || isFlagged
+          'font-Poppins_500Medium_Italic text-gray-light':
+            isDeleted || isFlagged
         })}
       >
         {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}

@@ -525,7 +525,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   <View className="mx-auto w-5/6 space-y-2 py-4">
                     <Text
                       className={clsx('font-Poppins_600SemiBold text-base', {
-                        'font-Poppins_600SemiBold_Italic':
+                        'font-Poppins_600SemiBold_Italic text-gray-light':
                           post.is_deleted || post.is_flagged
                       })}
                     >
@@ -541,7 +541,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         by&nbsp;
                         <Text
                           className={clsx('font-Poppins_600SemiBold', {
-                            'font-Poppins_600SemiBold_Italic': post.is_deleted
+                            'font-Poppins_600SemiBold_Italic text-gray-light':
+                              post.is_deleted
                           })}
                         >
                           {post.is_deleted ? 'Deleted' : post.username}
