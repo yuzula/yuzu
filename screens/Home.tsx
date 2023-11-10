@@ -534,7 +534,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <FontAwesome5 name="chevron-down" />
                       </Text>
                     </Pressable>
-                    <Text className="font-Poppins_700Bold text-gray-light">
+                    <Text className="font-Poppins_600SemiBold text-gray-light">
                       What's&nbsp;&nbsp;
                       <FontAwesome5 name="lock" />
                       &nbsp;?
@@ -579,33 +579,25 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                           </Text>
                         </Text>
                         <View className="flex flex-row items-center space-x-2">
-                          <View>
-                            <Text className="font-Poppins_500Medium text-gray-light">
-                              <FontAwesome5 name="arrow-up" size={14} />
-                              &nbsp;{item.item.vote_count}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text className="font-Poppins_500Medium text-gray-light">
-                              <FontAwesome5 name="comment-dots" size={14} />
-                              &nbsp;{item.item.comment_count}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text className="font-Poppins_500Medium text-gray-light">
-                              <FontAwesome5 name="clock" size={14} />
-                              &nbsp;
-                              {formatDuration(
-                                Date.now() - item.item.created_at.getTime()
-                              )}
-                            </Text>
-                          </View>
+                          <Text className="font-Poppins_500Medium text-gray-light">
+                            <FontAwesome5 name="arrow-up" size={14} />
+                            &nbsp;{item.item.vote_count}
+                          </Text>
+                          <Text className="font-Poppins_500Medium text-gray-light">
+                            <FontAwesome5 name="comment-dots" size={14} />
+                            &nbsp;{item.item.comment_count}
+                          </Text>
+                          <Text className="font-Poppins_500Medium text-gray-light">
+                            <FontAwesome5 name="clock" size={14} />
+                            &nbsp;
+                            {formatDuration(
+                              Date.now() - item.item.created_at.getTime()
+                            )}
+                          </Text>
                           {item.item.is_private && (
-                            <View>
-                              <Text className="text-yellow-light">
-                                <FontAwesome5 name="lock" />
-                              </Text>
-                            </View>
+                            <Text className="text-yellow-light">
+                              <FontAwesome5 name="lock" />
+                            </Text>
                           )}
                         </View>
                       </View>

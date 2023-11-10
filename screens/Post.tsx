@@ -549,34 +549,26 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         </Text>
                       </Text>
                       <View className="flex flex-row items-center space-x-2">
-                        <View>
-                          <Text className="font-Poppins_500Medium text-gray-light">
-                            <FontAwesome5 name="arrow-up" size={14} />
-                            &nbsp;{post.vote_count}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text className="font-Poppins_500Medium text-gray-light">
-                            <FontAwesome5 name="comment-dots" size={14} />
-                            &nbsp;{post.comment_count}
-                          </Text>
-                        </View>
-                        <View>
-                          <Text className="font-Poppins_500Medium text-gray-light">
-                            <FontAwesome5 name="clock" size={14} />
-                            &nbsp;
-                            {formatDuration(
-                              Date.now() - post.created_at.getTime()
-                            )}
-                          </Text>
-                        </View>
-                        <Text className="text-gray-light">
-                          {post.is_private ? (
-                            <FontAwesome5 name="lock" />
-                          ) : (
-                            <FontAwesome5 name="globe-americas" />
+                        <Text className="font-Poppins_500Medium text-gray-light">
+                          <FontAwesome5 name="arrow-up" size={14} />
+                          &nbsp;{post.vote_count}
+                        </Text>
+                        <Text className="font-Poppins_500Medium text-gray-light">
+                          <FontAwesome5 name="comment-dots" size={14} />
+                          &nbsp;{post.comment_count}
+                        </Text>
+                        <Text className="font-Poppins_500Medium text-gray-light">
+                          <FontAwesome5 name="clock" size={14} />
+                          &nbsp;
+                          {formatDuration(
+                            Date.now() - post.created_at.getTime()
                           )}
                         </Text>
+                        {post.is_private && (
+                          <Text className="text-yellow-light">
+                            <FontAwesome5 name="lock" />
+                          </Text>
+                        )}
                       </View>
                     </View>
                   </View>
