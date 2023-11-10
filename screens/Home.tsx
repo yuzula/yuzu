@@ -525,7 +525,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               )}
               ListHeaderComponent={
                 <View className="bg-gray-100 py-4">
-                  <View className="mx-auto w-5/6">
+                  <View className="mx-auto flex w-5/6 flex-row">
                     <Pressable onPress={handleSortButtonPress}>
                       <Text className="font-Poppins_700Bold text-gray-600">
                         <FontAwesome5 name="fire" />

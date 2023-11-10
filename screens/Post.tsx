@@ -288,30 +288,81 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const handleCommentEllipsisButtonPress = useCallback(
     (comment: commentModel.BaseSchema) => {
-      showActionSheetWithOptions(
-        {
-          title: 'More actions',
-          options: ['Report this comment', 'Block the author', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2
-        },
-        async index => {
-          if (index === 2) {
-            return
-          }
+      if (!user) {
+        return Alert.alert(
+          'Could not fetch user details',
+          GENERIC_ERROR_MESSAGE
+        )
+      }
 
-          if (index === 0) {
-            await handleReportCommentButtonPress(comment)
-          } else if (index === 1 && comment.user_id) {
-            await handleBlockAuthorButtonPress(comment.user_id)
+      if (user.id === comment.user_id) {
+        showActionSheetWithOptions(
+          {
+            title: 'More actions',
+            options: ['Delete this comment', 'Cancel'],
+            destructiveButtonIndex: 0,
+            cancelButtonIndex: 1
+          },
+          async index => {
+            if (index === 1) {
+              return
+            }
+
+            Alert.alert(
+              'Are you sure you want to delete this comment?',
+              undefined,
+              [
+                {
+                  text: 'Yes',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await commentService.markAsDeleted(comment.id)
+
+                      getComments()
+                    } catch (error) {
+                      Sentry.Native.captureException(error)
+
+                      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+                    }
+                  }
+                },
+                {
+                  text: 'Cancel',
+                  style: 'cancel'
+                }
+              ]
+            )
           }
-        }
-      )
+        )
+      } else {
+        showActionSheetWithOptions(
+          {
+            title: 'More actions',
+            options: ['Report this comment', 'Block the author', 'Cancel'],
+            destructiveButtonIndex: 1,
+            cancelButtonIndex: 2
+          },
+          async index => {
+            if (index === 2) {
+              return
+            }
+
+            if (index === 0) {
+              await handleReportCommentButtonPress(comment)
+            } else if (index === 1 && comment.user_id) {
+              await handleBlockAuthorButtonPress(comment.user_id)
+            }
+          }
+        )
+      }
     },
     [
+      getComments,
       handleBlockAuthorButtonPress,
       handleReportCommentButtonPress,
-      showActionSheetWithOptions
+      showActionSheetWithOptions,
+      user
     ]
   )
 
@@ -604,7 +655,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
-                    isCurrentUserAuthor={item.item.user_id === user.id}
                     isDeleted={item.item.is_deleted}
                     isFlagged={item.item.is_flagged}
                     username={item.item.username}
@@ -637,7 +687,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
                     id={item.item.id}
-                    isCurrentUserAuthor={item.item.user_id === user.id}
                     isDeleted={item.item.is_deleted}
                     isFlagged={item.item.is_flagged}
                     username={item.item.username}

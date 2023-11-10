@@ -80,6 +80,17 @@ export const getAllRoot = async (postId: number) => {
   )
 }
 
+export const markAsDeleted = async (id: number) => {
+  const { error } = await supabase
+    .from('comments')
+    .update({ is_deleted: true })
+    .eq('id', id)
+
+  if (error) {
+    throw error
+  }
+}
+
 interface GetPostVotesParams {
   commentId: number
   userId: string

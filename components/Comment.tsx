@@ -15,7 +15,6 @@ interface CommentProps {
   content?: string
   currentUserVote?: 'upvote' | 'downvote'
   variant?: 'parent' | 'child'
-  isCurrentUserAuthor?: boolean
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
   onUpvoteButtonPress?: (id: number) => void
@@ -32,7 +31,6 @@ export const Comment: FunctionComponent<CommentProps> = ({
   variant = 'parent',
   isDeleted,
   isFlagged,
-  isCurrentUserAuthor = false,
   onEllipsisButtonPress,
   onReplyButtonPress,
   onUpvoteButtonPress,
@@ -50,10 +48,10 @@ export const Comment: FunctionComponent<CommentProps> = ({
       <View className="flex-row items-center space-x-2">
         <Text
           className={clsx('font-Poppins_600SemiBold', {
-            'font-Poppins_600SemiBold_Italic': isDeleted
+            'font-Poppins_600SemiBold_Italic': !username
           })}
         >
-          {isDeleted ? 'Deleted' : username}
+          {!username ? 'Deleted' : username}
         </Text>
         <View className="flex-row items-center">
           <Text className="text-apple-gray-light">
@@ -67,19 +65,14 @@ export const Comment: FunctionComponent<CommentProps> = ({
       </View>
 
       <View className="flex-row items-center space-x-1">
-        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
-        since right now it only contains report and block actions, both of which the user can't
-        perform on themselves */}
-        {!isCurrentUserAuthor && (
-          <Pressable
-            className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onEllipsisButtonPress?.(id)}
-          >
-            <Text className="text-apple-gray-light">
-              <FontAwesome5 name="ellipsis-h" size={14} />
-            </Text>
-          </Pressable>
-        )}
+        <Pressable
+          className="rounded-lg p-2 active:bg-gray-200"
+          onPress={() => onEllipsisButtonPress?.(id)}
+        >
+          <Text className="text-apple-gray-light">
+            <FontAwesome5 name="ellipsis-h" size={14} />
+          </Text>
+        </Pressable>
         <Text className="font-Poppins_500Medium text-apple-gray-light">
           {formatDuration(Date.now() - createdAt.getTime())}
         </Text>
