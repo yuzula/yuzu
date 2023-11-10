@@ -177,10 +177,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     )
   }, [filterPosts, showActionSheetWithOptions])
 
-  const handlePostsRefresh = useCallback(async () => {
-    refreshPosts()
-  }, [refreshPosts])
-
   const handlePostVoteButtonPress = useCallback(
     async ({
       postId,
@@ -209,7 +205,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             })
           )
 
-          await handlePostsRefresh()
+          await refreshPosts()
         } else {
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
         }
@@ -219,7 +215,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handlePostsRefresh, user]
+    [refreshPosts, user]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -265,30 +261,81 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const handlePostEllipsisButtonPress = useCallback(
     (post: postModel.Schema) => {
-      showActionSheetWithOptions(
-        {
-          title: 'More actions',
-          options: ['Report this post', 'Block the author', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2
-        },
-        async index => {
-          if (index === 2) {
-            return
-          }
+      if (!user) {
+        return Alert.alert(
+          'Could not fetch user details',
+          GENERIC_ERROR_MESSAGE
+        )
+      }
 
-          if (index === 0) {
-            await handleReportPostButtonPress(post)
-          } else if (index === 1 && post.user_id) {
-            await handleBlockAuthorButtonPress(post.user_id)
+      if (user.id === post.user_id) {
+        showActionSheetWithOptions(
+          {
+            title: 'More actions',
+            options: ['Delete this post', 'Cancel'],
+            destructiveButtonIndex: 0,
+            cancelButtonIndex: 1
+          },
+          async index => {
+            if (index === 1) {
+              return
+            }
+
+            Alert.alert(
+              'Are you sure you want to delete this post?',
+              undefined,
+              [
+                {
+                  text: 'Yes',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await postService.markAsDeleted(post.id)
+
+                      refreshPosts()
+                    } catch (error) {
+                      Sentry.Native.captureException(error)
+
+                      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+                    }
+                  }
+                },
+                {
+                  text: 'Cancel',
+                  style: 'cancel'
+                }
+              ]
+            )
           }
-        }
-      )
+        )
+      } else {
+        showActionSheetWithOptions(
+          {
+            title: 'More actions',
+            options: ['Report this post', 'Block the author', 'Cancel'],
+            destructiveButtonIndex: 1,
+            cancelButtonIndex: 2
+          },
+          async index => {
+            if (index === 2) {
+              return
+            }
+
+            if (index === 0) {
+              await handleReportPostButtonPress(post)
+            } else if (index === 1 && post.user_id) {
+              await handleBlockAuthorButtonPress(post.user_id)
+            }
+          }
+        )
+      }
     },
     [
       handleBlockAuthorButtonPress,
       handleReportPostButtonPress,
-      showActionSheetWithOptions
+      refreshPosts,
+      showActionSheetWithOptions,
+      user
     ]
   )
 
@@ -315,7 +362,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           bottomSheetModalRef.current?.close()
 
-          handlePostsRefresh()
+          refreshPosts()
 
           navigation.navigate('Post', { postId })
         } catch (error) {
@@ -331,7 +378,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         }
       }
     },
-    [handlePostsRefresh, navigation, profile, reset]
+    [navigation, profile, refreshPosts, reset]
   )
 
   const handlePostPress = useCallback(
@@ -355,9 +402,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   useEffect(() => {
     if (route.params?.shouldRefresh) {
-      handlePostsRefresh()
+      refreshPosts()
     }
-  }, [handlePostsRefresh, route.params?.shouldRefresh])
+  }, [refreshPosts, route.params?.shouldRefresh])
 
   if (!user || !profile) {
     return null
@@ -625,7 +672,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   </View>
                 </Pressable>
               )}
-              onRefresh={handlePostsRefresh}
+              onRefresh={refreshPosts}
             />
           )}
         </View>
