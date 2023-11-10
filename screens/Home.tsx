@@ -366,8 +366,8 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       What's this?
                     </Text>
                     <Text className="font-Poppins_500Medium">
-                      This is your community! Everyone else here also signed up
-                      with a&nbsp;
+                      This is your community! You were automatically added since
+                      you signed up with a&nbsp;
                       <Text className="font-Poppins_600SemiBold">
                         @{profile.community_domain_name}
                       </Text>
@@ -385,7 +385,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
-                <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
+                <Text className="font-Poppins_600SemiBold text-apple-gray-light">
                   {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
                 </Text>
               </Skeleton>
@@ -450,11 +450,14 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               )}
               ListHeaderComponent={
                 <View className="bg-gray-100 py-4">
-                  <View className="mx-auto flex w-5/6">
+                  <View className="mx-auto flex w-5/6 flex-row items-center justify-between">
                     <Text className="font-Poppins_700Bold text-gray-600">
                       <FontAwesome5 name="fire" />
                       &nbsp;&nbsp;Sort by Hot&nbsp;&nbsp;
                       <FontAwesome5 name="chevron-down" />
+                    </Text>
+                    <Text className="font-Poppins_600SemiBold text-apple-gray-light">
+                      Public vs Internal?
                     </Text>
                   </View>
                 </View>
