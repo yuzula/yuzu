@@ -86,7 +86,7 @@ export const EmailVerification: FunctionComponent<
           </Text>
 
           <View className="w-full">
-            <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+            <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
               Code
             </Text>
             <Controller
@@ -95,7 +95,7 @@ export const EmailVerification: FunctionComponent<
               rules={{ required: true }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                  className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                   editable={!isLoading}
                   inputMode="numeric"
                   maxLength={6}

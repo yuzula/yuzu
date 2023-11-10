@@ -450,7 +450,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       &nbsp;email address.
                     </Text>
                     <Pressable onPress={handleDomainNamePopoverLearnMorePress}>
-                      <Text className="font-Poppins_500Medium text-apple-blue-light">
+                      <Text className="font-Poppins_500Medium text-blue-light">
                         Learn more
                       </Text>
                     </Pressable>
@@ -460,7 +460,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
-                <Text className="font-Poppins_600SemiBold text-apple-gray-light">
+                <Text className="font-Poppins_600SemiBold text-gray-light">
                   {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
                 </Text>
               </Skeleton>
@@ -515,10 +515,10 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
               refreshing={arePostsLoading}
               ListEmptyComponent={() => (
                 <View className="flex-1 items-center justify-center">
-                  <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
+                  <Text className="font-Poppins_600SemiBold text-base text-gray-light">
                     No posts yet
                   </Text>
-                  <Text className="font-Poppins_500Medium text-apple-gray-light">
+                  <Text className="font-Poppins_500Medium text-gray-light">
                     Be the first to post!
                   </Text>
                 </View>
@@ -534,7 +534,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <FontAwesome5 name="chevron-down" />
                       </Text>
                     </Pressable>
-                    <Text className="font-Poppins_700Bold text-apple-gray-light">
+                    <Text className="font-Poppins_700Bold text-gray-light">
                       What's&nbsp;&nbsp;
                       <FontAwesome5 name="lock" />
                       &nbsp;?
@@ -565,7 +565,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
                     <View className="flex flex-row items-center justify-between">
                       <View className="space-y-1">
-                        <Text className="font-Poppins_500Medium text-apple-gray-light">
+                        <Text className="font-Poppins_500Medium text-gray-light">
                           by&nbsp;
                           <Text
                             className={clsx('font-Poppins_600SemiBold', {
@@ -580,19 +580,19 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         </Text>
                         <View className="flex flex-row items-center space-x-2">
                           <View>
-                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <Text className="font-Poppins_500Medium text-gray-light">
                               <FontAwesome5 name="arrow-up" size={14} />
                               &nbsp;{item.item.vote_count}
                             </Text>
                           </View>
                           <View>
-                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <Text className="font-Poppins_500Medium text-gray-light">
                               <FontAwesome5 name="comment-dots" size={14} />
                               &nbsp;{item.item.comment_count}
                             </Text>
                           </View>
                           <View>
-                            <Text className="font-Poppins_500Medium text-apple-gray-light">
+                            <Text className="font-Poppins_500Medium text-gray-light">
                               <FontAwesome5 name="clock" size={14} />
                               &nbsp;
                               {formatDuration(
@@ -617,14 +617,14 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             handlePostEllipsisButtonPress(item.item)
                           }
                         >
-                          <Text className="text-apple-gray-light">
+                          <Text className="text-gray-light">
                             <FontAwesome5 name="ellipsis-h" size={18} />
                           </Text>
                         </Pressable>
                         <Pressable
                           className={clsx(
                             {
-                              'bg-apple-pink-light active:opacity-90':
+                              'bg-pink-light active:opacity-90':
                                 item.item.current_user_vote === 'upvote',
                               'active:bg-gray-200':
                                 item.item.current_user_vote !== 'upvote'
@@ -643,7 +643,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             className={clsx({
                               'text-white':
                                 item.item.current_user_vote === 'upvote',
-                              'text-apple-gray-light':
+                              'text-gray-light':
                                 item.item.current_user_vote !== 'upvote'
                             })}
                           >
@@ -653,7 +653,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                         <Pressable
                           className={clsx(
                             {
-                              'bg-apple-blue-light active:opacity-90':
+                              'bg-blue-light active:opacity-90':
                                 item.item.current_user_vote === 'downvote',
                               'active:bg-gray-200':
                                 item.item.current_user_vote !== 'downvote'
@@ -672,7 +672,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                             className={clsx({
                               'text-white':
                                 item.item.current_user_vote === 'downvote',
-                              'text-apple-gray-light':
+                              'text-gray-light':
                                 item.item.current_user_vote !== 'downvote'
                             })}
                           >

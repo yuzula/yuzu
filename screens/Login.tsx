@@ -83,7 +83,7 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         <View className="w-4/6 items-center justify-center space-y-8">
           <View className="w-full space-y-4">
             <View className="w-full">
-              <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 Email
               </Text>
               <Controller
@@ -95,7 +95,7 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                    className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                     editable={!isLoading}
                     value={value}
                     onBlur={onBlur}
@@ -106,7 +106,7 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
             </View>
 
             <View className="w-full">
-              <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 Password
               </Text>
               <Controller
@@ -119,7 +119,7 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                    className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                     editable={!isLoading}
                     maxLength={60}
                     value={value}

@@ -18,7 +18,7 @@ export const get = async (id: number) => {
     ...response.data,
     user_id: response.data.user_id ?? undefined,
     content: response.data.content ?? undefined,
-    current_user_vote: response.data.current_user_vote
+    current_user_vote: response.data.current_user_vote ?? undefined
   })
 }
 

@@ -479,7 +479,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
                 onPress={handleBackButtonPress}
               >
-                <Text className="text-apple-gray-light">
+                <Text className="text-gray-light">
                   <FontAwesome5 name="chevron-left" size={16} />
                 </Text>
               </Pressable>
@@ -494,7 +494,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
                 onPress={handlePostEllipsisButtonPress}
               >
-                <Text className="text-apple-gray-light">
+                <Text className="text-gray-light">
                   <FontAwesome5 name="ellipsis-h" size={16} />
                 </Text>
               </Pressable>
@@ -511,10 +511,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             refreshing={isPostRefreshing || areCommentsRefreshing}
             ListEmptyComponent={() => (
               <View className="flex-1 items-center justify-center">
-                <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
+                <Text className="font-Poppins_600SemiBold text-base text-gray-light">
                   No comments yet
                 </Text>
-                <Text className="font-Poppins_500Medium text-apple-gray-light">
+                <Text className="font-Poppins_500Medium text-gray-light">
                   Be the first to comment!
                 </Text>
               </View>
@@ -537,7 +537,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </Text>
 
                     <View className="space-y-1">
-                      <Text className="font-Poppins_500Medium text-apple-gray-light">
+                      <Text className="font-Poppins_500Medium text-gray-light">
                         by&nbsp;
                         <Text
                           className={clsx('font-Poppins_600SemiBold', {
@@ -549,19 +549,19 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       </Text>
                       <View className="flex flex-row items-center space-x-2">
                         <View>
-                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                          <Text className="font-Poppins_500Medium text-gray-light">
                             <FontAwesome5 name="arrow-up" size={14} />
                             &nbsp;{post.vote_count}
                           </Text>
                         </View>
                         <View>
-                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                          <Text className="font-Poppins_500Medium text-gray-light">
                             <FontAwesome5 name="comment-dots" size={14} />
                             &nbsp;{post.comment_count}
                           </Text>
                         </View>
                         <View>
-                          <Text className="font-Poppins_500Medium text-apple-gray-light">
+                          <Text className="font-Poppins_500Medium text-gray-light">
                             <FontAwesome5 name="clock" size={14} />
                             &nbsp;
                             {formatDuration(
@@ -569,7 +569,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                             )}
                           </Text>
                         </View>
-                        <Text className="text-apple-gray-light">
+                        <Text className="text-gray-light">
                           {post.is_private ? (
                             <FontAwesome5 name="lock" />
                           ) : (
@@ -585,7 +585,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     <Pressable
                       className={clsx(
                         {
-                          'bg-apple-pink-light active:opacity-90':
+                          'bg-pink-light active:opacity-90':
                             post.current_user_vote === 'upvote',
                           'active:bg-gray-200':
                             post.current_user_vote !== 'upvote'
@@ -603,8 +603,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       <Text
                         className={clsx({
                           'text-white': post.current_user_vote === 'upvote',
-                          'text-apple-gray-light':
-                            post.current_user_vote !== 'upvote'
+                          'text-gray-light': post.current_user_vote !== 'upvote'
                         })}
                       >
                         <FontAwesome5 name="arrow-up" size={18} />
@@ -613,7 +612,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     <Pressable
                       className={clsx(
                         {
-                          'bg-apple-blue-light active:opacity-90':
+                          'bg-blue-light active:opacity-90':
                             post.current_user_vote === 'downvote',
                           'active:bg-gray-200':
                             post.current_user_vote !== 'downvote'
@@ -631,7 +630,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       <Text
                         className={clsx({
                           'text-white': post.current_user_vote === 'downvote',
-                          'text-apple-gray-light':
+                          'text-gray-light':
                             post.current_user_vote !== 'downvote'
                         })}
                       >
@@ -642,7 +641,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       className="rounded-lg p-2 active:bg-gray-200"
                       onPress={handleReplyButtonPress}
                     >
-                      <Text className="text-apple-gray-light">
+                      <Text className="text-gray-light">
                         <FontAwesome5 name="comment-dots" size={18} />
                       </Text>
                     </Pressable>

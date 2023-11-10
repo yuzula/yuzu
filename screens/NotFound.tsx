@@ -26,7 +26,7 @@ export const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
           look into it.
         </Text>
         <Pressable
-          className="w-full items-center rounded-xl bg-apple-blue-light p-3.5 active:opacity-90"
+          className="w-full items-center rounded-xl bg-blue-light p-3.5 active:opacity-90"
           onPress={handleHomeButtonPress}
         >
           <Text className="font-Poppins_600SemiBold text-white">

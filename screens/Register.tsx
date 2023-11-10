@@ -109,7 +109,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
         <View className="w-4/6 items-center justify-center space-y-8">
           <View className="w-full space-y-4">
             <View className="w-full">
-              <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 School or workplace email
               </Text>
               <Controller
@@ -121,7 +121,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                    className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                     editable={!isLoading}
                     inputMode="email"
                     placeholder="mark@harvard.edu"
@@ -134,7 +134,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </View>
 
             <View className="w-full">
-              <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 Username
               </Text>
               <Controller
@@ -146,7 +146,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                    className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                     editable={!isLoading}
                     maxLength={20}
                     value={value}
@@ -158,7 +158,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </View>
 
             <View className="w-full">
-              <Text className="font-Poppins_600SemiBold text-xs uppercase text-apple-gray-light">
+              <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 Password
               </Text>
               <Controller
@@ -170,7 +170,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
-                    className="h-10 w-full border-b border-apple-gray-light font-Poppins_500Medium"
+                    className="h-10 w-full border-b border-gray-light font-Poppins_500Medium"
                     editable={!isLoading}
                     maxLength={60}
                     value={value}
@@ -197,7 +197,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             >
               Cancel
             </Button>
-            <Text className="text-center font-Poppins_500Medium text-apple-gray-light">
+            <Text className="text-center font-Poppins_500Medium text-gray-light">
               By signing up, you agree to our&nbsp;
               <Text
                 className="font-Poppins_600SemiBold"

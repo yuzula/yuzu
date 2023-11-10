@@ -54,10 +54,10 @@ export const Comment: FunctionComponent<CommentProps> = ({
           {!username ? 'Deleted' : username}
         </Text>
         <View className="flex-row items-center">
-          <Text className="text-apple-gray-light">
+          <Text className="text-gray-light">
             <FontAwesome5 name="arrow-up" size={14} />
           </Text>
-          <Text className="font-Poppins_500Medium text-apple-gray-light">
+          <Text className="font-Poppins_500Medium text-gray-light">
             &nbsp;
             {voteCount}
           </Text>
@@ -69,11 +69,11 @@ export const Comment: FunctionComponent<CommentProps> = ({
           className="rounded-lg p-2 active:bg-gray-200"
           onPress={() => onEllipsisButtonPress?.(id)}
         >
-          <Text className="text-apple-gray-light">
+          <Text className="text-gray-light">
             <FontAwesome5 name="ellipsis-h" size={14} />
           </Text>
         </Pressable>
-        <Text className="font-Poppins_500Medium text-apple-gray-light">
+        <Text className="font-Poppins_500Medium text-gray-light">
           {formatDuration(Date.now() - createdAt.getTime())}
         </Text>
       </View>
@@ -95,7 +95,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
           className="rounded-lg p-2 active:bg-gray-200"
           onPress={() => onReplyButtonPress?.(id)}
         >
-          <Text className="text-apple-gray-light">
+          <Text className="text-gray-light">
             <FontAwesome5 name="reply" size={14} />
             &nbsp;
             <Text className="font-Poppins_500Medium">Reply</Text>
@@ -105,8 +105,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
       <Pressable
         className={clsx(
           {
-            'bg-apple-pink-light active:opacity-90':
-              currentUserVote === 'upvote',
+            'bg-pink-light active:opacity-90': currentUserVote === 'upvote',
             'active:bg-gray-200': currentUserVote !== 'upvote'
           },
           'rounded-lg p-2'
@@ -116,7 +115,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
         <Text
           className={clsx({
             'text-white': currentUserVote === 'upvote',
-            'text-apple-gray-light': currentUserVote !== 'upvote'
+            'text-gray-light': currentUserVote !== 'upvote'
           })}
         >
           <FontAwesome5 name="arrow-up" size={14} />
@@ -125,8 +124,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
       <Pressable
         className={clsx(
           {
-            'bg-apple-blue-light active:opacity-90':
-              currentUserVote === 'downvote',
+            'bg-blue-light active:opacity-90': currentUserVote === 'downvote',
             'active:bg-gray-200': currentUserVote !== 'downvote'
           },
           'rounded-lg p-2'
@@ -136,7 +134,7 @@ export const Comment: FunctionComponent<CommentProps> = ({
         <Text
           className={clsx({
             'text-white': currentUserVote === 'downvote',
-            'text-apple-gray-light': currentUserVote !== 'downvote'
+            'text-gray-light': currentUserVote !== 'downvote'
           })}
         >
           <FontAwesome5 name="arrow-down" size={14} />
