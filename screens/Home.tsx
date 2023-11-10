@@ -595,6 +595,15 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                               )}
                             </Text>
                           </View>
+                          <View>
+                            <Text className="text-apple-gray-light">
+                              {item.item.is_private ? (
+                                <FontAwesome5 name="lock" />
+                              ) : (
+                                <FontAwesome5 name="globe-americas" />
+                              )}
+                            </Text>
+                          </View>
                         </View>
                       </View>
 
