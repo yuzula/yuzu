@@ -19,7 +19,7 @@ export const usePost = (id: number) => {
 
   const getPost = useCallback(async () => {
     try {
-      setPost(await retryPromise(() => postService.get({ postId: id })))
+      setPost(await retryPromise(() => postService.get(id)))
     } catch (error) {
       Sentry.Native.captureException(error)
 

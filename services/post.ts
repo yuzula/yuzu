@@ -3,15 +3,11 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { postModel } from '../models/post'
 
-interface GetParams {
-  postId: number
-}
-
-export const get = async ({ postId }: GetParams) => {
+export const get = async (id: number) => {
   const response = await supabase
     .from('home_screen_posts')
     .select('*')
-    .eq('id', postId)
+    .eq('id', id)
     .single()
 
   if (response.error) {
@@ -105,6 +101,17 @@ export const create = async ({
   }
 
   return z.number().parse(response.data[0]?.id)
+}
+
+export const markAsDeleted = async (id: number) => {
+  const { error } = await supabase
+    .from('posts')
+    .update({ is_deleted: true })
+    .eq('id', id)
+
+  if (error) {
+    throw error
+  }
 }
 
 interface GetPostVotesParams {

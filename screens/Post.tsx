@@ -24,7 +24,6 @@ import { Button } from '../components/Button'
 import { Comment } from '../components/Comment'
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { formatCount } from '../helpers/count'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
@@ -35,6 +34,7 @@ import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
 import { commentService } from '../services/comment'
+import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
 
@@ -209,7 +209,54 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   )
 
   const handlePostEllipsisButtonPress = useCallback(() => {
-    if (post) {
+    if (!user) {
+      return Alert.alert('Could not get user details', GENERIC_ERROR_MESSAGE)
+    }
+
+    if (!post) {
+      return Alert.alert('Could not get post details', GENERIC_ERROR_MESSAGE)
+    }
+
+    if (user.id === post.user_id) {
+      showActionSheetWithOptions(
+        {
+          title: 'More actions',
+          options: ['Delete this post', 'Cancel'],
+          destructiveButtonIndex: 0,
+          cancelButtonIndex: 1
+        },
+        async index => {
+          if (index === 1) {
+            return
+          }
+
+          Alert.alert('Are you sure you want to delete this post?', undefined, [
+            {
+              text: 'Yes',
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  await postService.markAsDeleted(post.id)
+
+                  navigation.navigate('Tabs', {
+                    screen: 'Home',
+                    params: { shouldRefresh: true }
+                  })
+                } catch (error) {
+                  Sentry.Native.captureException(error)
+
+                  Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+                }
+              }
+            },
+            {
+              text: 'Cancel',
+              style: 'cancel'
+            }
+          ])
+        }
+      )
+    } else {
       showActionSheetWithOptions(
         {
           title: 'More actions',
@@ -229,14 +276,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           }
         }
       )
-    } else {
-      Alert.alert('Could not get post details', GENERIC_ERROR_MESSAGE)
     }
   }, [
     handleBlockAuthorButtonPress,
     handleReportPostButtonPress,
+    navigation,
     post,
-    showActionSheetWithOptions
+    showActionSheetWithOptions,
+    user
   ])
 
   const handleCommentEllipsisButtonPress = useCallback(
@@ -375,8 +422,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="w-full flex-1"
         >
-          <View className="flex-row items-center justify-between border-b border-gray-100 py-2">
-            <View className="basis-1/3 items-start pl-2">
+          <View className="border-b border-gray-100">
+            <View className="flex-row items-center justify-between px-3 py-2">
               <Pressable
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
                 onPress={handleBackButtonPress}
@@ -385,24 +432,17 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   <FontAwesome5 name="chevron-left" size={16} />
                 </Text>
               </Pressable>
-            </View>
-            <Text className="basis-1/3 text-center font-Poppins_600SemiBold">
-              {formatCount(post.comment_count)} Comments
-            </Text>
-            <View className="basis-1/3 items-end pr-2">
-              {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
-              since right now it only contains report and block actions, both of which the user can't
-              perform on themselves */}
-              {post.user_id !== user.id && (
-                <Pressable
-                  className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
-                  onPress={handlePostEllipsisButtonPress}
-                >
-                  <Text className="text-apple-gray-light">
-                    <FontAwesome5 name="ellipsis-h" size={16} />
-                  </Text>
-                </Pressable>
-              )}
+              <Text className="grow text-center font-Poppins_600SemiBold">
+                @rangitoto.school.nz
+              </Text>
+              <Pressable
+                className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
+                onPress={handlePostEllipsisButtonPress}
+              >
+                <Text className="text-apple-gray-light">
+                  <FontAwesome5 name="ellipsis-h" size={16} />
+                </Text>
+              </Pressable>
             </View>
           </View>
 
