@@ -30,6 +30,7 @@ import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
 import { Button } from '../components/Button'
+import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
@@ -384,7 +385,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
-                <Text className="font-Poppins_600SemiBold text-apple-gray-light">
+                <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
                   {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
                 </Text>
               </Skeleton>
@@ -393,15 +394,19 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
           <View className="w-5/6 flex-row space-x-2">
             <View className="grow">
-              <Button onPress={handleCreatePostButtonPress}>
+              <Button className="h-10" onPress={handleCreatePostButtonPress}>
                 <FontAwesome5 name="pen" />
                 &nbsp;&nbsp;Post
               </Button>
             </View>
             <View className="grow">
-              <Button variant="secondary" onPress={handleSortButtonPress}>
-                <FontAwesome5 name="sort" />
-                &nbsp;&nbsp;Sort
+              <Button
+                className="h-10"
+                variant="secondary"
+                onPress={handleSortButtonPress}
+              >
+                <FontAwesome5 name="filter" />
+                &nbsp;&nbsp;Filter
               </Button>
             </View>
           </View>
@@ -427,14 +432,12 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
             </View>
           ) : (
             <FlatList
-              className="w-full border-t border-gray-200"
+              ItemSeparatorComponent={Separator}
+              className="w-full"
               contentContainerStyle={{ flexGrow: 1 }}
               data={posts}
               keyExtractor={item => item.id.toString()}
               refreshing={arePostsLoading}
-              ItemSeparatorComponent={() => (
-                <View className="w-full border-t border-gray-200" />
-              )}
               ListEmptyComponent={() => (
                 <View className="flex-1 items-center justify-center">
                   <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
@@ -445,6 +448,17 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   </Text>
                 </View>
               )}
+              ListHeaderComponent={
+                <View className="bg-gray-100 py-4">
+                  <View className="mx-auto flex w-5/6">
+                    <Text className="font-Poppins_700Bold text-gray-600">
+                      <FontAwesome5 name="fire" />
+                      &nbsp;&nbsp;Sort by Hot&nbsp;&nbsp;
+                      <FontAwesome5 name="chevron-down" />
+                    </Text>
+                  </View>
+                </View>
+              }
               renderItem={item => (
                 <Pressable
                   className="active:bg-gray-200"

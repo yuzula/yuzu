@@ -22,6 +22,7 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { Comment } from '../components/Comment'
+import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatCount } from '../helpers/count'
 import { retryPromise } from '../helpers/promise'
@@ -406,15 +407,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           </View>
 
           <FlatList
+            ItemSeparatorComponent={Separator}
             className="w-full"
             contentContainerStyle={{ flexGrow: 1 }}
             data={comments}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
             refreshing={isPostRefreshing || areCommentsRefreshing}
-            ItemSeparatorComponent={() => (
-              <View className="w-full border-t border-gray-200" />
-            )}
             ListEmptyComponent={() => (
               <View className="flex-1 items-center justify-center">
                 <Text className="font-Poppins_600SemiBold text-base text-apple-gray-light">
@@ -551,12 +550,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             }
             renderItem={item => (
               <FlatList
+                ItemSeparatorComponent={Separator}
                 data={item.item.children}
                 keyExtractor={item => item.id.toString()}
                 scrollEnabled={false}
-                ItemSeparatorComponent={() => (
-                  <View className="w-full border-t border-gray-200" />
-                )}
                 ListHeaderComponent={() => (
                   <Comment
                     content={item.item.content}
