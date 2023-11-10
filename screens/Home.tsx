@@ -528,7 +528,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                   <View className="mx-auto flex w-5/6 flex-row justify-between">
                     <Pressable onPress={handleSortButtonPress}>
                       <Text className="font-Poppins_700Bold text-gray-600">
-                        <FontAwesome5 name="fire" />
+                        {sortBy === 'hot' ? (
+                          <FontAwesome5 name="fire" />
+                        ) : sortBy === 'new' ? (
+                          <FontAwesome5 name="hourglass-start" />
+                        ) : (
+                          <FontAwesome5 name="scroll" />
+                        )}
                         &nbsp;&nbsp;Sort by&nbsp;
                         <Text className="capitalize">{sortBy}</Text>&nbsp;&nbsp;
                         <FontAwesome5 name="chevron-down" />
