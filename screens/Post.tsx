@@ -432,8 +432,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   <FontAwesome5 name="chevron-left" size={16} />
                 </Text>
               </Pressable>
-              <Text className="grow text-center font-Poppins_600SemiBold">
-                @rangitoto.school.nz
+              <Text
+                className="shrink text-center font-Poppins_600SemiBold"
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                @{post.community_domain_name}
               </Text>
               <Pressable
                 className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"

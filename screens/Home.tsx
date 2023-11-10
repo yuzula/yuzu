@@ -552,21 +552,16 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       </View>
 
                       <View className="flex flex-row items-center space-x-1">
-                        {/* TODO: remove this check once we have more actions in the ellipsis action sheet,
-                        since right now it only contains report and block actions, both of which the user can't
-                        perform on themselves */}
-                        {user.id !== item.item.user_id && (
-                          <Pressable
-                            className="rounded-lg p-2 active:bg-gray-200"
-                            onPress={() =>
-                              handlePostEllipsisButtonPress(item.item)
-                            }
-                          >
-                            <Text className="text-apple-gray-light">
-                              <FontAwesome5 name="ellipsis-h" size={18} />
-                            </Text>
-                          </Pressable>
-                        )}
+                        <Pressable
+                          className="rounded-lg p-2 active:bg-gray-200"
+                          onPress={() =>
+                            handlePostEllipsisButtonPress(item.item)
+                          }
+                        >
+                          <Text className="text-apple-gray-light">
+                            <FontAwesome5 name="ellipsis-h" size={18} />
+                          </Text>
+                        </Pressable>
                         <Pressable
                           className={clsx(
                             {
