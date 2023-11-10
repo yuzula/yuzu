@@ -16,6 +16,8 @@ module.exports = {
         'apple-green-dark': 'rgb(48, 209, 88)',
         'apple-orange-light': 'rgb(255, 149, 0)',
         'apple-orange-dark': 'rgb(255, 159, 10)',
+        'yellow-light': 'rgb(255, 204, 0)',
+        'yellow-dark': 'rgb(255, 214, 10)',
         'apple-blue-light': 'rgb(0, 122, 255)',
         'apple-blue-dark': 'rgb(10, 132, 255)',
         'apple-purple-light': 'rgb(175, 82, 222)',

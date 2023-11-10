@@ -535,8 +535,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       </Text>
                     </Pressable>
                     <Text className="font-Poppins_700Bold text-apple-gray-light">
-                      <FontAwesome5 name="globe-americas" />
-                      &nbsp;/&nbsp;
+                      What's&nbsp;&nbsp;
                       <FontAwesome5 name="lock" />
                       &nbsp;?
                     </Text>
@@ -601,15 +600,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                               )}
                             </Text>
                           </View>
-                          <View>
-                            <Text className="text-apple-gray-light">
-                              {item.item.is_private ? (
+                          {item.item.is_private && (
+                            <View>
+                              <Text className="text-yellow-light">
                                 <FontAwesome5 name="lock" />
-                              ) : (
-                                <FontAwesome5 name="globe-americas" />
-                              )}
-                            </Text>
-                          </View>
+                              </Text>
+                            </View>
+                          )}
                         </View>
                       </View>
 
