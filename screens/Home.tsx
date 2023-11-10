@@ -373,12 +373,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
                       </Text>
                       &nbsp;email address.
                     </Text>
-                    <Text
-                      className="font-Poppins_500Medium text-apple-blue-light"
-                      onPress={handleDomainNamePopoverLearnMorePress}
-                    >
-                      Learn more
-                    </Text>
+                    <Pressable onPress={handleDomainNamePopoverLearnMorePress}>
+                      <Text className="font-Poppins_500Medium text-apple-blue-light">
+                        Learn more
+                      </Text>
+                    </Pressable>
                   </View>
                 </Popover>
               </View>
