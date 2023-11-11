@@ -1,6 +1,8 @@
+import { Vote } from '../types/vote'
+
 interface GetResultingVoteParams {
-  oldVote?: 'upvote' | 'downvote'
-  vote: 'upvote' | 'downvote'
+  oldVote?: Vote
+  vote: Vote
 }
 
 export const getResultingVote = ({ oldVote, vote }: GetResultingVoteParams) => {

@@ -8,6 +8,7 @@ import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
+import { Vote } from '../types/vote'
 import { useProfileContext } from './useProfileContext'
 
 export const usePost = (id: number) => {
@@ -42,7 +43,7 @@ export const usePost = (id: number) => {
       delta
     }: {
       postId: number
-      vote?: 'upvote' | 'downvote'
+      vote?: Vote
       delta: number
     }) => {
       if (!profile) {

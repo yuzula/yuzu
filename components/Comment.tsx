@@ -4,6 +4,7 @@ import React, { FunctionComponent } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import { formatDuration } from '../helpers/time'
+import { Vote } from '../types/vote'
 
 interface CommentProps {
   id: number
@@ -13,7 +14,7 @@ interface CommentProps {
   isDeleted: boolean
   isFlagged: boolean
   content?: string
-  currentUserVote?: 'upvote' | 'downvote'
+  currentUserVote?: Vote
   variant?: 'parent' | 'child'
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void

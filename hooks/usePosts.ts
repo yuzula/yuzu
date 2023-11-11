@@ -9,6 +9,7 @@ import { retryPromise } from '../helpers/promise'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { FilterBy, SortBy } from '../types/post'
+import { Vote } from '../types/vote'
 import { useProfileContext } from './useProfileContext'
 
 interface UsePostsParams {
@@ -80,7 +81,7 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
       delta
     }: {
       postId: number
-      vote?: 'upvote' | 'downvote'
+      vote?: Vote
       delta: number
     }) => {
       if (!profile) {

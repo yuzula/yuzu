@@ -8,6 +8,7 @@ import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
 import { commentModel } from '../models/comment'
 import { commentService } from '../services/comment'
+import { Vote } from '../types/vote'
 import { useProfileContext } from './useProfileContext'
 
 export const useComments = (postId: number) => {
@@ -48,7 +49,7 @@ export const useComments = (postId: number) => {
     }: {
       commentId: number
       parentCommentId?: number
-      vote?: 'upvote' | 'downvote'
+      vote?: Vote
       delta: number
     }) => {
       if (!profile) {

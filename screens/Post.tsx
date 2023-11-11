@@ -37,6 +37,7 @@ import { commentService } from '../services/comment'
 import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
+import { Vote } from '../types/vote'
 
 const createCommentSchema = z.object({
   content: z.string().trim().min(1).max(600)
@@ -431,8 +432,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       vote
     }: {
       postId: number
-      oldVote?: 'upvote' | 'downvote'
-      vote: 'upvote' | 'downvote'
+      oldVote?: Vote
+      vote: Vote
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
@@ -450,8 +451,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }: {
       commentId: number
       parentCommentId?: number
-      oldVote?: 'upvote' | 'downvote'
-      vote: 'upvote' | 'downvote'
+      oldVote?: Vote
+      vote: Vote
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 

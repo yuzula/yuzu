@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { postModel } from '../models/post'
 import { SortBy } from '../types/post'
+import { Vote } from '../types/vote'
 
 export const get = async (id: number) => {
   const response = await supabase
@@ -138,7 +139,7 @@ export const getVote = async ({ postId, userId }: GetPostVotesParams) => {
 interface VoteParams {
   postId: number
   userId: string
-  vote?: 'upvote' | 'downvote'
+  vote?: Vote
 }
 
 export const registerVote = async ({ postId, userId, vote }: VoteParams) => {
