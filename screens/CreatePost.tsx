@@ -2,7 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, TextInput, View } from 'react-native'
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
@@ -28,8 +35,7 @@ export const CreatePost: FunctionComponent<
   const {
     control,
     handleSubmit,
-    formState: { isValid, isDirty },
-    reset
+    formState: { isValid, isDirty }
   } = useForm<CreatePostSchema>({
     defaultValues: { content: '' },
     mode: 'all',
@@ -57,9 +63,7 @@ export const CreatePost: FunctionComponent<
             Haptics.NotificationFeedbackType.Success
           )
 
-          reset()
-
-          navigation.navigate('Post', { postId })
+          navigation.replace('Post', { postId })
         } catch (error) {
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Error
@@ -73,7 +77,7 @@ export const CreatePost: FunctionComponent<
         }
       }
     },
-    [navigation, profile, reset]
+    [navigation, profile]
   )
 
   const handleCreatePostCloseButtonPress = useCallback(() => {
@@ -85,8 +89,13 @@ export const CreatePost: FunctionComponent<
           {
             text: 'Yes',
             onPress: () => {
-              reset()
-              navigation.goBack()
+              if (navigation.canGoBack()) {
+                navigation.goBack()
+              } else {
+                Sentry.Native.captureException('Could not go back')
+
+                Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+              }
             }
           },
           {
@@ -96,53 +105,68 @@ export const CreatePost: FunctionComponent<
         ]
       )
     } else {
-      navigation.goBack()
+      if (navigation.canGoBack()) {
+        navigation.goBack()
+      } else {
+        Sentry.Native.captureException('Could not go back')
+
+        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
     }
-  }, [isDirty, navigation, reset])
+  }, [isDirty, navigation])
 
   return (
-    <SafeAreaView className="flex-1 space-y-4 bg-white pt-4">
-      <View className="mx-auto w-5/6 flex-row space-x-2">
-        <View className="basis-1/2">
-          <Button
-            isDisabled={!isValid}
-            isLoading={isCreatePostLoading}
-            onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
-          >
-            Post
-          </Button>
+    <SafeAreaView className="flex-1 bg-white pt-4">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="w-full flex-1 space-y-4"
+      >
+        <View className="mx-auto w-5/6 flex-row space-x-2">
+          <View className="basis-1/2">
+            <Button
+              isDisabled={!isValid}
+              isLoading={isCreatePostLoading}
+              onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
+            >
+              Post
+            </Button>
+          </View>
+
+          <View className="basis-1/2">
+            <Button
+              variant="secondary"
+              onPress={handleCreatePostCloseButtonPress}
+            >
+              Cancel
+            </Button>
+          </View>
         </View>
 
-        <View className="basis-1/2">
-          <Button
-            variant="secondary"
-            onPress={handleCreatePostCloseButtonPress}
-          >
-            Cancel
-          </Button>
+        <View className="flex-1">
+          <Controller
+            control={control}
+            name="content"
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                autoFocus
+                multiline
+                className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
+                editable={!isCreatePostLoading}
+                maxLength={300}
+                placeholder="What's happening?"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+            )}
+          />
         </View>
-      </View>
 
-      <View className="grow">
-        <Controller
-          control={control}
-          name="content"
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              autoFocus
-              multiline
-              className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
-              editable={!isCreatePostLoading}
-              maxLength={300}
-              placeholder="What's happening?"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-            />
-          )}
-        />
-      </View>
+        <View>
+          <Text>Bruh</Text>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
