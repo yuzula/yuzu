@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import { postModel } from '../models/post'
+import { SortBy } from '../types/post'
 
 export const get = async (id: number) => {
   const response = await supabase
@@ -24,7 +25,7 @@ export const get = async (id: number) => {
 
 interface GetAllParams {
   communityDomainName: string
-  sortBy: 'hot' | 'new' | 'controversial'
+  sortBy: SortBy
   filterBy: 'all' | 'private' | 'public'
 }
 

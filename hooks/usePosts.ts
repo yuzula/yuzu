@@ -8,10 +8,8 @@ import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
+import { FilterBy, SortBy } from '../types/post'
 import { useProfileContext } from './useProfileContext'
-
-type SortBy = 'hot' | 'new' | 'controversial'
-type FilterBy = 'all' | 'public' | 'private'
 
 interface UsePostsParams {
   communityDomainName?: string
