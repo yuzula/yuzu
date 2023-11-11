@@ -174,7 +174,7 @@ export const CreatePost: FunctionComponent<
                   <Text className="font-Poppins_600SemiBold">@maxwowo.com</Text>
                 </Text>
                 <Text className="text-yellow-light">
-                  <FontAwesome5 name="lock" />
+                  <FontAwesome5 name="lock" size={14} />
                 </Text>
               </View>
             </View>
