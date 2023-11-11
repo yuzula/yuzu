@@ -1,3 +1,4 @@
+import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent, useCallback, useState } from 'react'
@@ -123,7 +124,7 @@ export const CreatePost: FunctionComponent<
           className="flex-1 bg-gray-100"
         >
           <View className="flex-1 space-y-4 bg-white pt-4">
-            <View className="mx-auto w-5/6 flex-row space-x-2">
+            <View className="mx-auto w-5/6 flex-row">
               <View className="basis-1/2">
                 <Button
                   isDisabled={!isValid}
@@ -165,9 +166,19 @@ export const CreatePost: FunctionComponent<
               />
             </View>
 
-            <View className="bg-gray-100">
-              <View className="mx-auto w-5/6">
-                <Text>Bruh</Text>
+            <View className="bg-gray-100 py-4">
+              <View className="mx-auto w-5/6 flex-row items-center justify-between space-x-2">
+                <Text
+                  className="shrink font-Poppins_500Medium text-gray-600"
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                >
+                  Posting to&nbsp;
+                  <Text className="font-Poppins_600SemiBold">@maxwowo.com</Text>
+                </Text>
+                <Text className="text-yellow-light">
+                  <FontAwesome5 name="lock" />
+                </Text>
               </View>
             </View>
           </View>
