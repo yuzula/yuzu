@@ -197,16 +197,18 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
             </Button>
           </View>
 
-          <Posts
-            isLoading={arePostsLoadingOnMount}
-            isRefreshing={arePostsLoading}
-            posts={posts}
-            refreshPosts={refreshPosts}
-            sortBy={sortBy}
-            sortPosts={sortPosts}
-            votePost={votePost}
-            onPostPress={handlePostPress}
-          />
+          <View className="w-full flex-1">
+            <Posts
+              isLoading={arePostsLoadingOnMount}
+              isRefreshing={arePostsLoading}
+              posts={posts}
+              refreshPosts={refreshPosts}
+              sortBy={sortBy}
+              sortPosts={sortPosts}
+              votePost={votePost}
+              onPostPress={handlePostPress}
+            />
+          </View>
         </View>
       </View>
     </SafeAreaView>
