@@ -31,6 +31,7 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { Separator } from '../components/Separator'
+import { SortByButton } from '../components/SortByButton'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
@@ -122,33 +123,6 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
       bottomSheetModalRef.current?.close()
     }
   }, [isDirty, reset])
-
-  const handleSortButtonPress = useCallback(() => {
-    showActionSheetWithOptions(
-      {
-        title: 'Sort posts by',
-        options: ['Hot', 'New', 'Controversial', 'Cancel'],
-        cancelButtonIndex: 3
-      },
-      async index => {
-        if (index === 3) {
-          return
-        }
-
-        switch (index) {
-          case 0:
-            await sortPosts('hot')
-            break
-          case 1:
-            await sortPosts('new')
-            break
-          case 2:
-            await sortPosts('controversial')
-            break
-        }
-      }
-    )
-  }, [showActionSheetWithOptions, sortPosts])
 
   const handleFilterButtonPress = useCallback(() => {
     showActionSheetWithOptions(
@@ -526,20 +500,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
               ListHeaderComponent={
                 <View className="bg-gray-100 py-4">
                   <View className="mx-auto flex w-5/6 flex-row justify-between">
-                    <Pressable onPress={handleSortButtonPress}>
-                      <Text className="font-Poppins_700Bold text-gray-600">
-                        {sortBy === 'hot' ? (
-                          <FontAwesome5 name="fire" />
-                        ) : sortBy === 'new' ? (
-                          <FontAwesome5 name="hourglass-start" />
-                        ) : (
-                          <FontAwesome5 name="scroll" />
-                        )}
-                        &nbsp;&nbsp;Sort by&nbsp;
-                        <Text className="capitalize">{sortBy}</Text>&nbsp;&nbsp;
-                        <FontAwesome5 name="chevron-down" />
-                      </Text>
-                    </Pressable>
+                    <SortByButton sortBy={sortBy} onChange={sortPosts} />
                     <Popover
                       from={
                         <Pressable>
