@@ -1,5 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
 import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent, useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -7,6 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   Text,
   TextInput,
   View
@@ -31,8 +33,6 @@ type CreatePostSchema = z.infer<typeof createPostSchema>
 export const CreatePost: FunctionComponent<
   RootStackScreenProps<'CreatePost'>
 > = ({ navigation }) => {
-  const { profile } = useProfileContext()
-
   const {
     control,
     handleSubmit,
@@ -42,6 +42,10 @@ export const CreatePost: FunctionComponent<
     mode: 'all',
     resolver: zodResolver(createPostSchema)
   })
+
+  const { profile } = useProfileContext()
+
+  const [isPrivate, setIsPrivate] = useState(true)
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
 
@@ -56,7 +60,7 @@ export const CreatePost: FunctionComponent<
               communityDomainName: profile.community_domain_name,
               content,
               userId: profile.id,
-              isPrivate: true
+              isPrivate
             })
           )
 
@@ -78,13 +82,13 @@ export const CreatePost: FunctionComponent<
         }
       }
     },
-    [navigation, profile]
+    [isPrivate, navigation, profile]
   )
 
   const handleCreatePostCloseButtonPress = useCallback(() => {
     if (isDirty) {
       Alert.alert(
-        'Unsaved Changes',
+        'Unsaved changes',
         'You have unsaved changes. Are you sure you want to close the editor?',
         [
           {
@@ -115,6 +119,33 @@ export const CreatePost: FunctionComponent<
       }
     }
   }, [isDirty, navigation])
+
+  const handleVisibilityButtonPress = useCallback(() => {
+    if (!profile) {
+      Sentry.Native.captureException('Profile is not defined')
+
+      return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    }
+
+    Alert.alert(
+      isPrivate ? 'Make post public' : 'Make post private',
+      isPrivate
+        ? `If you change the post visibility to public, it will be visible to everyone, including users who don't have a @${profile.community_domain_name} email.`
+        : `By making this post private, you limit access to only your peers that have a @${profile.community_domain_name} email.`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => {
+            setIsPrivate(prevIsPrivate => !prevIsPrivate)
+          }
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ]
+    )
+  }, [isPrivate, profile])
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100" edges={['bottom']}>
@@ -163,7 +194,7 @@ export const CreatePost: FunctionComponent<
               />
             </View>
 
-            <View className="bg-gray-100 py-4">
+            <View className="bg-gray-100 py-2">
               <View className="mx-auto w-5/6 flex-row items-center justify-between space-x-2">
                 <Text
                   className="shrink font-Poppins_500Medium text-gray-600"
@@ -173,9 +204,23 @@ export const CreatePost: FunctionComponent<
                   Posting to&nbsp;
                   <Text className="font-Poppins_600SemiBold">@maxwowo.com</Text>
                 </Text>
-                <Text className="text-yellow-light">
-                  <FontAwesome5 name="lock" size={14} />
-                </Text>
+                <Pressable
+                  className="rounded-lg p-2 active:bg-gray-200"
+                  onPress={handleVisibilityButtonPress}
+                >
+                  <Text
+                    className={clsx({
+                      'text-yellow-light': isPrivate,
+                      'text-gray-600': !isPrivate
+                    })}
+                  >
+                    {isPrivate ? (
+                      <FontAwesome5 name="lock" size={16} />
+                    ) : (
+                      <FontAwesome5 name="lock-open" size={16} />
+                    )}
+                  </Text>
+                </Pressable>
               </View>
             </View>
           </View>
