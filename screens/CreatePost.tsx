@@ -135,8 +135,8 @@ export const CreatePost: FunctionComponent<
     Alert.alert(
       isPrivate ? 'Make post public' : 'Make post private',
       isPrivate
-        ? `If you change the post visibility to public, it will be visible to everyone, including users who don't have a @${profile.community_domain_name} email.`
-        : `By making this post private, you limit access to only your peers that have a @${profile.community_domain_name} email.`,
+        ? `The post will be visible to everyone, including those who don't have a @${profile.community_domain_name} email.`
+        : `The post will be visible only to your peers that have a @${profile.community_domain_name} email.`,
       [
         {
           text: 'Yes',
