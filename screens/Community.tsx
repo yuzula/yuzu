@@ -22,7 +22,6 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { useMemberCount } from '../hooks/useMemberCount'
 import { usePosts } from '../hooks/usePosts'
 import { useProfileContext } from '../hooks/useProfileContext'
-import { postModel } from '../models/post'
 import { RootTabScreenProps } from '../types'
 
 export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
@@ -94,8 +93,8 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
   }, [filterPosts, showActionSheetWithOptions])
 
   const handlePostPress = useCallback(
-    (post: postModel.Schema) => {
-      navigation.navigate('Post', { postId: post.id })
+    (postId: number) => {
+      navigation.navigate('Post', { postId })
     },
     [navigation]
   )

@@ -41,7 +41,7 @@ interface PostsProps {
   }) => Promise<void>
   refreshPosts: () => Promise<void>
   sortPosts: (sortBy: SortBy) => Promise<void>
-  onPostPress: (post: postModel.Schema) => void
+  onPostPress: (postId: number) => void
 }
 
 export const Posts: FunctionComponent<PostsProps> = ({
@@ -61,17 +61,17 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const handlePostVoteButtonPress = useCallback(
     async ({
-      post,
+      postId,
       oldVote,
       vote
     }: {
-      post: postModel.Schema
+      postId: number
       oldVote?: Vote
       vote: Vote
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      await votePost({ postId: post.id, vote: newVote, delta })
+      await votePost({ postId, vote: newVote, delta })
     },
     [votePost]
   )
@@ -101,10 +101,16 @@ export const Posts: FunctionComponent<PostsProps> = ({
   )
 
   const handleReportPostButtonPress = useCallback(
-    async (post: postModel.Schema) => {
+    async ({
+      postId,
+      postAuthorId
+    }: {
+      postId: number
+      postAuthorId?: string
+    }) => {
       try {
         if (user) {
-          await retryPromise(() => reportService.reportPost(post.id))
+          await retryPromise(() => reportService.reportPost(postId))
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -119,8 +125,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
                     {
                       text: 'Yes',
                       onPress: () => {
-                        if (post.user_id) {
-                          handleBlockAuthorButtonPress(post.user_id)
+                        if (postAuthorId) {
+                          handleBlockAuthorButtonPress(postAuthorId)
                         }
                       }
                     }
@@ -142,7 +148,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   )
 
   const handlePostEllipsisButtonPress = useCallback(
-    (post: postModel.Schema) => {
+    ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
       if (!user) {
         return Alert.alert(
           'Could not fetch user details',
@@ -150,7 +156,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
         )
       }
 
-      if (user.id === post.user_id) {
+      if (user.id === postAuthorId) {
         showActionSheetWithOptions(
           {
             title: 'More actions',
@@ -172,7 +178,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
                   style: 'destructive',
                   onPress: async () => {
                     try {
-                      await postService.markAsDeleted(post.id)
+                      await postService.markAsDeleted(postId)
 
                       refreshPosts()
                     } catch (error) {
@@ -204,9 +210,9 @@ export const Posts: FunctionComponent<PostsProps> = ({
             }
 
             if (index === 0) {
-              await handleReportPostButtonPress(post)
-            } else if (index === 1 && post.user_id) {
-              await handleBlockAuthorButtonPress(post.user_id)
+              await handleReportPostButtonPress({ postId, postAuthorId })
+            } else if (index === 1 && postAuthorId) {
+              await handleBlockAuthorButtonPress(postAuthorId)
             }
           }
         )
@@ -312,7 +318,17 @@ export const Posts: FunctionComponent<PostsProps> = ({
       }
       renderItem={item => (
         <Post
-          post={item.item}
+          authorId={item.item.user_id}
+          authorUsername={item.item.username}
+          commentCount={item.item.comment_count}
+          content={item.item.content}
+          createdAt={item.item.created_at}
+          currentUserVote={item.item.current_user_vote}
+          id={item.item.id}
+          isDeleted={item.item.is_deleted}
+          isFlagged={item.item.is_flagged}
+          isPrivate={item.item.is_private}
+          voteCount={item.item.vote_count}
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
           onPress={onPostPress}
           onVoteButtonPress={handlePostVoteButtonPress}
