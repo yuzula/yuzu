@@ -1,6 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
-import clsx from 'clsx'
 import { Skeleton } from 'moti/skeleton'
 import React, { FunctionComponent, useCallback } from 'react'
 import {
@@ -17,7 +16,6 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { retryPromise } from '../helpers/promise'
-import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
@@ -27,6 +25,7 @@ import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
+import { Post } from './Post'
 import { Separator } from './Separator'
 import { SortByButton } from './SortByButton'
 
@@ -62,17 +61,17 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const handlePostVoteButtonPress = useCallback(
     async ({
-      postId,
+      post,
       oldVote,
       vote
     }: {
-      postId: number
+      post: postModel.Schema
       oldVote?: Vote
       vote: Vote
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      await votePost({ postId, vote: newVote, delta })
+      await votePost({ postId: post.id, vote: newVote, delta })
     },
     [votePost]
   )
@@ -312,131 +311,12 @@ export const Posts: FunctionComponent<PostsProps> = ({
         </View>
       }
       renderItem={item => (
-        <Pressable
-          className="active:bg-gray-200"
-          onPress={() => onPostPress(item.item)}
-        >
-          <View className="mx-auto w-5/6 space-y-2 py-4">
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={4}
-              className={clsx('font-Poppins_600SemiBold text-base', {
-                'font-Poppins_600SemiBold_Italic text-gray-light':
-                  item.item.is_deleted || item.item.is_flagged
-              })}
-            >
-              {item.item.is_deleted
-                ? 'Deleted'
-                : item.item.is_flagged
-                ? 'Flagged'
-                : item.item.content}
-            </Text>
-
-            <View className="flex flex-row items-center justify-between">
-              <View className="space-y-1">
-                <Text className="font-Poppins_500Medium text-gray-light">
-                  by&nbsp;
-                  <Text
-                    className={clsx('font-Poppins_600SemiBold', {
-                      'font-Poppins_600SemiBold_Italic': item.item.is_deleted
-                    })}
-                  >
-                    {item.item.is_deleted ? 'Deleted' : item.item.username}
-                  </Text>
-                </Text>
-                <View className="flex flex-row items-center space-x-2">
-                  <Text className="font-Poppins_500Medium text-gray-light">
-                    <FontAwesome5 name="arrow-up" size={14} />
-                    &nbsp;{item.item.vote_count}
-                  </Text>
-                  <Text className="font-Poppins_500Medium text-gray-light">
-                    <FontAwesome5 name="comment-dots" size={14} />
-                    &nbsp;{item.item.comment_count}
-                  </Text>
-                  <Text className="font-Poppins_500Medium text-gray-light">
-                    <FontAwesome5 name="clock" size={14} />
-                    &nbsp;
-                    {formatDuration(
-                      Date.now() - item.item.created_at.getTime()
-                    )}
-                  </Text>
-                  {item.item.is_private && (
-                    <Text className="text-yellow-light">
-                      <FontAwesome5 name="lock" size={14} />
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              <View className="flex flex-row items-center space-x-1">
-                <Pressable
-                  className="rounded-lg p-2 active:bg-gray-200"
-                  onPress={() => handlePostEllipsisButtonPress(item.item)}
-                >
-                  <Text className="text-gray-light">
-                    <FontAwesome5 name="ellipsis-h" size={18} />
-                  </Text>
-                </Pressable>
-                <Pressable
-                  className={clsx(
-                    {
-                      'bg-pink-light active:opacity-90':
-                        item.item.current_user_vote === 'upvote',
-                      'active:bg-gray-200':
-                        item.item.current_user_vote !== 'upvote'
-                    },
-                    'rounded-lg p-2'
-                  )}
-                  onPress={() =>
-                    handlePostVoteButtonPress({
-                      postId: item.item.id,
-                      oldVote: item.item.current_user_vote,
-                      vote: 'upvote'
-                    })
-                  }
-                >
-                  <Text
-                    className={clsx({
-                      'text-white': item.item.current_user_vote === 'upvote',
-                      'text-gray-light':
-                        item.item.current_user_vote !== 'upvote'
-                    })}
-                  >
-                    <FontAwesome5 name="arrow-up" size={18} />
-                  </Text>
-                </Pressable>
-                <Pressable
-                  className={clsx(
-                    {
-                      'bg-blue-light active:opacity-90':
-                        item.item.current_user_vote === 'downvote',
-                      'active:bg-gray-200':
-                        item.item.current_user_vote !== 'downvote'
-                    },
-                    'rounded-lg p-2'
-                  )}
-                  onPress={() =>
-                    handlePostVoteButtonPress({
-                      postId: item.item.id,
-                      oldVote: item.item.current_user_vote,
-                      vote: 'downvote'
-                    })
-                  }
-                >
-                  <Text
-                    className={clsx({
-                      'text-white': item.item.current_user_vote === 'downvote',
-                      'text-gray-light':
-                        item.item.current_user_vote !== 'downvote'
-                    })}
-                  >
-                    <FontAwesome5 name="arrow-down" size={18} />
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Pressable>
+        <Post
+          post={item.item}
+          onEllipsisButtonPress={handlePostEllipsisButtonPress}
+          onPress={onPostPress}
+          onVoteButtonPress={handlePostVoteButtonPress}
+        />
       )}
       onRefresh={refreshPosts}
     />
