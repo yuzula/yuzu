@@ -30,6 +30,7 @@ interface CommunityScreenParams {
 
 interface CreatePostScreenParams {
   initialIsPrivate?: boolean
+  communityDomainName: string
 }
 
 export type RootStackParamList = {

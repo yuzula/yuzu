@@ -63,10 +63,17 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     arePostsLoadingOnMount || isMemberCountLoading
 
   const handleCreatePostButtonPress = useCallback(() => {
+    if (!profile) {
+      Sentry.Native.captureException('Profile is not defined')
+
+      return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    }
+
     navigation.navigate('CreatePost', {
-      initialIsPrivate: filterBy === 'all' || filterBy === 'private'
+      initialIsPrivate: filterBy === 'all' || filterBy === 'private',
+      communityDomainName: profile.community_domain_name
     })
-  }, [filterBy, navigation])
+  }, [filterBy, navigation, profile])
 
   const handleFilterButtonPress = useCallback(() => {
     showActionSheetWithOptions(

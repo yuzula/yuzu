@@ -35,7 +35,7 @@ export const CreatePost: FunctionComponent<
 > = ({
   navigation,
   route: {
-    params: { initialIsPrivate = true }
+    params: { initialIsPrivate = false, communityDomainName }
   }
 }) => {
   const {
@@ -62,7 +62,7 @@ export const CreatePost: FunctionComponent<
         try {
           const postId = await retryPromise(() =>
             postService.create({
-              communityDomainName: profile.community_domain_name,
+              communityDomainName,
               content,
               userId: profile.id,
               isPrivate
@@ -87,7 +87,7 @@ export const CreatePost: FunctionComponent<
         }
       }
     },
-    [isPrivate, navigation, profile]
+    [communityDomainName, isPrivate, navigation, profile]
   )
 
   const handleCreatePostCloseButtonPress = useCallback(() => {
