@@ -124,25 +124,22 @@ export const CreatePost: FunctionComponent<
           className="flex-1 bg-gray-100"
         >
           <View className="flex-1 space-y-4 bg-white pt-4">
-            <View className="mx-auto w-5/6 flex-row">
-              <View className="basis-1/2">
-                <Button
-                  isDisabled={!isValid}
-                  isLoading={isCreatePostLoading}
-                  onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
-                >
-                  Post
-                </Button>
-              </View>
-
-              <View className="basis-1/2">
-                <Button
-                  variant="secondary"
-                  onPress={handleCreatePostCloseButtonPress}
-                >
-                  Cancel
-                </Button>
-              </View>
+            <View className="mx-auto flex w-5/6 flex-row space-x-2">
+              <Button
+                className="flex-1"
+                isDisabled={!isValid}
+                isLoading={isCreatePostLoading}
+                onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
+              >
+                Post
+              </Button>
+              <Button
+                className="flex-1"
+                variant="secondary"
+                onPress={handleCreatePostCloseButtonPress}
+              >
+                Cancel
+              </Button>
             </View>
 
             <View className="flex-1">

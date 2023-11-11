@@ -340,23 +340,22 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
             </View>
           </View>
 
-          <View className="w-5/6 flex-row space-x-2">
-            <View className="grow">
-              <Button className="h-10" onPress={handleCreatePostButtonPress}>
-                <FontAwesome5 name="pen" />
-                &nbsp;&nbsp;Post
-              </Button>
-            </View>
-            <View className="grow">
-              <Button
-                className="h-10"
-                variant="secondary"
-                onPress={handleFilterButtonPress}
-              >
-                <FontAwesome5 name="filter" />
-                &nbsp;&nbsp;Filter
-              </Button>
-            </View>
+          <View className="flex w-5/6 flex-row space-x-2">
+            <Button
+              className="h-10 flex-1"
+              onPress={handleCreatePostButtonPress}
+            >
+              <FontAwesome5 name="pen" />
+              &nbsp;&nbsp;Post
+            </Button>
+            <Button
+              className="h-10 flex-1"
+              variant="secondary"
+              onPress={handleFilterButtonPress}
+            >
+              <FontAwesome5 name="filter" />
+              &nbsp;&nbsp;Filter
+            </Button>
           </View>
 
           {areResourcesLoadingOnMount ? (
