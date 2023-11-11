@@ -501,14 +501,14 @@ PODS:
   - RNScreens (3.22.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (5.5.0):
+  - RNSentry (5.12.0):
     - React-Core
-    - Sentry/HybridSDK (= 8.7.1)
+    - Sentry/HybridSDK (= 8.14.2)
   - RNSVG (13.14.0):
     - React-Core
-  - Sentry/HybridSDK (8.7.1):
-    - SentryPrivate (= 8.7.1)
-  - SentryPrivate (8.7.1)
+  - Sentry/HybridSDK (8.14.2):
+    - SentryPrivate (= 8.14.2)
+  - SentryPrivate (8.14.2)
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
 
@@ -767,10 +767,10 @@ SPEC CHECKSUMS:
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 50ffe2fa2342eabb2d0afbe19f7c1af286bc7fb3
-  RNSentry: 4fb2cd7d2d6cb94423c24884488206ef881da136
+  RNSentry: 22ec5cbcdfffeea7fae88695467a3af5f8d94790
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
-  Sentry: 11776f6a25a128808d793d0d41bb7ad873b5ae4f
-  SentryPrivate: b3c448eacdabe9eab7679a2e0af609c608f91572
+  Sentry: e0ea366f95ebb68f26d6030d8c22d6b2e6d23dd0
+  SentryPrivate: 949a21fa59872427edc73b524c3ec8456761d97f
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
 
