@@ -1,7 +1,6 @@
 import 'react-native-reanimated'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
@@ -48,11 +47,9 @@ const BaseApp: FunctionComponent = memo(() => {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar />
-        <BottomSheetModalProvider>
-          <ActionSheetProvider>
-            <Navigation onReady={handleNavigationReady} />
-          </ActionSheetProvider>
-        </BottomSheetModalProvider>
+        <ActionSheetProvider>
+          <Navigation onReady={handleNavigationReady} />
+        </ActionSheetProvider>
       </GestureHandlerRootView>
     )
   }
