@@ -19,9 +19,9 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Post: 'post',
       Tabs: {
         screens: {
-          Home: {
+          Community: {
             screens: {
-              HomeScreen: 'home'
+              CommunityScreen: 'community'
             }
           },
           Me: {

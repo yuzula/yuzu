@@ -24,7 +24,7 @@ interface PostScreenParams {
   postId: number
 }
 
-interface HomeTabParams {
+interface CommunityTabParams {
   shouldRefresh?: boolean
 }
 
@@ -42,7 +42,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>
 
 export type RootTabParamList = {
-  Home: HomeTabParams
+  Community: CommunityTabParams
   Me: undefined
 }
 

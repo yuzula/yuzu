@@ -107,7 +107,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
           if (authorId === post.user_id) {
             navigation.navigate('Tabs', {
-              screen: 'Home',
+              screen: 'Community',
               params: { shouldRefresh: true }
             })
           } else {
@@ -239,7 +239,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   await postService.markAsDeleted(post.id)
 
                   navigation.navigate('Tabs', {
-                    screen: 'Home',
+                    screen: 'Community',
                     params: { shouldRefresh: true }
                   })
                 } catch (error) {

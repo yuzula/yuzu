@@ -6,8 +6,8 @@ import { FunctionComponent } from 'react'
 
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { Community } from '../screens/Community'
 import { EmailVerification } from '../screens/EmailVerification'
-import { Home } from '../screens/Home'
 import { Login } from '../screens/Login'
 import { Me } from '../screens/Me'
 import { NotFound } from '../screens/NotFound'
@@ -22,7 +22,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>()
 const BottomTabNavigator: FunctionComponent = () => {
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Community"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: 'black',
@@ -36,12 +36,12 @@ const BottomTabNavigator: FunctionComponent = () => {
       }}
     >
       <BottomTab.Screen
-        component={Home}
-        name="Home"
+        component={Community}
+        name="Community"
         options={{
-          title: 'Home',
+          title: 'Community',
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="home" size={20} />
+            <FontAwesome5 color={color} name="users" size={20} />
           )
         }}
       />

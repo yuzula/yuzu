@@ -51,7 +51,7 @@ const createPostSchema = z.object({
 
 type CreatePostSchema = z.infer<typeof createPostSchema>
 
-export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
+export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
   navigation,
   route
 }) => {
