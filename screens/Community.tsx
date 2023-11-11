@@ -49,6 +49,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     isLoading: arePostsLoading,
     sortBy,
     sortPosts,
+    filterBy,
     filterPosts,
     refreshPosts,
     votePost
@@ -62,8 +63,10 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     arePostsLoadingOnMount || isMemberCountLoading
 
   const handleCreatePostButtonPress = useCallback(() => {
-    navigation.navigate('CreatePost')
-  }, [navigation])
+    navigation.navigate('CreatePost', {
+      initialIsPrivate: filterBy === 'all' || filterBy === 'private'
+    })
+  }, [filterBy, navigation])
 
   const handleFilterButtonPress = useCallback(() => {
     showActionSheetWithOptions(

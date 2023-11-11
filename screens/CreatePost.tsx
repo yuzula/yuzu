@@ -32,7 +32,12 @@ type CreatePostSchema = z.infer<typeof createPostSchema>
 
 export const CreatePost: FunctionComponent<
   RootStackScreenProps<'CreatePost'>
-> = ({ navigation }) => {
+> = ({
+  navigation,
+  route: {
+    params: { initialIsPrivate = true }
+  }
+}) => {
   const {
     control,
     handleSubmit,
@@ -45,7 +50,7 @@ export const CreatePost: FunctionComponent<
 
   const { profile } = useProfileContext()
 
-  const [isPrivate, setIsPrivate] = useState(true)
+  const [isPrivate, setIsPrivate] = useState(initialIsPrivate)
 
   const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
 

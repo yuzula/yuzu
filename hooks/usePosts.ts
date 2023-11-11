@@ -131,6 +131,7 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
     isLoading,
     sortBy,
     sortPosts,
+    filterBy,
     filterPosts,
     refreshPosts,
     votePost

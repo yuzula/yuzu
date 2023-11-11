@@ -24,8 +24,12 @@ interface PostScreenParams {
   postId: number
 }
 
-interface CommunityTabParams {
+interface CommunityScreenParams {
   shouldRefresh?: boolean
+}
+
+interface CreatePostScreenParams {
+  initialIsPrivate?: boolean
 }
 
 export type RootStackParamList = {
@@ -35,7 +39,7 @@ export type RootStackParamList = {
   EmailVerification: EmailVerificationScreenParams
   Post: PostScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
-  CreatePost: undefined
+  CreatePost: CreatePostScreenParams
   NotFound: undefined
 }
 
@@ -43,7 +47,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>
 
 export type RootTabParamList = {
-  Community: CommunityTabParams
+  Community: CommunityScreenParams
   Me: undefined
 }
 
