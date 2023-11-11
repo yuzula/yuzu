@@ -566,7 +566,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                         </Text>
                         {post.is_private && (
                           <Text className="text-yellow-light">
-                            <FontAwesome5 name="lock" />
+                            <FontAwesome5 name="lock" size={14} />
                           </Text>
                         )}
                       </View>

@@ -497,7 +497,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
                           </Text>
                           {item.item.is_private && (
                             <Text className="text-yellow-light">
-                              <FontAwesome5 name="lock" />
+                              <FontAwesome5 name="lock" size={14} />
                             </Text>
                           )}
                         </View>
