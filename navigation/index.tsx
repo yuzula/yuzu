@@ -7,6 +7,7 @@ import { FunctionComponent } from 'react'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { Community } from '../screens/Community'
+import { CreatePost } from '../screens/CreatePost'
 import { EmailVerification } from '../screens/EmailVerification'
 import { Login } from '../screens/Login'
 import { Me } from '../screens/Me'
@@ -71,6 +72,11 @@ const RootNavigator: FunctionComponent = () => {
         <>
           <Stack.Screen component={BottomTabNavigator} name="Tabs" />
           <Stack.Screen component={Post} name="Post" />
+          <Stack.Screen
+            component={CreatePost}
+            name="CreatePost"
+            options={{ presentation: 'fullScreenModal' }}
+          />
         </>
       ) : (
         <>

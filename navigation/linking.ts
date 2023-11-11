@@ -17,6 +17,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Login: 'login',
       Register: 'register',
       Post: 'post',
+      CreatePost: 'createPost',
       Tabs: {
         screens: {
           Community: {
