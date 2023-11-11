@@ -116,57 +116,63 @@ export const CreatePost: FunctionComponent<
   }, [isDirty, navigation])
 
   return (
-    <SafeAreaView className="flex-1 bg-white pt-4">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="w-full flex-1 space-y-4"
-      >
-        <View className="mx-auto w-5/6 flex-row space-x-2">
-          <View className="basis-1/2">
-            <Button
-              isDisabled={!isValid}
-              isLoading={isCreatePostLoading}
-              onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
-            >
-              Post
-            </Button>
-          </View>
+    <SafeAreaView className="flex-1 bg-gray-100" edges={['bottom']}>
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1 bg-gray-100"
+        >
+          <View className="flex-1 space-y-4 bg-white pt-4">
+            <View className="mx-auto w-5/6 flex-row space-x-2">
+              <View className="basis-1/2">
+                <Button
+                  isDisabled={!isValid}
+                  isLoading={isCreatePostLoading}
+                  onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
+                >
+                  Post
+                </Button>
+              </View>
 
-          <View className="basis-1/2">
-            <Button
-              variant="secondary"
-              onPress={handleCreatePostCloseButtonPress}
-            >
-              Cancel
-            </Button>
-          </View>
-        </View>
+              <View className="basis-1/2">
+                <Button
+                  variant="secondary"
+                  onPress={handleCreatePostCloseButtonPress}
+                >
+                  Cancel
+                </Button>
+              </View>
+            </View>
 
-        <View className="flex-1">
-          <Controller
-            control={control}
-            name="content"
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                autoFocus
-                multiline
-                className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
-                editable={!isCreatePostLoading}
-                maxLength={300}
-                placeholder="What's happening?"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
+            <View className="flex-1">
+              <Controller
+                control={control}
+                name="content"
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    autoFocus
+                    multiline
+                    className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
+                    editable={!isCreatePostLoading}
+                    maxLength={300}
+                    placeholder="What's happening?"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                  />
+                )}
               />
-            )}
-          />
-        </View>
+            </View>
 
-        <View>
-          <Text>Bruh</Text>
-        </View>
-      </KeyboardAvoidingView>
+            <View className="bg-gray-100">
+              <View className="mx-auto w-5/6">
+                <Text>Bruh</Text>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </SafeAreaView>
   )
 }
