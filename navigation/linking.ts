@@ -30,6 +30,11 @@ export const linking: LinkingOptions<RootStackParamList> = {
               CommunityScreen: 'community'
             }
           },
+          Search: {
+            screens: {
+              SearchScreen: 'search'
+            }
+          },
           Me: {
             screens: {
               MeScreen: 'me'

@@ -16,6 +16,7 @@ import { NotFound } from '../screens/NotFound'
 import { Post } from '../screens/Post'
 import { Register } from '../screens/Register'
 import { Root } from '../screens/Root'
+import { Search } from '../screens/Search'
 import { RootStackParamList, RootTabParamList } from '../types'
 import { linking } from './linking'
 
@@ -54,6 +55,16 @@ const BottomTabNavigator: FunctionComponent = () => {
           title: 'Community',
           tabBarIcon: ({ color }) => (
             <FontAwesome color={color} name="users" size={20} />
+          )
+        }}
+      />
+      <BottomTab.Screen
+        component={Search}
+        name="Search"
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome color={color} name="search" size={20} />
           )
         }}
       />
