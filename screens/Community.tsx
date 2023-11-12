@@ -18,7 +18,6 @@ import * as Sentry from 'sentry-expo'
 import { Button } from '../components/Button'
 import { Posts } from '../components/Posts'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { useAuthContext } from '../hooks/useAuthContext'
 import { useMemberCount } from '../hooks/useMemberCount'
 import { usePosts } from '../hooks/usePosts'
 import { useProfileContext } from '../hooks/useProfileContext'
@@ -30,7 +29,6 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
-  const { user } = useAuthContext()
   const { profile } = useProfileContext()
 
   const {
@@ -117,7 +115,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     }
   }, [refreshPosts, route.params?.shouldRefresh])
 
-  if (!user || !profile) {
+  if (!profile) {
     return null
   }
 
@@ -126,7 +124,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      <View className="w-full flex-1 pt-6">
+      <View className="w-full flex-1 pt-4">
         <View className="w-full flex-1 items-center justify-center space-y-4">
           <View className="w-5/6 space-y-2">
             <View className="flex flex-row items-center space-x-2">

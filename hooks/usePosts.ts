@@ -16,7 +16,7 @@ interface UsePostsParams {
   communityDomainName?: string
 }
 
-export const usePosts = ({ communityDomainName }: UsePostsParams) => {
+export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
   const { profile } = useProfileContext()
 
   const [posts, setPosts] = useState<postModel.Schema[]>([])
@@ -30,14 +30,6 @@ export const usePosts = ({ communityDomainName }: UsePostsParams) => {
       Sentry.Native.captureException(new NotAuthenticatedError())
 
       return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
-    }
-
-    if (!communityDomainName) {
-      Sentry.Native.captureException(
-        new Error('communityDomainName does not exist')
-      )
-
-      return Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
     }
 
     setIsLoading(true)

@@ -1,16 +1,52 @@
-import React, { FunctionComponent } from 'react'
-import { Text } from 'react-native'
+import React, { FunctionComponent, useCallback } from 'react'
+import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { Posts as PostsComponent } from '../components/Posts'
+import { usePosts } from '../hooks/usePosts'
 import { RootTabScreenProps } from '../types'
 
-export const Posts: FunctionComponent<RootTabScreenProps<'Posts'>> = () => {
+export const Posts: FunctionComponent<RootTabScreenProps<'Posts'>> = ({
+  navigation
+}) => {
+  const {
+    posts,
+    isLoadingOnMount: arePostsLoadingOnMount,
+    isLoading: arePostsLoading,
+    sortBy,
+    sortPosts,
+    refreshPosts,
+    votePost
+  } = usePosts()
+
+  const handlePostPress = useCallback(
+    (postId: number) => {
+      navigation.navigate('Post', { postId })
+    },
+    [navigation]
+  )
+
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      <Text>Posts</Text>
+      <View className="py-4">
+        <Text className="font-Poppins_700Bold text-xl">Posts</Text>
+      </View>
+
+      <View className="w-full flex-1">
+        <PostsComponent
+          isLoading={arePostsLoadingOnMount}
+          isRefreshing={arePostsLoading}
+          posts={posts}
+          refreshPosts={refreshPosts}
+          sortBy={sortBy}
+          sortPosts={sortPosts}
+          votePost={votePost}
+          onPostPress={handlePostPress}
+        />
+      </View>
     </SafeAreaView>
   )
 }

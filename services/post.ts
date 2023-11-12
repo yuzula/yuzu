@@ -25,7 +25,7 @@ export const get = async (id: number) => {
 }
 
 interface GetAllParams {
-  communityDomainName: string
+  communityDomainName?: string
   sortBy: SortBy
   filterBy: 'all' | 'private' | 'public'
 }
@@ -38,7 +38,6 @@ export const getAll = async ({
   const query = supabase
     .from('home_screen_posts')
     .select('*')
-    .eq('community_domain_name', communityDomainName)
     .eq('is_deleted', false)
     .eq('is_flagged', false)
     .order(
@@ -50,6 +49,10 @@ export const getAll = async ({
       { ascending: false }
     )
     .limit(40)
+
+  if (communityDomainName) {
+    query.eq('community_domain_name', communityDomainName)
+  }
 
   if (filterBy !== 'all') {
     query.eq('is_private', filterBy === 'private')
