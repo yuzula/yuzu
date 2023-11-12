@@ -60,7 +60,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     }
 
     navigation.navigate('CreatePost', {
-      initialIsPrivate: filterBy === 'all' || filterBy === 'private',
+      initialIsPrivate: filterBy === 'private',
       communityDomainName: profile.community_domain_name
     })
   }, [filterBy, navigation, profile])
