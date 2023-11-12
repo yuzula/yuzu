@@ -20,6 +20,11 @@ export const linking: LinkingOptions<RootStackParamList> = {
       CreatePost: 'createPost',
       Tabs: {
         screens: {
+          Home: {
+            screens: {
+              HomeScreen: 'home'
+            }
+          },
           Community: {
             screens: {
               CommunityScreen: 'community'

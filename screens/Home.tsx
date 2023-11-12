@@ -2,11 +2,11 @@ import React, { FunctionComponent, useCallback } from 'react'
 import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Posts as PostsComponent } from '../components/Posts'
+import { Posts } from '../components/Posts'
 import { usePosts } from '../hooks/usePosts'
 import { RootTabScreenProps } from '../types'
 
-export const Posts: FunctionComponent<RootTabScreenProps<'Posts'>> = ({
+export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   navigation
 }) => {
   const {
@@ -32,11 +32,11 @@ export const Posts: FunctionComponent<RootTabScreenProps<'Posts'>> = ({
       edges={['top']}
     >
       <View className="py-4">
-        <Text className="font-Poppins_700Bold text-xl">Posts</Text>
+        <Text className="font-Poppins_700Bold text-xl">Home</Text>
       </View>
 
       <View className="w-full flex-1">
-        <PostsComponent
+        <Posts
           isLoading={arePostsLoadingOnMount}
           isRefreshing={arePostsLoading}
           posts={posts}

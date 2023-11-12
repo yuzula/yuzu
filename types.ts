@@ -48,7 +48,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>
 
 export type RootTabParamList = {
-  Posts: undefined
+  Home: undefined
   Community: CommunityScreenParams
   Me: undefined
 }

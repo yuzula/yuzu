@@ -9,11 +9,11 @@ import { useProfileContext } from '../hooks/useProfileContext'
 import { Community } from '../screens/Community'
 import { CreatePost } from '../screens/CreatePost'
 import { EmailVerification } from '../screens/EmailVerification'
+import { Home } from '../screens/Home'
 import { Login } from '../screens/Login'
 import { Me } from '../screens/Me'
 import { NotFound } from '../screens/NotFound'
 import { Post } from '../screens/Post'
-import { Posts } from '../screens/Posts'
 import { Register } from '../screens/Register'
 import { Root } from '../screens/Root'
 import { RootStackParamList, RootTabParamList } from '../types'
@@ -24,7 +24,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>()
 const BottomTabNavigator: FunctionComponent = () => {
   return (
     <BottomTab.Navigator
-      initialRouteName="Posts"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: 'black',
@@ -38,12 +38,12 @@ const BottomTabNavigator: FunctionComponent = () => {
       }}
     >
       <BottomTab.Screen
-        component={Posts}
-        name="Posts"
+        component={Home}
+        name="Home"
         options={{
-          title: 'Posts',
+          title: 'Home',
           tabBarIcon: ({ color }) => (
-            <FontAwesome color={color} name="file-text" size={20} />
+            <FontAwesome color={color} name="home" size={24} />
           )
         }}
       />
