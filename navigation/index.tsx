@@ -1,4 +1,4 @@
-import { FontAwesome5, Octicons } from '@expo/vector-icons'
+import { FontAwesome } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -43,7 +43,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Posts',
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="file-alt" size={20} />
+            <FontAwesome color={color} name="file-text" size={20} />
           )
         }}
       />
@@ -53,7 +53,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Community',
           tabBarIcon: ({ color }) => (
-            <Octicons color={color} name="people" size={20} />
+            <FontAwesome color={color} name="users" size={20} />
           )
         }}
       />
@@ -63,7 +63,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Me',
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="user" size={20} />
+            <FontAwesome color={color} name="user" size={20} />
           )
         }}
       />

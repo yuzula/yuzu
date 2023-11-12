@@ -1,4 +1,4 @@
-import { FontAwesome, Octicons } from '@expo/vector-icons'
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons'
 import {
   Poppins_100Thin,
   Poppins_100Thin_Italic,
@@ -42,7 +42,7 @@ export const useFonts = () => {
     Poppins_900Black,
     Poppins_900Black_Italic,
     ...FontAwesome.font,
-    ...Octicons.font
+    ...FontAwesome5.font
   })
 
   return {
