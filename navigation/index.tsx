@@ -1,4 +1,4 @@
-import { FontAwesome } from '@expo/vector-icons'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -44,7 +44,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
-            <FontAwesome color={color} name="home" size={24} />
+            <FontAwesome5 color={color} name="home" size={20} />
           )
         }}
       />
@@ -54,7 +54,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Community',
           tabBarIcon: ({ color }) => (
-            <FontAwesome color={color} name="users" size={20} />
+            <FontAwesome5 color={color} name="users" size={20} />
           )
         }}
       />
@@ -64,7 +64,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Search',
           tabBarIcon: ({ color }) => (
-            <FontAwesome color={color} name="search" size={20} />
+            <FontAwesome5 color={color} name="search" size={20} />
           )
         }}
       />
@@ -74,7 +74,7 @@ const BottomTabNavigator: FunctionComponent = () => {
         options={{
           title: 'Me',
           tabBarIcon: ({ color }) => (
-            <FontAwesome color={color} name="user" size={20} />
+            <FontAwesome5 color={color} name="user-alt" size={20} />
           )
         }}
       />
