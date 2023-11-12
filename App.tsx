@@ -17,7 +17,8 @@ import { Navigation } from './navigation'
 
 Sentry.init({
   dsn: 'https://ed72494c4256c5d19e3994d2d69e93e2@o4506121746186240.ingest.sentry.io/4506121763160064',
-  enableInExpoDevelopment: true
+  enableInExpoDevelopment: true,
+  environment: __DEV__ ? 'development' : 'production'
 })
 
 SplashScreen.preventAutoHideAsync()
