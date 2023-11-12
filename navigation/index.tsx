@@ -1,4 +1,4 @@
-import { FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome5, Octicons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -13,6 +13,7 @@ import { Login } from '../screens/Login'
 import { Me } from '../screens/Me'
 import { NotFound } from '../screens/NotFound'
 import { Post } from '../screens/Post'
+import { Posts } from '../screens/Posts'
 import { Register } from '../screens/Register'
 import { Root } from '../screens/Root'
 import { RootStackParamList, RootTabParamList } from '../types'
@@ -23,7 +24,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>()
 const BottomTabNavigator: FunctionComponent = () => {
   return (
     <BottomTab.Navigator
-      initialRouteName="Community"
+      initialRouteName="Posts"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: 'black',
@@ -37,12 +38,22 @@ const BottomTabNavigator: FunctionComponent = () => {
       }}
     >
       <BottomTab.Screen
+        component={Posts}
+        name="Posts"
+        options={{
+          title: 'Posts',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 color={color} name="file-alt" size={20} />
+          )
+        }}
+      />
+      <BottomTab.Screen
         component={Community}
         name="Community"
         options={{
           title: 'Community',
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 color={color} name="users" size={20} />
+            <Octicons color={color} name="people" size={20} />
           )
         }}
       />
