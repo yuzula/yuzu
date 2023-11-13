@@ -37,6 +37,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
       <View className="w-full flex-1">
         <Posts
+          shouldDisplayCommunityDomainName
           isLoading={arePostsLoadingOnMount}
           isRefreshing={arePostsLoading}
           posts={posts}

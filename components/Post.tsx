@@ -13,6 +13,7 @@ interface PostProps {
   isPrivate: boolean
   authorId?: string
   authorUsername?: string
+  communityDomainName?: string
   voteCount: number
   commentCount: number
   content?: string
@@ -46,6 +47,7 @@ export const Post: FunctionComponent<PostProps> = memo(
     isFlagged,
     isPrivate,
     authorUsername,
+    communityDomainName,
     authorId,
     voteCount,
     commentCount,
@@ -58,6 +60,12 @@ export const Post: FunctionComponent<PostProps> = memo(
   }) => (
     <Pressable className="active:bg-gray-200" onPress={() => onPress(id)}>
       <View className="mx-auto w-5/6 space-y-2 py-4">
+        {communityDomainName && (
+          <Text className="font-Poppins_600SemiBold text-gray-light">
+            @{communityDomainName}
+          </Text>
+        )}
+
         <Text
           ellipsizeMode="tail"
           numberOfLines={4}
@@ -83,16 +91,6 @@ export const Post: FunctionComponent<PostProps> = memo(
                 })}
               >
                 {isDeleted ? 'Deleted' : authorUsername}
-              </Text>
-            </Text>
-            <Text
-              className="shrink font-Poppins_500Medium text-gray-light"
-              ellipsizeMode="tail"
-              numberOfLines={1}
-            >
-              in&nbsp;
-              <Text className="font-Poppins_600SemiBold">
-                @rangitoto.school.nz
               </Text>
             </Text>
             <View className="flex flex-row items-center space-x-2">

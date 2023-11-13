@@ -34,6 +34,7 @@ interface PostsProps {
   isRefreshing: boolean
   isLoading: boolean
   sortBy: SortBy
+  shouldDisplayCommunityDomainName?: boolean
   votePost: (params: {
     postId: number
     vote?: Vote
@@ -49,6 +50,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   isRefreshing,
   isLoading,
   sortBy,
+  shouldDisplayCommunityDomainName = false,
   votePost,
   sortPosts,
   refreshPosts,
@@ -329,6 +331,11 @@ export const Posts: FunctionComponent<PostsProps> = ({
           isFlagged={item.item.is_flagged}
           isPrivate={item.item.is_private}
           voteCount={item.item.vote_count}
+          communityDomainName={
+            shouldDisplayCommunityDomainName
+              ? item.item.community_domain_name
+              : undefined
+          }
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
           onPress={onPostPress}
           onVoteButtonPress={handlePostVoteButtonPress}
