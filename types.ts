@@ -25,6 +25,7 @@ interface PostScreenParams {
 }
 
 interface CommunityScreenParams {
+  domainName?: string
   shouldRefresh?: boolean
 }
 

@@ -234,7 +234,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   }
 
   return isLoading ? (
-    <View className="w-full grow">
+    <View className="w-full grow border-t border-gray-100">
       {[...Array(4).keys()].map(i => (
         <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
           <View>

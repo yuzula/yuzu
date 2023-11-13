@@ -345,6 +345,13 @@ export interface Database {
             referencedColumns: ['domain_name']
           },
           {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
+            referencedColumns: ['domain_name']
+          },
+          {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
@@ -375,6 +382,13 @@ export interface Database {
             columns: ['community_domain_name']
             isOneToOne: false
             referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'profiles_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
             referencedColumns: ['domain_name']
           },
           {
@@ -606,6 +620,14 @@ export interface Database {
           }
         ]
       }
+      communities_with_member_count: {
+        Row: {
+          created_at: string | null
+          domain_name: string | null
+          member_count: number | null
+        }
+        Relationships: []
+      }
       home_screen_posts: {
         Row: {
           comment_count: number | null
@@ -629,6 +651,13 @@ export interface Database {
             columns: ['community_domain_name']
             isOneToOne: false
             referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
             referencedColumns: ['domain_name']
           },
           {
@@ -756,6 +785,13 @@ export interface Database {
             referencedColumns: ['domain_name']
           },
           {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
+            referencedColumns: ['domain_name']
+          },
+          {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
@@ -784,6 +820,13 @@ export interface Database {
             columns: ['community_domain_name']
             isOneToOne: false
             referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
             referencedColumns: ['domain_name']
           },
           {
@@ -819,6 +862,13 @@ export interface Database {
             referencedColumns: ['domain_name']
           },
           {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
+            referencedColumns: ['domain_name']
+          },
+          {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
@@ -849,6 +899,13 @@ export interface Database {
             referencedColumns: ['domain_name']
           },
           {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
+            referencedColumns: ['domain_name']
+          },
+          {
             foreignKeyName: 'posts_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
@@ -875,6 +932,13 @@ export interface Database {
             columns: ['community_domain_name']
             isOneToOne: false
             referencedRelation: 'communities'
+            referencedColumns: ['domain_name']
+          },
+          {
+            foreignKeyName: 'posts_community_domain_name_fkey'
+            columns: ['community_domain_name']
+            isOneToOne: false
+            referencedRelation: 'communities_with_member_count'
             referencedColumns: ['domain_name']
           },
           {

@@ -42,7 +42,9 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     refreshPosts,
     votePost
   } = usePosts({
-    communityDomainName: profile?.community_domain_name
+    communityDomainName: route.params?.domainName
+      ? route.params.domainName
+      : profile?.community_domain_name
   })
 
   const { memberCount, isLoading: isMemberCountLoading } = useMemberCount()
@@ -184,14 +186,17 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
               <FontAwesome5 name="pen" />
               &nbsp;&nbsp;Post
             </Button>
-            <Button
-              className="h-10 flex-1"
-              variant="secondary"
-              onPress={handleFilterButtonPress}
-            >
-              <FontAwesome5 name="filter" />
-              &nbsp;&nbsp;Filter
-            </Button>
+            {(!route.params?.domainName ||
+              route.params.domainName === profile.community_domain_name) && (
+              <Button
+                className="h-10 flex-1"
+                variant="secondary"
+                onPress={handleFilterButtonPress}
+              >
+                <FontAwesome5 name="filter" />
+                &nbsp;&nbsp;Filter
+              </Button>
+            )}
           </View>
 
           <View className="w-full flex-1">
