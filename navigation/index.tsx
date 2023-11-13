@@ -9,6 +9,7 @@ import { useProfileContext } from '../hooks/useProfileContext'
 import { Community } from '../screens/Community'
 import { CreatePost } from '../screens/CreatePost'
 import { EmailVerification } from '../screens/EmailVerification'
+import { ForeignCommunity } from '../screens/ForeignCommunity'
 import { Home } from '../screens/Home'
 import { Login } from '../screens/Login'
 import { Me } from '../screens/Me'
@@ -93,6 +94,7 @@ const RootNavigator: FunctionComponent = () => {
       {session && profile ? (
         <>
           <Stack.Screen component={BottomTabNavigator} name="Tabs" />
+          <Stack.Screen component={ForeignCommunity} name="ForeignCommunity" />
           <Stack.Screen component={Post} name="Post" />
           <Stack.Screen
             component={CreatePost}

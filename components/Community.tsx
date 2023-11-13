@@ -23,12 +23,14 @@ import { Posts } from './Posts'
 
 interface CommunityProps {
   domainName: string
+  isForeign?: boolean
   onCreatePostButtonPress: (initialIsPrivate: boolean) => void
   onPostPress: (postId: number) => void
 }
 
 export const Community: FunctionComponent<CommunityProps> = ({
   domainName,
+  isForeign = false,
   onCreatePostButtonPress,
   onPostPress
 }) => {
@@ -162,14 +164,17 @@ export const Community: FunctionComponent<CommunityProps> = ({
               <FontAwesome5 name="pen" />
               &nbsp;&nbsp;Post
             </Button>
-            <Button
-              className="h-10 flex-1"
-              variant="secondary"
-              onPress={handleFilterButtonPress}
-            >
-              <FontAwesome5 name="filter" />
-              &nbsp;&nbsp;Filter
-            </Button>
+
+            {!isForeign && (
+              <Button
+                className="h-10 flex-1"
+                variant="secondary"
+                onPress={handleFilterButtonPress}
+              >
+                <FontAwesome5 name="filter" />
+                &nbsp;&nbsp;Filter
+              </Button>
+            )}
           </View>
 
           <View className="w-full flex-1">
