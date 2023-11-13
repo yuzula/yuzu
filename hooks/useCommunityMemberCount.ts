@@ -3,32 +3,20 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { retryPromise } from '../helpers/promise'
 import { communityService } from '../services/community'
-import { useProfileContext } from './useProfileContext'
 
-export const useMemberCount = () => {
-  const { profile } = useProfileContext()
-
+export const useCommunityMemberCount = (domainName: string) => {
   const [memberCount, setMemberCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     ;(async () => {
-      if (!profile) {
-        Sentry.Native.captureException(new NotAuthenticatedError())
-
-        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
-      }
-
       setIsLoading(true)
 
       try {
         setMemberCount(
-          await retryPromise(() =>
-            communityService.getMemberCount(profile.community_domain_name)
-          )
+          await retryPromise(() => communityService.getMemberCount(domainName))
         )
       } catch (error) {
         Sentry.Native.captureException(error)
@@ -38,7 +26,7 @@ export const useMemberCount = () => {
         setIsLoading(false)
       }
     })()
-  }, [profile])
+  }, [domainName])
 
   return { memberCount, isLoading }
 }
