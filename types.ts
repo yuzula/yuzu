@@ -24,9 +24,8 @@ interface PostScreenParams {
   postId: number
 }
 
-interface CommunityScreenParams {
-  domainName?: string
-  shouldRefresh?: boolean
+interface ForeignCommunityScreenParams {
+  domainName: string
 }
 
 interface CreatePostScreenParams {
@@ -40,6 +39,7 @@ export type RootStackParamList = {
   Login: undefined
   EmailVerification: EmailVerificationScreenParams
   Post: PostScreenParams
+  ForeignCommunity: ForeignCommunityScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
   CreatePost: CreatePostScreenParams
   NotFound: undefined
@@ -50,7 +50,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 
 export type RootTabParamList = {
   Home: undefined
-  Community: CommunityScreenParams
+  Community: undefined
   Search: undefined
   Me: undefined
 }

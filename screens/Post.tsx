@@ -107,10 +107,11 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           )
 
           if (authorId === post.user_id) {
-            navigation.navigate('Tabs', {
-              screen: 'Community',
-              params: { shouldRefresh: true }
-            })
+            if (navigation.canGoBack()) {
+              navigation.goBack()
+            } else {
+              Sentry.Native.captureException('Cannot go back')
+            }
           } else {
             await refreshPost()
             await refreshComments()
@@ -239,10 +240,11 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 try {
                   await postService.markAsDeleted(post.id)
 
-                  navigation.navigate('Tabs', {
-                    screen: 'Community',
-                    params: { shouldRefresh: true }
-                  })
+                  if (navigation.canGoBack()) {
+                    navigation.goBack()
+                  } else {
+                    Sentry.Native.captureException('Cannot go back')
+                  }
                 } catch (error) {
                   Sentry.Native.captureException(error)
 

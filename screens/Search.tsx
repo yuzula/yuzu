@@ -22,9 +22,7 @@ import { communityModel } from '../models/community'
 import { communityService } from '../services/community'
 import { RootTabScreenProps } from '../types'
 
-export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
-  navigation
-}) => {
+export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = () => {
   const [communities, setCommunities] = useState<communityModel.Schema[]>([])
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
 
@@ -42,15 +40,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     })()
   }, [])
 
-  const handleCommunityPress = useCallback(
-    (domainName: string) => {
-      navigation.navigate('Tabs', {
-        screen: 'Community',
-        params: { domainName }
-      })
-    },
-    [navigation]
-  )
+  const handleCommunityPress = useCallback((_domainName: string) => {}, [])
 
   return (
     <SafeAreaView

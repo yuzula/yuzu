@@ -1,7 +1,7 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Skeleton } from 'moti/skeleton'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import {
   Alert,
   Linking,
@@ -24,8 +24,7 @@ import { useProfileContext } from '../hooks/useProfileContext'
 import { RootTabScreenProps } from '../types'
 
 export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
-  navigation,
-  route
+  navigation
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -42,9 +41,7 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     refreshPosts,
     votePost
   } = usePosts({
-    communityDomainName: route.params?.domainName
-      ? route.params.domainName
-      : profile?.community_domain_name
+    communityDomainName: profile?.community_domain_name
   })
 
   const { memberCount, isLoading: isMemberCountLoading } = useMemberCount()
@@ -110,12 +107,6 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
       Alert.alert('Could not open About page', GENERIC_ERROR_MESSAGE)
     }
   }, [])
-
-  useEffect(() => {
-    if (route.params?.shouldRefresh) {
-      refreshPosts()
-    }
-  }, [refreshPosts, route.params?.shouldRefresh])
 
   if (!profile) {
     return null
@@ -186,17 +177,14 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
               <FontAwesome5 name="pen" />
               &nbsp;&nbsp;Post
             </Button>
-            {(!route.params?.domainName ||
-              route.params.domainName === profile.community_domain_name) && (
-              <Button
-                className="h-10 flex-1"
-                variant="secondary"
-                onPress={handleFilterButtonPress}
-              >
-                <FontAwesome5 name="filter" />
-                &nbsp;&nbsp;Filter
-              </Button>
-            )}
+            <Button
+              className="h-10 flex-1"
+              variant="secondary"
+              onPress={handleFilterButtonPress}
+            >
+              <FontAwesome5 name="filter" />
+              &nbsp;&nbsp;Filter
+            </Button>
           </View>
 
           <View className="w-full flex-1">
