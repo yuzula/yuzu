@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   Text,
   TextInput,
@@ -47,43 +49,48 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = () => {
       className="flex-1 items-center justify-center bg-white"
       edges={['top']}
     >
-      <View className="w-full items-center justify-center space-y-2 border-b border-gray-100 py-4">
-        <TextInput
-          autoFocus
-          className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
-          placeholder="Search communities"
-          returnKeyType="search"
-        />
-      </View>
-
-      <View className="w-full flex-1 items-center justify-center">
-        {isLoadingOnMount ? (
-          <ActivityIndicator />
-        ) : (
-          <FlatList
-            ItemSeparatorComponent={Separator}
-            className="w-full border-t border-gray-100"
-            data={communities}
-            keyExtractor={item => item.domain_name}
-            renderItem={({ item }) => (
-              <Pressable
-                className="active:bg-gray-200"
-                onPress={() => handleCommunityPress(item.domain_name)}
-              >
-                <View className="mx-auto w-5/6 space-y-2 py-4">
-                  <Text className="font-Poppins_600SemiBold text-base">
-                    @{item.domain_name}
-                  </Text>
-                  <Text className="font-Poppins_500Medium text-gray-light">
-                    {item.member_count} member
-                    {item.member_count > 1 ? 's' : null}
-                  </Text>
-                </View>
-              </Pressable>
-            )}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="w-full flex-1"
+      >
+        <View className="w-full items-center justify-center space-y-2 border-b border-gray-100 py-4">
+          <TextInput
+            autoFocus
+            className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
+            placeholder="Search communities"
+            returnKeyType="search"
           />
-        )}
-      </View>
+        </View>
+
+        <View className="w-full flex-1 items-center justify-center">
+          {isLoadingOnMount ? (
+            <ActivityIndicator />
+          ) : (
+            <FlatList
+              ItemSeparatorComponent={Separator}
+              className="w-full border-t border-gray-100"
+              data={communities}
+              keyExtractor={item => item.domain_name}
+              renderItem={({ item }) => (
+                <Pressable
+                  className="active:bg-gray-200"
+                  onPress={() => handleCommunityPress(item.domain_name)}
+                >
+                  <View className="mx-auto w-5/6 space-y-2 py-4">
+                    <Text className="font-Poppins_600SemiBold text-base">
+                      @{item.domain_name}
+                    </Text>
+                    <Text className="font-Poppins_500Medium text-gray-light">
+                      {item.member_count} member
+                      {item.member_count > 1 ? 's' : null}
+                    </Text>
+                  </View>
+                </Pressable>
+              )}
+            />
+          )}
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
