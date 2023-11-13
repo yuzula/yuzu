@@ -20,6 +20,7 @@ import * as Sentry from 'sentry-expo'
 
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { useProfileContext } from '../hooks/useProfileContext'
 import { communityModel } from '../models/community'
 import { communityService } from '../services/community'
 import { RootTabScreenProps } from '../types'
@@ -27,6 +28,8 @@ import { RootTabScreenProps } from '../types'
 export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   navigation
 }) => {
+  const { profile } = useProfileContext()
+
   const [communities, setCommunities] = useState<communityModel.Schema[]>([])
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
 
@@ -46,9 +49,19 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 
   const handleCommunityPress = useCallback(
     (domainName: string) => {
-      navigation.navigate('ForeignCommunity', { domainName })
+      if (!profile) {
+        Sentry.Native.captureException('Profile is not defined')
+
+        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+      }
+
+      if (profile.community_domain_name === domainName) {
+        navigation.navigate('Tabs', { screen: 'Community' })
+      } else {
+        navigation.navigate('ForeignCommunity', { domainName })
+      }
     },
-    [navigation]
+    [navigation, profile]
   )
 
   return (
