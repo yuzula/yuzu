@@ -69,9 +69,13 @@ export const Post: FunctionComponent<PostProps> = memo(
           {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}
         </Text>
 
-        <View className="flex flex-row items-center justify-between">
-          <View className="space-y-1">
-            <Text className="font-Poppins_500Medium text-gray-light">
+        <View className="flex flex-row items-center justify-between space-x-2">
+          <View className="flex-1 space-y-1">
+            <Text
+              className="shrink font-Poppins_500Medium text-gray-light"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
               by&nbsp;
               <Text
                 className={clsx('font-Poppins_600SemiBold', {
@@ -79,6 +83,16 @@ export const Post: FunctionComponent<PostProps> = memo(
                 })}
               >
                 {isDeleted ? 'Deleted' : authorUsername}
+              </Text>
+            </Text>
+            <Text
+              className="shrink font-Poppins_500Medium text-gray-light"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
+              in&nbsp;
+              <Text className="font-Poppins_600SemiBold">
+                @rangitoto.school.nz
               </Text>
             </Text>
             <View className="flex flex-row items-center space-x-2">
