@@ -36,6 +36,7 @@ interface PostProps {
     postId: number
     postAuthorId?: string
   }) => void
+  onCommunityDomainNamePress: () => void
 }
 
 // This needs to be memo'ed since otherwise it will re-render when any
@@ -56,14 +57,17 @@ export const Post: FunctionComponent<PostProps> = memo(
     createdAt,
     onPress,
     onVoteButtonPress,
-    onEllipsisButtonPress
+    onEllipsisButtonPress,
+    onCommunityDomainNamePress
   }) => (
     <Pressable className="active:bg-gray-200" onPress={() => onPress(id)}>
       <View className="mx-auto w-5/6 space-y-2 py-4">
         {communityDomainName && (
-          <Text className="font-Poppins_600SemiBold text-gray-light">
-            @{communityDomainName}
-          </Text>
+          <Pressable onPress={onCommunityDomainNamePress}>
+            <Text className="font-Poppins_600SemiBold text-gray-light">
+              @{communityDomainName}
+            </Text>
+          </Pressable>
         )}
 
         <Text

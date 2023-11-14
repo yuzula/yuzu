@@ -43,6 +43,7 @@ interface PostsProps {
   refreshPosts: () => Promise<void>
   sortPosts: (sortBy: SortBy) => Promise<void>
   onPostPress: (postId: number) => void
+  onPostCommunityDomainNamePress?: (domainName: string) => void
 }
 
 export const Posts: FunctionComponent<PostsProps> = ({
@@ -54,7 +55,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
   votePost,
   sortPosts,
   refreshPosts,
-  onPostPress
+  onPostPress,
+  onPostCommunityDomainNamePress
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -339,6 +341,9 @@ export const Posts: FunctionComponent<PostsProps> = ({
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
           onPress={onPostPress}
           onVoteButtonPress={handlePostVoteButtonPress}
+          onCommunityDomainNamePress={() =>
+            onPostCommunityDomainNamePress?.(item.item.community_domain_name)
+          }
         />
       )}
       onRefresh={refreshPosts}
