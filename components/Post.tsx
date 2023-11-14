@@ -63,11 +63,13 @@ export const Post: FunctionComponent<PostProps> = memo(
     <Pressable className="active:bg-gray-200" onPress={() => onPress(id)}>
       <View className="mx-auto w-5/6 space-y-2 py-4">
         {communityDomainName && (
-          <Pressable onPress={onCommunityDomainNamePress}>
-            <Text className="font-Poppins_600SemiBold text-gray-light">
-              @{communityDomainName}
-            </Text>
-          </Pressable>
+          <View className="flex-row">
+            <Pressable className="shrink" onPress={onCommunityDomainNamePress}>
+              <Text className="font-Poppins_600SemiBold text-gray-light">
+                @{communityDomainName}
+              </Text>
+            </Pressable>
+          </View>
         )}
 
         <Text
