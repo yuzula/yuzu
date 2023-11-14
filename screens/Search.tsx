@@ -75,7 +75,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
       >
         <View className="w-full items-center justify-center space-y-2 border-b border-gray-100 py-4">
           <TextInput
-            autoFocus
             className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
             placeholder="Search communities"
             returnKeyType="search"

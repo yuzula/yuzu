@@ -38,7 +38,7 @@ export const CreatePost: FunctionComponent<
     params: {
       initialIsPrivate = false,
       communityDomainName,
-      isVisibilityChangeable
+      isVisibilityChangeable = true
     }
   }
 }) => {
