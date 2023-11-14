@@ -14,15 +14,13 @@ export const ForeignCommunity: FunctionComponent<
     params: { domainName }
   }
 }) => {
-  const handleCreatePostButtonPress = useCallback(
-    (initialIsPrivate: boolean) => {
-      navigation.navigate('CreatePost', {
-        initialIsPrivate,
-        communityDomainName: domainName
-      })
-    },
-    [domainName, navigation]
-  )
+  const handleCreatePostButtonPress = useCallback(() => {
+    navigation.navigate('CreatePost', {
+      initialIsPrivate: false,
+      isVisibilityChangeable: false,
+      communityDomainName: domainName
+    })
+  }, [domainName, navigation])
 
   const handlePostPress = useCallback(
     (postId: number) => {

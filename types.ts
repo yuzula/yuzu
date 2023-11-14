@@ -30,6 +30,7 @@ interface ForeignCommunityScreenParams {
 
 interface CreatePostScreenParams {
   initialIsPrivate?: boolean
+  isVisibilityChangeable?: boolean
   communityDomainName: string
 }
 

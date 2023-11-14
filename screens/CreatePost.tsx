@@ -35,7 +35,11 @@ export const CreatePost: FunctionComponent<
 > = ({
   navigation,
   route: {
-    params: { initialIsPrivate = false, communityDomainName }
+    params: {
+      initialIsPrivate = false,
+      communityDomainName,
+      isVisibilityChangeable
+    }
   }
 }) => {
   const {
@@ -132,25 +136,32 @@ export const CreatePost: FunctionComponent<
       return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     }
 
-    Alert.alert(
-      isPrivate ? 'Make post public' : 'Make post private',
-      isPrivate
-        ? `The post will be visible to everyone, including those who don't have a @${profile.community_domain_name} email.`
-        : `The post will be visible only to your peers that have a @${profile.community_domain_name} email.`,
-      [
-        {
-          text: 'Yes',
-          onPress: () => {
-            setIsPrivate(prevIsPrivate => !prevIsPrivate)
+    if (isVisibilityChangeable) {
+      Alert.alert(
+        isPrivate ? 'Make post public' : 'Make post private',
+        isPrivate
+          ? `The post will be visible to everyone, including those who don't have a @${profile.community_domain_name} email.`
+          : `The post will be visible only to your peers that have a @${profile.community_domain_name} email.`,
+        [
+          {
+            text: 'Yes',
+            onPress: () => {
+              setIsPrivate(prevIsPrivate => !prevIsPrivate)
+            }
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
           }
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        }
-      ]
-    )
-  }, [isPrivate, profile])
+        ]
+      )
+    } else {
+      Alert.alert(
+        'Visibility cannot be changed',
+        `Only users with @${communityDomainName} emails can create internal posts in this community`
+      )
+    }
+  }, [communityDomainName, isPrivate, isVisibilityChangeable, profile])
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100" edges={['bottom']}>
