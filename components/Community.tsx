@@ -26,13 +26,15 @@ interface CommunityProps {
   isForeign?: boolean
   onCreatePostButtonPress: (initialIsPrivate: boolean) => void
   onPostPress: (postId: number) => void
+  onBackButtonPress?: () => void
 }
 
 export const Community: FunctionComponent<CommunityProps> = ({
   domainName,
   isForeign = false,
   onCreatePostButtonPress,
-  onPostPress
+  onPostPress,
+  onBackButtonPress
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -169,7 +171,16 @@ export const Community: FunctionComponent<CommunityProps> = ({
               &nbsp;&nbsp;Post
             </Button>
 
-            {!isForeign && (
+            {isForeign ? (
+              <Button
+                className="h-10 flex-1"
+                variant="secondary"
+                onPress={onBackButtonPress}
+              >
+                <FontAwesome5 name="arrow-left" />
+                &nbsp;&nbsp;Back
+              </Button>
+            ) : (
               <Button
                 className="h-10 flex-1"
                 variant="secondary"
