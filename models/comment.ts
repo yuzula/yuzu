@@ -7,6 +7,7 @@ export const baseSchema = z.object({
   post_id: z.number(),
   content: z.string().optional(),
   vote_count: z.number(),
+  is_author_internal: z.boolean(),
   parent_comment_id: z.number().optional(),
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),
   is_deleted: z.boolean(),

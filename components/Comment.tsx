@@ -14,6 +14,7 @@ interface CommentProps {
   isDeleted: boolean
   isFlagged: boolean
   content?: string
+  isAuthorInternal?: boolean
   currentUserVote?: Vote
   variant?: 'parent' | 'child'
   onEllipsisButtonPress?: (id: number) => void
@@ -31,6 +32,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     voteCount,
     createdAt,
     content,
+    isAuthorInternal = false,
     currentUserVote,
     variant = 'parent',
     isDeleted,
@@ -59,6 +61,11 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           >
             {!username ? 'Deleted' : username}
           </Text>
+          {isAuthorInternal && (
+            <Text className="text-gray-light">
+              <FontAwesome5 name="users" size={14} />
+            </Text>
+          )}
           <View className="flex-row items-center">
             <Text className="text-gray-light">
               <FontAwesome5 name="arrow-up" size={14} />
