@@ -338,12 +338,10 @@ export const Posts: FunctionComponent<PostsProps> = ({
               ? item.item.community_domain_name
               : undefined
           }
+          onCommunityDomainNamePress={onPostCommunityDomainNamePress}
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
           onPress={onPostPress}
           onVoteButtonPress={handlePostVoteButtonPress}
-          onCommunityDomainNamePress={() =>
-            onPostCommunityDomainNamePress?.(item.item.community_domain_name)
-          }
         />
       )}
       onRefresh={refreshPosts}
