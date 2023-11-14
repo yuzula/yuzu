@@ -91,6 +91,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
               className="w-full border-t border-gray-100"
               data={communities}
               keyExtractor={item => item.domain_name}
+              keyboardDismissMode="interactive"
               renderItem={({ item }) => (
                 <Pressable
                   className="active:bg-gray-200"

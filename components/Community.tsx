@@ -111,41 +111,45 @@ export const Community: FunctionComponent<CommunityProps> = ({
               <Text className="font-Poppins_700Bold text-xl">
                 @{domainName}
               </Text>
-              <View>
-                <Popover
-                  from={
-                    <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
-                      <Text className="text-gray-600">
-                        <FontAwesome5 name="question" size={12} />
+              {!isForeign && (
+                <View>
+                  <Popover
+                    from={
+                      <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
+                        <Text className="text-gray-600">
+                          <FontAwesome5 name="question" size={12} />
+                        </Text>
+                      </Pressable>
+                    }
+                    verticalOffset={
+                      Platform.OS === 'android' && StatusBar.currentHeight
+                        ? -StatusBar.currentHeight
+                        : 0
+                    }
+                  >
+                    <View className="space-y-2 p-4">
+                      <Text className="font-Poppins_600SemiBold text-base">
+                        What's this?
                       </Text>
-                    </Pressable>
-                  }
-                  verticalOffset={
-                    Platform.OS === 'android' && StatusBar.currentHeight
-                      ? -StatusBar.currentHeight
-                      : 0
-                  }
-                >
-                  <View className="space-y-2 p-4">
-                    <Text className="font-Poppins_600SemiBold text-base">
-                      What's this?
-                    </Text>
-                    <Text className="font-Poppins_500Medium">
-                      This is your community! You were automatically added since
-                      you signed up with a&nbsp;
-                      <Text className="font-Poppins_600SemiBold">
-                        @{domainName}
+                      <Text className="font-Poppins_500Medium">
+                        This is your community! You were automatically added
+                        since you signed up with a&nbsp;
+                        <Text className="font-Poppins_600SemiBold">
+                          @{domainName}
+                        </Text>
+                        &nbsp;email address.
                       </Text>
-                      &nbsp;email address.
-                    </Text>
-                    <Pressable onPress={handleDomainNamePopoverLearnMorePress}>
-                      <Text className="font-Poppins_500Medium text-blue-light">
-                        Learn more
-                      </Text>
-                    </Pressable>
-                  </View>
-                </Popover>
-              </View>
+                      <Pressable
+                        onPress={handleDomainNamePopoverLearnMorePress}
+                      >
+                        <Text className="font-Poppins_500Medium text-blue-light">
+                          Learn more
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </Popover>
+                </View>
+              )}
             </View>
             <View>
               <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
