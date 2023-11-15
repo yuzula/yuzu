@@ -31,7 +31,9 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   const { profile } = useProfileContext()
 
   const [communities, setCommunities] = useState<communityModel.Schema[]>([])
+  const [searchText, setSearchText] = useState('')
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     ;(async () => {
@@ -43,6 +45,8 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       } finally {
         setIsLoadingOnMount(false)
+
+        setIsLoading(false)
       }
     })()
   }, [])
@@ -64,6 +68,20 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     [navigation, profile]
   )
 
+  const handleSearchSubmit = useCallback(async () => {
+    setIsLoading(true)
+
+    try {
+      setCommunities(await communityService.search(searchText))
+    } catch (error) {
+      Sentry.Native.captureException(error)
+
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [searchText])
+
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white"
@@ -78,6 +96,8 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
             className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
             placeholder="Search communities"
             returnKeyType="search"
+            onChangeText={setSearchText}
+            onSubmitEditing={handleSearchSubmit}
           />
         </View>
 
@@ -91,6 +111,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
               data={communities}
               keyExtractor={item => item.domain_name}
               keyboardDismissMode="interactive"
+              refreshing={isLoading}
               renderItem={({ item }) => (
                 <Pressable
                   className="active:bg-gray-200"

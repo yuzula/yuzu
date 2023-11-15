@@ -3,6 +3,16 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { communityModel } from '../models/community'
 
+export const search = async (query: string) => {
+  const response = await supabase.rpc('search_communities', { query })
+
+  if (response.error) {
+    throw response.error
+  }
+
+  return communityModel.schema.array().parse(response.data)
+}
+
 export const getAll = async () => {
   const response = await supabase
     .from('communities_with_member_count')

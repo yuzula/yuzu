@@ -675,6 +675,7 @@ export interface Database {
           created_at: string | null
           current_user_vote: string | null
           id: number | null
+          is_author_internal: boolean | null
           is_deleted: boolean | null
           is_flagged: boolean | null
           parent_comment_id: number | null
@@ -969,6 +970,16 @@ export interface Database {
           post_user_id: string
         }
         Returns: number
+      }
+      search_communities: {
+        Args: {
+          query: string
+        }
+        Returns: {
+          created_at: string | null
+          domain_name: string | null
+          member_count: number | null
+        }[]
       }
     }
     Enums: {
