@@ -35,21 +35,23 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        setCommunities(await communityService.getAll())
-      } catch (error) {
-        Sentry.Native.captureException(error)
+  const getCommunities = useCallback(async () => {
+    try {
+      setCommunities(await communityService.getAll())
+    } catch (error) {
+      Sentry.Native.captureException(error)
 
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
-        setIsLoadingOnMount(false)
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    } finally {
+      setIsLoadingOnMount(false)
 
-        setIsLoading(false)
-      }
-    })()
+      setIsLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    getCommunities()
+  }, [getCommunities])
 
   const handleCommunityPress = useCallback(
     (domainName: string) => {
@@ -69,6 +71,10 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   )
 
   const handleSearchSubmit = useCallback(async () => {
+    if (!searchText.length) {
+      return getCommunities()
+    }
+
     setIsLoading(true)
 
     try {
@@ -80,7 +86,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     } finally {
       setIsLoading(false)
     }
-  }, [searchText])
+  }, [getCommunities, searchText])
 
   return (
     <SafeAreaView

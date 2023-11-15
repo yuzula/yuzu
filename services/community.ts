@@ -4,7 +4,7 @@ import { supabase } from '../clients/supabase'
 import { communityModel } from '../models/community'
 
 export const search = async (query: string) => {
-  const response = await supabase.rpc('search_communities', { query })
+  const response = await supabase.rpc('search_communities', { query }).limit(20)
 
   if (response.error) {
     throw response.error
