@@ -36,6 +36,8 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   const [isLoading, setIsLoading] = useState(true)
 
   const getCommunities = useCallback(async () => {
+    setIsLoading(true)
+
     try {
       setCommunities(await communityService.getAll())
     } catch (error) {
@@ -88,6 +90,10 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     }
   }, [getCommunities, searchText])
 
+  const handleRefresh = useCallback(async () => {
+    await handleSearchSubmit()
+  }, [handleSearchSubmit])
+
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white"
@@ -134,6 +140,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
                   </View>
                 </Pressable>
               )}
+              onRefresh={handleRefresh}
             />
           )}
         </View>
