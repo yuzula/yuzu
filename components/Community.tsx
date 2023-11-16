@@ -194,7 +194,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
           <View className="w-full flex-1">
             <Posts
-              isLoading={arePostsLoadingOnMount}
+              isLoading={areResourcesLoadingOnMount}
               isRefreshing={arePostsLoading}
               posts={posts}
               refreshPosts={refreshPosts}
