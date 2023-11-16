@@ -103,7 +103,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                 ellipsizeMode="tail"
                 numberOfLines={1}
               >
-                by&nbsp;
+                by{' '}
                 <Text
                   className={clsx('font-Poppins_600SemiBold', {
                     'font-Poppins_600SemiBold_Italic': isDeleted
@@ -114,16 +114,13 @@ export const Post: FunctionComponent<PostProps> = memo(
               </Text>
               <View className="flex flex-row items-center space-x-2">
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="arrow-up" size={14} />
-                  &nbsp;{voteCount}
+                  <FontAwesome5 name="arrow-up" size={14} /> {voteCount}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="comment-dots" size={14} />
-                  &nbsp;{commentCount}
+                  <FontAwesome5 name="comment-dots" size={14} /> {commentCount}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="clock" size={14} />
-                  &nbsp;
+                  <FontAwesome5 name="clock" size={14} />{' '}
                   {formatDuration(Date.now() - createdAt.getTime())}
                 </Text>
                 {isPrivate && (

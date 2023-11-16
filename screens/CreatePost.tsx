@@ -217,7 +217,7 @@ export const CreatePost: FunctionComponent<
                   ellipsizeMode="tail"
                   numberOfLines={1}
                 >
-                  Posting to&nbsp;
+                  Posting to{' '}
                   <Text className="font-Poppins_600SemiBold">@maxwowo.com</Text>
                 </Text>
                 <Pressable

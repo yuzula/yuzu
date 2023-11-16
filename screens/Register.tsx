@@ -198,7 +198,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
               Cancel
             </Button>
             <Text className="text-center font-Poppins_500Medium text-gray-light">
-              By signing up, you agree to our&nbsp;
+              By signing up, you agree to our{' '}
               <Text
                 className="font-Poppins_600SemiBold"
                 onPress={handlePrivacyPolicyPress}

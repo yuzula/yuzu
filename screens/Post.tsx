@@ -541,7 +541,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
                     <View className="space-y-1">
                       <Text className="font-Poppins_500Medium text-gray-light">
-                        by&nbsp;
+                        by{' '}
                         <Text
                           className={clsx('font-Poppins_600SemiBold', {
                             'font-Poppins_600SemiBold_Italic text-gray-light':
@@ -553,16 +553,15 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                       </Text>
                       <View className="flex flex-row items-center space-x-2">
                         <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="arrow-up" size={14} />
-                          &nbsp;{post.vote_count}
+                          <FontAwesome5 name="arrow-up" size={14} />{' '}
+                          {post.vote_count}
                         </Text>
                         <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="comment-dots" size={14} />
-                          &nbsp;{post.comment_count}
+                          <FontAwesome5 name="comment-dots" size={14} />{' '}
+                          {post.comment_count}
                         </Text>
                         <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="clock" size={14} />
-                          &nbsp;
+                          <FontAwesome5 name="clock" size={14} />{' '}
                           {formatDuration(
                             Date.now() - post.created_at.getTime()
                           )}
@@ -730,7 +729,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             {replyParentCommentId && (
               <View className="mx-auto w-5/6">
                 <Text className="font-Poppins_500Medium">
-                  Replying to&nbsp;
+                  Replying to{' '}
                   <Text className="font-Poppins_600SemiBold">
                     {
                       comments.find(

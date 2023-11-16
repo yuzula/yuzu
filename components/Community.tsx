@@ -135,11 +135,11 @@ export const Community: FunctionComponent<CommunityProps> = ({
                       </Text>
                       <Text className="font-Poppins_500Medium">
                         This is your community! You were automatically added
-                        since you signed up with a&nbsp;
+                        since you signed up with a{' '}
                         <Text className="font-Poppins_600SemiBold">
                           @{domainName}
-                        </Text>
-                        &nbsp;email address.
+                        </Text>{' '}
+                        email address.
                       </Text>
                       <Pressable
                         onPress={handleDomainNamePopoverLearnMorePress}
@@ -168,7 +168,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
               onPress={handleCreatePostButtonPress}
             >
               <FontAwesome5 name="pen" />
-              &nbsp;&nbsp;Post
+              {'  '}Post
             </Button>
 
             {isForeign ? (
@@ -178,7 +178,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
                 onPress={onBackButtonPress}
               >
                 <FontAwesome5 name="arrow-left" />
-                &nbsp;&nbsp;Back
+                {'  '}Back
               </Button>
             ) : (
               <Button
@@ -187,7 +187,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
                 onPress={handleFilterButtonPress}
               >
                 <FontAwesome5 name="filter" />
-                &nbsp;&nbsp;Filter
+                {'  '}Filter
               </Button>
             )}
           </View>

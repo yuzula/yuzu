@@ -87,13 +87,13 @@ export const Comment: FunctionComponent<CommentProps> = memo(
                     Community members
                   </Text>
                   <Text className="font-Poppins_500Medium">
-                    Members of the&nbsp;
+                    Members of the{' '}
                     <Text className="font-Poppins_600SemiBold">
                       @{communityDomainName}
-                    </Text>
-                    &nbsp;community are marked with the&nbsp;&nbsp;
+                    </Text>{' '}
+                    community are marked with the{'  '}
                     <FontAwesome5 name="users" />
-                    &nbsp;&nbsp;icon.
+                    {'  '}icon.
                   </Text>
                 </View>
               </Popover>
@@ -104,7 +104,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
               <FontAwesome5 name="arrow-up" size={14} />
             </Text>
             <Text className="font-Poppins_500Medium text-gray-light">
-              &nbsp;
+              {' '}
               {voteCount}
             </Text>
           </View>
@@ -143,8 +143,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             onPress={() => onReplyButtonPress?.(id)}
           >
             <Text className="text-gray-light">
-              <FontAwesome5 name="reply" size={14} />
-              &nbsp;
+              <FontAwesome5 name="reply" size={14} />{' '}
               <Text className="font-Poppins_500Medium">Reply</Text>
             </Text>
           </Pressable>

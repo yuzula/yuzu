@@ -53,8 +53,8 @@ export const SortByButton: FunctionComponent<SortByButtonProps> = ({
         ) : (
           <FontAwesome5 name="scroll" />
         )}
-        &nbsp;&nbsp;Sort by&nbsp;
-        <Text className="capitalize">{sortBy}</Text>&nbsp;&nbsp;
+        {'  '}Sort by <Text className="capitalize">{sortBy}</Text>
+        {'  '}
         <FontAwesome5 name="chevron-down" />
       </Text>
     </Pressable>

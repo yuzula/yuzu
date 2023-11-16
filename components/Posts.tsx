@@ -283,9 +283,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
                 from={
                   <Pressable>
                     <Text className="font-Poppins_600SemiBold text-gray-light">
-                      What's&nbsp;&nbsp;
-                      <FontAwesome5 name="lock" />
-                      &nbsp;?
+                      What's{'  '}
+                      <FontAwesome5 name="lock" /> ?
                     </Text>
                   </Pressable>
                 }
