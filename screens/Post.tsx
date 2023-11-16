@@ -660,6 +660,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     isAuthorInternal={item.item.is_author_internal}
                     isDeleted={item.item.is_deleted}
                     isFlagged={item.item.is_flagged}
+                    isPostPrivate={post.is_private}
                     username={item.item.username}
                     voteCount={item.item.vote_count}
                     onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
@@ -693,6 +694,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     isAuthorInternal={item.item.is_author_internal}
                     isDeleted={item.item.is_deleted}
                     isFlagged={item.item.is_flagged}
+                    isPostPrivate={post.is_private}
                     username={item.item.username}
                     variant="child"
                     voteCount={item.item.vote_count}
