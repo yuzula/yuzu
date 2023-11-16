@@ -198,6 +198,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
               isRefreshing={arePostsLoading}
               posts={posts}
               refreshPosts={refreshPosts}
+              shouldDisplayInternalPopover={!isForeign}
               sortBy={sortBy}
               sortPosts={sortPosts}
               votePost={votePost}
