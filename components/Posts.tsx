@@ -300,19 +300,19 @@ export const Posts: FunctionComponent<PostsProps> = ({
                     Internal posts
                   </Text>
                   <Text className="font-Poppins_500Medium">
-                    Internal posts can only be created and viewed by your peers
-                    that also signed up with a&nbsp;
+                    Internal posts can only be created and viewed by members of
+                    the{' '}
                     <Text className="font-Poppins_600SemiBold">
                       @{profile.community_domain_name}
-                    </Text>
-                    &nbsp;email address.
+                    </Text>{' '}
+                    community.
                   </Text>
                   <Text className="font-Poppins_500Medium">
-                    They are marked with the special&nbsp;&nbsp;
+                    They are marked with the special{'  '}
                     <Text className="text-yellow-light">
                       <FontAwesome5 name="lock" />
                     </Text>
-                    &nbsp;&nbsp;icon.
+                    {'  '}icon.
                   </Text>
                   <Text className="font-Poppins_500Medium">
                     Public posts don't have that icon and can be created &
