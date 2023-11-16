@@ -1,7 +1,8 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
 import React, { FunctionComponent, memo } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Platform, Pressable, StatusBar, Text, View } from 'react-native'
+import Popover from 'react-native-popover-view'
 
 import { formatDuration } from '../helpers/time'
 import { Vote } from '../types/vote'
@@ -14,6 +15,7 @@ interface CommentProps {
   isDeleted: boolean
   isFlagged: boolean
   content?: string
+  communityDomainName: string
   isPostPrivate: boolean
   isAuthorInternal: boolean
   currentUserVote?: Vote
@@ -33,6 +35,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     voteCount,
     createdAt,
     content,
+    communityDomainName,
     isPostPrivate,
     isAuthorInternal,
     currentUserVote,
@@ -64,9 +67,37 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             {!username ? 'Deleted' : username}
           </Text>
           {!isPostPrivate && isAuthorInternal && (
-            <Text className="text-gray-light">
-              <FontAwesome5 name="users" size={14} />
-            </Text>
+            <View>
+              <Popover
+                from={
+                  <Pressable>
+                    <Text className="text-gray-light">
+                      <FontAwesome5 name="users" size={14} />
+                    </Text>
+                  </Pressable>
+                }
+                verticalOffset={
+                  Platform.OS === 'android' && StatusBar.currentHeight
+                    ? -StatusBar.currentHeight
+                    : 0
+                }
+              >
+                <View className="space-y-2 p-4">
+                  <Text className="font-Poppins_600SemiBold text-base">
+                    Community members
+                  </Text>
+                  <Text className="font-Poppins_500Medium">
+                    Members of the&nbsp;
+                    <Text className="font-Poppins_600SemiBold">
+                      @{communityDomainName}
+                    </Text>
+                    &nbsp;community are marked with the&nbsp;&nbsp;
+                    <FontAwesome5 name="users" />
+                    &nbsp;&nbsp;icon.
+                  </Text>
+                </View>
+              </Popover>
+            </View>
           )}
           <View className="flex-row items-center">
             <Text className="text-gray-light">

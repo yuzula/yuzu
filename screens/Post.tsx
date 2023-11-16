@@ -653,6 +653,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 scrollEnabled={false}
                 ListHeaderComponent={() => (
                   <Comment
+                    communityDomainName={post.community_domain_name}
                     content={item.item.content}
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
@@ -687,6 +688,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 )}
                 renderItem={item => (
                   <Comment
+                    communityDomainName={post.community_domain_name}
                     content={item.item.content}
                     createdAt={item.item.created_at}
                     currentUserVote={item.item.current_user_vote}
