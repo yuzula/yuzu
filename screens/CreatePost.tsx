@@ -218,7 +218,9 @@ export const CreatePost: FunctionComponent<
                   numberOfLines={1}
                 >
                   Posting to{' '}
-                  <Text className="font-Poppins_600SemiBold">@maxwowo.com</Text>
+                  <Text className="font-Poppins_600SemiBold">
+                    @{communityDomainName}
+                  </Text>
                 </Text>
                 <Pressable
                   className="rounded-lg p-2 active:bg-gray-200"
