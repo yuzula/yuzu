@@ -15,7 +15,6 @@ import Popover from 'react-native-popover-view'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
@@ -86,12 +85,10 @@ export const Posts: FunctionComponent<PostsProps> = ({
     async (authorId: string) => {
       try {
         if (user) {
-          await retryPromise(() =>
-            blockService.blockUser({
-              blockerId: user.id,
-              blockeeId: authorId
-            })
-          )
+          await blockService.blockUser({
+            blockerId: user.id,
+            blockeeId: authorId
+          })
 
           await refreshPosts()
         } else {
@@ -116,7 +113,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     }) => {
       try {
         if (user) {
-          await retryPromise(() => reportService.reportPost(postId))
+          await reportService.reportPost(postId)
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {

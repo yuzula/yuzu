@@ -5,7 +5,6 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
-import { retryPromise } from '../helpers/promise'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { Vote } from '../types/vote'
@@ -20,7 +19,7 @@ export const usePost = (id: number) => {
 
   const getPost = useCallback(async () => {
     try {
-      setPost(await retryPromise(() => postService.get(id)))
+      setPost(await postService.get(id))
     } catch (error) {
       Sentry.Native.captureException(error)
 
@@ -70,13 +69,11 @@ export const usePost = (id: number) => {
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
-      await retryPromise(() =>
-        postService.registerVote({
-          postId,
-          userId: profile.id,
-          vote
-        })
-      )
+      await postService.registerVote({
+        postId,
+        userId: profile.id,
+        vote
+      })
     },
     [post, profile]
   )

@@ -19,7 +19,6 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { postService } from '../services/post'
 import { RootStackScreenProps } from '../types'
@@ -64,14 +63,12 @@ export const CreatePost: FunctionComponent<
         setIsCreatePostLoading(true)
 
         try {
-          const postId = await retryPromise(() =>
-            postService.create({
-              communityDomainName,
-              content,
-              userId: profile.id,
-              isPrivate
-            })
-          )
+          const postId = await postService.create({
+            communityDomainName,
+            content,
+            userId: profile.id,
+            isPrivate
+          })
 
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success

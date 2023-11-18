@@ -17,7 +17,6 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { RootStackScreenProps } from '../types'
 
 const registerSchema = z.object({
@@ -53,17 +52,15 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
       setIsLoading(true)
 
       try {
-        const { error } = await retryPromise(() =>
-          supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                username
-              }
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username
             }
-          })
-        )
+          }
+        })
 
         if (error) {
           setIsLoading(false)

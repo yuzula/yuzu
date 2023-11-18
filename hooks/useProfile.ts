@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as Sentry from 'sentry-expo'
 
-import { retryPromise } from '../helpers/promise'
 import { profileModel } from '../models/profile'
 import { profileService } from '../services/profile'
 
@@ -13,7 +12,7 @@ export const useProfile = (id: string) => {
   useEffect(() => {
     ;(async () => {
       try {
-        setProfile(await retryPromise(() => profileService.get(id)))
+        setProfile(await profileService.get(id))
       } catch (error) {
         Sentry.Native.captureException(error)
 

@@ -24,7 +24,6 @@ import { Button } from '../components/Button'
 import { Comment } from '../components/Comment'
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
@@ -99,12 +98,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (authorId: string) => {
       try {
         if (user && post) {
-          await retryPromise(() =>
-            blockService.blockUser({
-              blockerId: user.id,
-              blockeeId: authorId
-            })
-          )
+          await blockService.blockUser({
+            blockerId: user.id,
+            blockeeId: authorId
+          })
 
           if (authorId === post.user_id) {
             if (navigation.canGoBack()) {
@@ -132,7 +129,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (post: postModel.Schema) => {
       try {
         if (user) {
-          await retryPromise(() => reportService.reportPost(post.id))
+          await reportService.reportPost(post.id)
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -173,7 +170,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (comment: commentModel.BaseSchema) => {
       try {
         if (user) {
-          await retryPromise(() => reportService.reportComment(comment.id))
+          await reportService.reportComment(comment.id)
 
           Alert.alert('Comment has been reported for moderation', undefined, [
             {
@@ -379,14 +376,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         setIsCreateCommentLoading(true)
 
         try {
-          await retryPromise(() =>
-            commentService.create({
-              postId: post.id,
-              userId: user.id,
-              content,
-              parentCommentId: replyParentCommentId
-            })
-          )
+          await commentService.create({
+            postId: post.id,
+            userId: user.id,
+            content,
+            parentCommentId: replyParentCommentId
+          })
 
           await Promise.all([getPost(), getComments()])
 

@@ -7,7 +7,6 @@ import {
 } from 'react'
 import * as Sentry from 'sentry-expo'
 
-import { retryPromise } from '../helpers/promise'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { profileModel } from '../models/profile'
 import { profileService } from '../services/profile'
@@ -37,7 +36,7 @@ export const ProfileContextProvider: FunctionComponent<PropsWithChildren> = ({
 
       if (user) {
         try {
-          setProfile(await retryPromise(() => profileService.get(user.id)))
+          setProfile(await profileService.get(user.id))
         } catch (error) {
           Sentry.Native.captureException(error)
 

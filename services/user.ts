@@ -1,6 +1,8 @@
+import { retryDecorator } from 'ts-retry-promise'
+
 import { supabase } from '../clients/supabase'
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = retryDecorator(async () => {
   const response = await supabase.auth.getUser()
 
   if (response.error) {
@@ -8,9 +10,9 @@ export const getCurrentUser = async () => {
   }
 
   return response.data.user
-}
+})
 
-export const deleteCurrentUser = async () => {
+export const deleteCurrentUser = retryDecorator(async () => {
   const currentUser = await getCurrentUser()
 
   const response = await supabase
@@ -21,14 +23,14 @@ export const deleteCurrentUser = async () => {
   if (response.error) {
     throw response.error
   }
-}
+})
 
-export const logOut = async () => {
+export const logOut = retryDecorator(async () => {
   const { error } = await supabase.auth.signOut()
 
   if (error) {
     throw error
   }
-}
+})
 
 export * as userService from './user'

@@ -3,7 +3,6 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { userService } from '../services/user'
 
 export const useDeleteCurrentUser = () => {
@@ -13,7 +12,7 @@ export const useDeleteCurrentUser = () => {
     setIsLoading(true)
 
     try {
-      await retryPromise(() => userService.deleteCurrentUser())
+      await userService.deleteCurrentUser()
     } catch (error) {
       Sentry.Native.captureException(error)
 

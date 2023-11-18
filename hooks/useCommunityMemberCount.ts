@@ -3,7 +3,6 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { communityService } from '../services/community'
 
 export const useCommunityMemberCount = (domainName: string) => {
@@ -15,9 +14,7 @@ export const useCommunityMemberCount = (domainName: string) => {
       setIsLoading(true)
 
       try {
-        setMemberCount(
-          await retryPromise(() => communityService.getMemberCount(domainName))
-        )
+        setMemberCount(await communityService.getMemberCount(domainName))
       } catch (error) {
         Sentry.Native.captureException(error)
 

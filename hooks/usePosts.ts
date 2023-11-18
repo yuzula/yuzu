@@ -5,7 +5,6 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
-import { retryPromise } from '../helpers/promise'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { FilterBy, SortBy } from '../types/post'
@@ -36,13 +35,11 @@ export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
 
     try {
       setPosts(
-        await retryPromise(() =>
-          postService.getAll({
-            communityDomainName,
-            sortBy,
-            filterBy
-          })
-        )
+        await postService.getAll({
+          communityDomainName,
+          sortBy,
+          filterBy
+        })
       )
     } catch (error) {
       Sentry.Native.captureException(error)
@@ -103,13 +100,11 @@ export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
-      await retryPromise(() =>
-        postService.registerVote({
-          postId,
-          userId: profile.id,
-          vote
-        })
-      )
+      await postService.registerVote({
+        postId,
+        userId: profile.id,
+        vote
+      })
     },
     [profile]
   )

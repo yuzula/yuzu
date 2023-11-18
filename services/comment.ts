@@ -1,3 +1,5 @@
+import { retryDecorator } from 'ts-retry-promise'
+
 import { supabase } from '../clients/supabase'
 import { commentModel } from '../models/comment'
 import { Vote } from '../types/vote'
@@ -9,25 +11,22 @@ interface CreateParams {
   parentCommentId?: number
 }
 
-export const create = async ({
-  postId,
-  userId,
-  content,
-  parentCommentId
-}: CreateParams) => {
-  const response = await supabase.from('comments').insert({
-    post_id: postId,
-    user_id: userId,
-    parent_comment_id: parentCommentId,
-    content
-  })
+export const create = retryDecorator(
+  async ({ postId, userId, content, parentCommentId }: CreateParams) => {
+    const response = await supabase.from('comments').insert({
+      post_id: postId,
+      user_id: userId,
+      parent_comment_id: parentCommentId,
+      content
+    })
 
-  if (response.error) {
-    throw response.error
+    if (response.error) {
+      throw response.error
+    }
   }
-}
+)
 
-const getAllChildren = async (commentId: number) => {
+const getAllChildren = retryDecorator(async (commentId: number) => {
   const response = await supabase
     .from('post_screen_comments')
     .select('*')
@@ -47,9 +46,9 @@ const getAllChildren = async (commentId: number) => {
       current_user_vote: data.current_user_vote ?? undefined
     }))
   )
-}
+})
 
-export const getAllRoot = async (postId: number) => {
+export const getAllRoot = retryDecorator(async (postId: number) => {
   const response = await supabase
     .from('post_screen_comments')
     .select('*')
@@ -79,9 +78,9 @@ export const getAllRoot = async (postId: number) => {
       }))
     )
   )
-}
+})
 
-export const markAsDeleted = async (id: number) => {
+export const markAsDeleted = retryDecorator(async (id: number) => {
   const { error } = await supabase
     .from('comments')
     .update({ is_deleted: true })
@@ -90,27 +89,29 @@ export const markAsDeleted = async (id: number) => {
   if (error) {
     throw error
   }
-}
+})
 
 interface GetPostVotesParams {
   commentId: number
   userId: string
 }
 
-export const getVote = async ({ commentId, userId }: GetPostVotesParams) => {
-  const response = await supabase
-    .from('comment_votes')
-    .select()
-    .eq('comment_id', commentId)
-    .eq('user_id', userId)
-    .maybeSingle()
+export const getVote = retryDecorator(
+  async ({ commentId, userId }: GetPostVotesParams) => {
+    const response = await supabase
+      .from('comment_votes')
+      .select()
+      .eq('comment_id', commentId)
+      .eq('user_id', userId)
+      .maybeSingle()
 
-  if (response.error) {
-    throw response.error
+    if (response.error) {
+      throw response.error
+    }
+
+    return response.data
   }
-
-  return response.data
-}
+)
 
 interface VoteParams {
   commentId: number
@@ -118,44 +119,46 @@ interface VoteParams {
   vote?: Vote
 }
 
-export const registerVote = async ({ commentId, userId, vote }: VoteParams) => {
-  const existingVote = await getVote({ commentId, userId })
+export const registerVote = retryDecorator(
+  async ({ commentId, userId, vote }: VoteParams) => {
+    const existingVote = await getVote({ commentId, userId })
 
-  // User has voted on this comment already
-  if (existingVote) {
-    // The new vote results in an upvote or downvote
-    if (vote) {
-      const response = await supabase
-        .from('comment_votes')
-        .update({ is_upvote: vote === 'upvote' })
-        .eq('id', existingVote.id)
+    // User has voted on this comment already
+    if (existingVote) {
+      // The new vote results in an upvote or downvote
+      if (vote) {
+        const response = await supabase
+          .from('comment_votes')
+          .update({ is_upvote: vote === 'upvote' })
+          .eq('id', existingVote.id)
 
-      if (response.error) {
-        throw response.error
+        if (response.error) {
+          throw response.error
+        }
+        // The new vote is cancelling the old vote
+      } else {
+        const response = await supabase
+          .from('comment_votes')
+          .delete()
+          .eq('id', existingVote.id)
+
+        if (response.error) {
+          throw response.error
+        }
       }
-      // The new vote is cancelling the old vote
+      // The user hasn't voted on this comment yet
     } else {
-      const response = await supabase
-        .from('comment_votes')
-        .delete()
-        .eq('id', existingVote.id)
+      const response = await supabase.from('comment_votes').insert({
+        user_id: userId,
+        comment_id: commentId,
+        is_upvote: vote === 'upvote'
+      })
 
       if (response.error) {
         throw response.error
       }
-    }
-    // The user hasn't voted on this comment yet
-  } else {
-    const response = await supabase.from('comment_votes').insert({
-      user_id: userId,
-      comment_id: commentId,
-      is_upvote: vote === 'upvote'
-    })
-
-    if (response.error) {
-      throw response.error
     }
   }
-}
+)
 
 export * as commentService from './comment'

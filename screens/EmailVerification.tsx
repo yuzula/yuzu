@@ -16,7 +16,6 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { retryPromise } from '../helpers/promise'
 import { RootStackScreenProps } from '../types'
 
 const emailVerificationSchema = z.object({
@@ -50,13 +49,11 @@ export const EmailVerification: FunctionComponent<
       setIsLoading(true)
 
       try {
-        const result = await retryPromise(() =>
-          supabase.auth.verifyOtp({
-            email: params.email,
-            token,
-            type: 'signup'
-          })
-        )
+        const result = await supabase.auth.verifyOtp({
+          email: params.email,
+          token,
+          type: 'signup'
+        })
 
         if (result.error) {
           setIsLoading(false)

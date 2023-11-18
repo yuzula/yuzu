@@ -5,7 +5,6 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
-import { retryPromise } from '../helpers/promise'
 import { commentModel } from '../models/comment'
 import { commentService } from '../services/comment'
 import { Vote } from '../types/vote'
@@ -21,7 +20,7 @@ export const useComments = (postId: number) => {
   const getComments = useCallback(async () => {
     if (profile) {
       try {
-        setComments(await retryPromise(() => commentService.getAllRoot(postId)))
+        setComments(await commentService.getAllRoot(postId))
       } catch (error) {
         Sentry.Native.captureException(error)
 
@@ -85,13 +84,11 @@ export const useComments = (postId: number) => {
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
-      await retryPromise(() =>
-        commentService.registerVote({
-          commentId,
-          userId: profile.id,
-          vote
-        })
-      )
+      await commentService.registerVote({
+        commentId,
+        userId: profile.id,
+        vote
+      })
     },
     [profile]
   )
