@@ -245,13 +245,13 @@ export const Posts: FunctionComponent<PostsProps> = ({
             <Skeleton colorMode="light" radius="round" />
           </View>
           <View>
-            <Skeleton colorMode="light" height={10} width="60%" />
+            <Skeleton colorMode="light" height={12} width="60%" />
           </View>
           <View>
-            <Skeleton colorMode="light" height={10} width="80%" />
+            <Skeleton colorMode="light" height={12} width="80%" />
           </View>
           <View>
-            <Skeleton colorMode="light" height={10} width="90%" />
+            <Skeleton colorMode="light" height={12} width="90%" />
           </View>
         </View>
       ))}

@@ -1,3 +1,4 @@
+import { Skeleton } from 'moti/skeleton'
 import React, {
   FunctionComponent,
   useCallback,
@@ -5,7 +6,6 @@ import React, {
   useState
 } from 'react'
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   KeyboardAvoidingView,
@@ -115,7 +115,21 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 
         <View className="w-full flex-1 items-center justify-center">
           {isLoadingOnMount ? (
-            <ActivityIndicator />
+            <View className="w-full grow border-t border-gray-100">
+              {[...Array(4).keys()].map(i => (
+                <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
+                  <View>
+                    <Skeleton colorMode="light" height={12} width="90%" />
+                  </View>
+                  <View>
+                    <Skeleton colorMode="light" height={12} width="80%" />
+                  </View>
+                  <View>
+                    <Skeleton colorMode="light" height={12} width="60%" />
+                  </View>
+                </View>
+              ))}
+            </View>
           ) : (
             <FlatList
               ItemSeparatorComponent={Separator}
