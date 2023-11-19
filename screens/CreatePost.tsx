@@ -137,8 +137,8 @@ export const CreatePost: FunctionComponent<
       Alert.alert(
         isPrivate ? 'Make post public' : 'Make post private',
         isPrivate
-          ? `The post will be visible to everyone, including those who don't have a @${profile.community_domain_name} email.`
-          : `The post will be visible only to your peers that have a @${profile.community_domain_name} email.`,
+          ? `The post will be visible to everyone, including those who aren't members of the @${profile.community_domain_name} community.`
+          : `The post will be visible only to other members of the @${profile.community_domain_name} community.`,
         [
           {
             text: 'Yes',
@@ -155,7 +155,7 @@ export const CreatePost: FunctionComponent<
     } else {
       Alert.alert(
         'Visibility cannot be changed',
-        `Only users with @${communityDomainName} emails can create internal posts in this community`
+        `Only members of the @${communityDomainName} community can create internal posts.`
       )
     }
   }, [communityDomainName, isPrivate, isVisibilityChangeable, profile])
