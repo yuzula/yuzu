@@ -482,7 +482,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </Text>
               </Pressable>
               <Text
-                className="shrink text-center font-Poppins_700Bold"
+                className="shrink text-center font-Poppins_700Bold text-base"
                 ellipsizeMode="tail"
                 numberOfLines={1}
               >
