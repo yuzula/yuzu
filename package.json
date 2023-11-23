@@ -60,6 +60,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-system-ui": "~2.4.0",
     "expo-tracking-transparency": "~3.1.0",
+    "expo-updates": "~0.18.17",
     "expo-web-browser": "~12.3.2",
     "moti": "^0.26.1",
     "nativewind": "^2.0.11",
