@@ -45,8 +45,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 
       Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     } finally {
-      setIsLoadingOnMount(false)
-
       setIsLoading(false)
     }
   }, [])
@@ -93,6 +91,12 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   const handleRefresh = useCallback(async () => {
     await handleSearchSubmit()
   }, [handleSearchSubmit])
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsLoadingOnMount(false)
+    }
+  }, [isLoading])
 
   return (
     <SafeAreaView

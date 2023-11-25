@@ -47,7 +47,6 @@ export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
       Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
     } finally {
       setIsLoading(false)
-      setIsLoadingOnMount(false)
     }
   }, [communityDomainName, filterBy, profile, sortBy])
 
@@ -112,6 +111,12 @@ export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
   useEffect(() => {
     getPosts()
   }, [getPosts])
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsLoadingOnMount(false)
+    }
+  }, [isLoading])
 
   return {
     posts,
