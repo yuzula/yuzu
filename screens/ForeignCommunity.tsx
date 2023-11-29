@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useCallback } from 'react'
 import { Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Community as CommunityComponent } from '../components/Community'
@@ -40,12 +41,17 @@ export const ForeignCommunity: FunctionComponent<
   }, [navigation])
 
   return (
-    <CommunityComponent
-      isForeign
-      domainName={domainName}
-      onBackButtonPress={handleBackButtonPress}
-      onCreatePostButtonPress={handleCreatePostButtonPress}
-      onPostPress={handlePostPress}
-    />
+    <SafeAreaView
+      className="flex-1 items-center justify-center bg-white"
+      edges={['top']}
+    >
+      <CommunityComponent
+        isForeign
+        domainName={domainName}
+        onBackButtonPress={handleBackButtonPress}
+        onCreatePostButtonPress={handleCreatePostButtonPress}
+        onPostPress={handlePostPress}
+      />
+    </SafeAreaView>
   )
 }

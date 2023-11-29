@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback } from 'react'
 import { Alert, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Posts } from '../components/Posts'
@@ -12,6 +12,8 @@ import { RootTabScreenProps } from '../types'
 export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   navigation
 }) => {
+  const insets = useSafeAreaInsets()
+
   const { profile } = useProfileContext()
 
   const {
@@ -49,9 +51,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   )
 
   return (
-    <SafeAreaView
+    <View
       className="flex-1 items-center justify-center bg-white"
-      edges={['top']}
+      style={{ paddingTop: insets.top }}
     >
       <View className="py-4">
         <Text className="font-Poppins_700Bold text-xl">Home</Text>
@@ -71,6 +73,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           onPostPress={handlePostPress}
         />
       </View>
-    </SafeAreaView>
+    </View>
   )
 }

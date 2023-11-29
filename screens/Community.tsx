@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useCallback } from 'react'
-import { Alert } from 'react-native'
+import { Alert, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Community as CommunityComponent } from '../components/Community'
@@ -10,6 +11,8 @@ import { RootTabScreenProps } from '../types'
 export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
   navigation
 }) => {
+  const insets = useSafeAreaInsets()
+
   const { profile } = useProfileContext()
 
   const handleCreatePostButtonPress = useCallback(
@@ -40,10 +43,15 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
   }
 
   return (
-    <CommunityComponent
-      domainName={profile.community_domain_name}
-      onCreatePostButtonPress={handleCreatePostButtonPress}
-      onPostPress={handlePostPress}
-    />
+    <View
+      className="flex-1 items-center justify-center bg-white"
+      style={{ paddingTop: insets.top }}
+    >
+      <CommunityComponent
+        domainName={profile.community_domain_name}
+        onCreatePostButtonPress={handleCreatePostButtonPress}
+        onPostPress={handlePostPress}
+      />
+    </View>
   )
 }

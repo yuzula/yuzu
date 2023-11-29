@@ -12,7 +12,6 @@ import {
   View
 } from 'react-native'
 import Popover from 'react-native-popover-view'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
@@ -102,111 +101,99 @@ export const Community: FunctionComponent<CommunityProps> = ({
   }, [])
 
   return (
-    <SafeAreaView
-      className="flex-1 items-center justify-center bg-white"
-      edges={['top']}
-    >
-      <View className="w-full flex-1 pt-4">
-        <View className="w-full flex-1 items-center justify-center space-y-4">
-          <View className="w-5/6 space-y-2">
-            <View className="flex flex-row items-center space-x-2">
-              <Text className="font-Poppins_700Bold text-xl">
-                @{domainName}
-              </Text>
-              {!isForeign && (
-                <View>
-                  <Popover
-                    from={
-                      <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
-                        <Text className="text-gray-600">
-                          <FontAwesome5 name="question" size={12} />
-                        </Text>
-                      </Pressable>
-                    }
-                    verticalOffset={
-                      Platform.OS === 'android' && StatusBar.currentHeight
-                        ? -StatusBar.currentHeight
-                        : 0
-                    }
-                  >
-                    <View className="space-y-2 p-4">
-                      <Text className="font-Poppins_600SemiBold text-base">
-                        What's this?
+    <View className="w-full flex-1 pt-4">
+      <View className="w-full flex-1 items-center justify-center space-y-4">
+        <View className="w-5/6 space-y-2">
+          <View className="flex flex-row items-center space-x-2">
+            <Text className="font-Poppins_700Bold text-xl">@{domainName}</Text>
+            {!isForeign && (
+              <View>
+                <Popover
+                  from={
+                    <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
+                      <Text className="text-gray-600">
+                        <FontAwesome5 name="question" size={12} />
                       </Text>
-                      <Text className="font-Poppins_500Medium">
-                        This is your community! You were automatically added
-                        since you signed up with a{' '}
-                        <Text className="font-Poppins_600SemiBold">
-                          @{domainName}
-                        </Text>{' '}
-                        email address.
+                    </Pressable>
+                  }
+                  verticalOffset={
+                    Platform.OS === 'android' && StatusBar.currentHeight
+                      ? -StatusBar.currentHeight
+                      : 0
+                  }
+                >
+                  <View className="space-y-2 p-4">
+                    <Text className="font-Poppins_600SemiBold text-base">
+                      What's this?
+                    </Text>
+                    <Text className="font-Poppins_500Medium">
+                      This is your community! You were automatically added since
+                      you signed up with a{' '}
+                      <Text className="font-Poppins_600SemiBold">
+                        @{domainName}
+                      </Text>{' '}
+                      email address.
+                    </Text>
+                    <Pressable onPress={handleDomainNamePopoverLearnMorePress}>
+                      <Text className="font-Poppins_500Medium text-blue-light">
+                        Learn more
                       </Text>
-                      <Pressable
-                        onPress={handleDomainNamePopoverLearnMorePress}
-                      >
-                        <Text className="font-Poppins_500Medium text-blue-light">
-                          Learn more
-                        </Text>
-                      </Pressable>
-                    </View>
-                  </Popover>
-                </View>
-              )}
-            </View>
-            <View>
-              <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
-                <Text className="font-Poppins_600SemiBold text-gray-light">
-                  {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
-                </Text>
-              </Skeleton>
-            </View>
-          </View>
-
-          <View className="flex w-5/6 flex-row space-x-2">
-            <Button
-              className="h-10 flex-1"
-              onPress={handleCreatePostButtonPress}
-            >
-              <FontAwesome5 name="pen" />
-              {'  '}Post
-            </Button>
-
-            {isForeign ? (
-              <Button
-                className="h-10 flex-1"
-                variant="secondary"
-                onPress={onBackButtonPress}
-              >
-                <FontAwesome5 name="arrow-left" />
-                {'  '}Back
-              </Button>
-            ) : (
-              <Button
-                className="h-10 flex-1"
-                variant="secondary"
-                onPress={handleFilterButtonPress}
-              >
-                <FontAwesome5 name="filter" />
-                {'  '}Filter
-              </Button>
+                    </Pressable>
+                  </View>
+                </Popover>
+              </View>
             )}
           </View>
-
-          <View className="w-full flex-1">
-            <Posts
-              isLoading={areResourcesLoadingOnMount}
-              isRefreshing={arePostsLoading}
-              posts={posts}
-              refreshPosts={refreshPosts}
-              shouldDisplayInternalPopover={!isForeign}
-              sortBy={sortBy}
-              sortPosts={sortPosts}
-              votePost={votePost}
-              onPostPress={onPostPress}
-            />
+          <View>
+            <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
+              <Text className="font-Poppins_600SemiBold text-gray-light">
+                {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
+              </Text>
+            </Skeleton>
           </View>
         </View>
+
+        <View className="flex w-5/6 flex-row space-x-2">
+          <Button className="h-10 flex-1" onPress={handleCreatePostButtonPress}>
+            <FontAwesome5 name="pen" />
+            {'  '}Post
+          </Button>
+
+          {isForeign ? (
+            <Button
+              className="h-10 flex-1"
+              variant="secondary"
+              onPress={onBackButtonPress}
+            >
+              <FontAwesome5 name="arrow-left" />
+              {'  '}Back
+            </Button>
+          ) : (
+            <Button
+              className="h-10 flex-1"
+              variant="secondary"
+              onPress={handleFilterButtonPress}
+            >
+              <FontAwesome5 name="filter" />
+              {'  '}Filter
+            </Button>
+          )}
+        </View>
+
+        <View className="w-full flex-1">
+          <Posts
+            isLoading={areResourcesLoadingOnMount}
+            isRefreshing={arePostsLoading}
+            posts={posts}
+            refreshPosts={refreshPosts}
+            shouldDisplayInternalPopover={!isForeign}
+            sortBy={sortBy}
+            sortPosts={sortPosts}
+            votePost={votePost}
+            onPostPress={onPostPress}
+          />
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   )
 }

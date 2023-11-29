@@ -15,7 +15,7 @@ import {
   TextInput,
   View
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Separator } from '../components/Separator'
@@ -28,6 +28,8 @@ import { RootTabScreenProps } from '../types'
 export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   navigation
 }) => {
+  const insets = useSafeAreaInsets()
+
   const { profile } = useProfileContext()
 
   const [communities, setCommunities] = useState<communityModel.Schema[]>([])
@@ -99,9 +101,9 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   }, [isLoading])
 
   return (
-    <SafeAreaView
+    <View
       className="flex-1 items-center justify-center bg-white"
-      edges={['top']}
+      style={{ paddingTop: insets.top }}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -163,6 +165,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
           )}
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   )
 }

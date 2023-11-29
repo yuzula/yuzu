@@ -5,11 +5,11 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Text,
   TextInput,
   View
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
