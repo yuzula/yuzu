@@ -1,8 +1,6 @@
-import { retryDecorator } from 'ts-retry-promise'
-
 import { supabase } from '../clients/supabase'
 
-export const reportPost = retryDecorator(async (postId: number) => {
+export const reportPost = async (postId: number) => {
   const response = await supabase
     .from('reported_posts')
     .insert({ post_id: postId })
@@ -10,9 +8,9 @@ export const reportPost = retryDecorator(async (postId: number) => {
   if (response.error) {
     throw response.error
   }
-})
+}
 
-export const reportComment = retryDecorator(async (commentId: number) => {
+export const reportComment = async (commentId: number) => {
   const response = await supabase
     .from('reported_comments')
     .insert({ comment_id: commentId })
@@ -20,6 +18,6 @@ export const reportComment = retryDecorator(async (commentId: number) => {
   if (response.error) {
     throw response.error
   }
-})
+}
 
 export * as reportService from './report'

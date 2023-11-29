@@ -1,10 +1,9 @@
-import { retryDecorator } from 'ts-retry-promise'
 import { z } from 'zod'
 
 import { supabase } from '../clients/supabase'
 import { communityModel } from '../models/community'
 
-export const search = retryDecorator(async (query: string) => {
+export const search = async (query: string) => {
   const response = await supabase.rpc('search_communities', { query }).limit(20)
 
   if (response.error) {
@@ -12,9 +11,9 @@ export const search = retryDecorator(async (query: string) => {
   }
 
   return communityModel.schema.array().parse(response.data)
-})
+}
 
-export const getAll = retryDecorator(async () => {
+export const getAll = async () => {
   const response = await supabase
     .from('communities_with_member_count')
     .select()
@@ -26,9 +25,9 @@ export const getAll = retryDecorator(async () => {
   }
 
   return communityModel.schema.array().parse(response.data)
-})
+}
 
-export const getMemberCount = retryDecorator(async (domainName: string) => {
+export const getMemberCount = async (domainName: string) => {
   const response = await supabase.rpc('count_community_members', {
     domain_name: domainName
   })
@@ -38,6 +37,6 @@ export const getMemberCount = retryDecorator(async (domainName: string) => {
   }
 
   return z.number().parse(response.data)
-})
+}
 
 export * as communityService from './community'

@@ -1,9 +1,7 @@
-import { retryDecorator } from 'ts-retry-promise'
-
 import { supabase } from '../clients/supabase'
 import { profileModel } from '../models/profile'
 
-export const get = retryDecorator(async (id: string) => {
+export const get = async (id: string) => {
   const response = await supabase
     .from('profiles')
     .select()
@@ -15,6 +13,6 @@ export const get = retryDecorator(async (id: string) => {
   }
 
   return profileModel.schema.parse(response.data)
-})
+}
 
 export * as profileService from './profile'
