@@ -1,6 +1,7 @@
 import 'react-native-reanimated'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
@@ -22,6 +23,8 @@ Sentry.init({
 })
 
 SplashScreen.preventAutoHideAsync()
+
+const queryClient = new QueryClient()
 
 const BaseApp: FunctionComponent = memo(() => {
   const { isLoading: areFontsLoading, error: fontsError } = useFonts()
@@ -48,20 +51,22 @@ const BaseApp: FunctionComponent = memo(() => {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar />
-        <ActionSheetProvider>
-          <Navigation onReady={handleNavigationReady} />
-        </ActionSheetProvider>
+        <Navigation onReady={handleNavigationReady} />
       </GestureHandlerRootView>
     )
   }
 })
 
 const App: FunctionComponent = () => (
-  <AuthContextProvider>
-    <ProfileContextProvider>
-      <BaseApp />
-    </ProfileContextProvider>
-  </AuthContextProvider>
+  <QueryClientProvider client={queryClient}>
+    <ActionSheetProvider>
+      <AuthContextProvider>
+        <ProfileContextProvider>
+          <BaseApp />
+        </ProfileContextProvider>
+      </AuthContextProvider>
+    </ActionSheetProvider>
+  </QueryClientProvider>
 )
 
 // eslint-disable-next-line import/no-default-export
