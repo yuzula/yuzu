@@ -1,5 +1,8 @@
 {
-  "extends": ["universe/native"],
+  "extends": [
+    "universe/native",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
+  ],
   "plugins": ["simple-import-sort", "eslint-plugin-tailwindcss"],
   "rules": {
     "@typescript-eslint/array-type": "error",
