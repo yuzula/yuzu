@@ -5,6 +5,7 @@ import React, { FunctionComponent, useCallback } from 'react'
 import {
   Alert,
   FlatList,
+  ListRenderItemInfo,
   Platform,
   Pressable,
   StatusBar,
@@ -29,7 +30,7 @@ import { Separator } from './Separator'
 import { SortByButton } from './SortByButton'
 
 interface PostsProps {
-  posts: postModel.Schema[]
+  posts?: postModel.Schema[]
   isRefreshing: boolean
   isLoading: boolean
   sortBy: SortBy
@@ -40,8 +41,8 @@ interface PostsProps {
     vote?: Vote
     delta: number
   }) => Promise<void>
-  refreshPosts: () => Promise<void>
-  sortPosts: (sortBy: SortBy) => Promise<void>
+  refreshPosts: () => void
+  sortPosts: (sortBy: SortBy) => void
   onPostPress: (postId: number) => void
   onPostCommunityDomainNamePress?: (domainName: string) => void
 }
@@ -230,6 +231,40 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
+  const handleRenderItem = useCallback(
+    (item: ListRenderItemInfo<postModel.Schema>) => (
+      <Post
+        authorId={item.item.user_id}
+        authorUsername={item.item.username}
+        commentCount={item.item.comment_count}
+        content={item.item.content}
+        createdAt={item.item.created_at}
+        currentUserVote={item.item.current_user_vote}
+        id={item.item.id}
+        isDeleted={item.item.is_deleted}
+        isFlagged={item.item.is_flagged}
+        isPrivate={item.item.is_private}
+        voteCount={item.item.vote_count}
+        communityDomainName={
+          shouldDisplayCommunityDomainName
+            ? item.item.community_domain_name
+            : undefined
+        }
+        onCommunityDomainNamePress={onPostCommunityDomainNamePress}
+        onEllipsisButtonPress={handlePostEllipsisButtonPress}
+        onPress={onPostPress}
+        onVoteButtonPress={handlePostVoteButtonPress}
+      />
+    ),
+    [
+      handlePostEllipsisButtonPress,
+      handlePostVoteButtonPress,
+      onPostCommunityDomainNamePress,
+      onPostPress,
+      shouldDisplayCommunityDomainName
+    ]
+  )
+
   if (!user || !profile) {
     return null
   }
@@ -261,6 +296,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
       data={posts}
       keyExtractor={item => item.id.toString()}
       refreshing={isRefreshing}
+      renderItem={handleRenderItem}
       ListEmptyComponent={() => (
         <View className="flex-1 items-center justify-center">
           <Text className="font-Poppins_600SemiBold text-base text-gray-light">
@@ -320,30 +356,6 @@ export const Posts: FunctionComponent<PostsProps> = ({
           </View>
         </View>
       }
-      renderItem={item => (
-        <Post
-          authorId={item.item.user_id}
-          authorUsername={item.item.username}
-          commentCount={item.item.comment_count}
-          content={item.item.content}
-          createdAt={item.item.created_at}
-          currentUserVote={item.item.current_user_vote}
-          id={item.item.id}
-          isDeleted={item.item.is_deleted}
-          isFlagged={item.item.is_flagged}
-          isPrivate={item.item.is_private}
-          voteCount={item.item.vote_count}
-          communityDomainName={
-            shouldDisplayCommunityDomainName
-              ? item.item.community_domain_name
-              : undefined
-          }
-          onCommunityDomainNamePress={onPostCommunityDomainNamePress}
-          onEllipsisButtonPress={handlePostEllipsisButtonPress}
-          onPress={onPostPress}
-          onVoteButtonPress={handlePostVoteButtonPress}
-        />
-      )}
       onRefresh={refreshPosts}
     />
   )

@@ -16,6 +16,7 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useCommunityMemberCount } from '../hooks/useCommunityMemberCount'
+import { useCommunityPosts } from '../hooks/useCommunityPosts'
 import { usePosts } from '../hooks/usePosts'
 import { Button } from './Button'
 import { Posts } from './Posts'
@@ -39,13 +40,25 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
   const {
     posts,
-    isLoadingOnMount: arePostsLoadingOnMount,
-    isLoading: arePostsLoading,
+    isLoadingInitially: arePostsLoadingInitially,
+    isFetching: arePostsFetching,
     sortBy,
-    sortPosts,
     filterBy,
-    filterPosts,
-    refreshPosts,
+    sort: sortPosts,
+    filter: filterPosts,
+    refresh: refreshPosts,
+    isRefreshing: arePostsRefreshing
+  } = useCommunityPosts({ domainName })
+
+  const {
+    // posts,
+    // isLoadingOnMount: arePostsLoadingOnMount,
+    // isLoading: arePostsLoading,
+    // sortBy,
+    // sortPosts,
+    // filterBy,
+    // filterPosts,
+    // refreshPosts,
     votePost
   } = usePosts({
     communityDomainName: domainName
@@ -54,8 +67,8 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const { memberCount, isLoading: isMemberCountLoading } =
     useCommunityMemberCount(domainName)
 
-  const areResourcesLoadingOnMount =
-    arePostsLoadingOnMount || isMemberCountLoading
+  const areResourcesLoadingInitially =
+    arePostsLoadingInitially || isMemberCountLoading
 
   const handleCreatePostButtonPress = useCallback(() => {
     onCreatePostButtonPress(filterBy === 'private')
@@ -75,13 +88,13 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         switch (index) {
           case 0:
-            await filterPosts('all')
+            filterPosts('all')
             break
           case 1:
-            await filterPosts('public')
+            filterPosts('public')
             break
           case 2:
-            await filterPosts('private')
+            filterPosts('private')
             break
         }
       }
@@ -145,7 +158,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
             )}
           </View>
           <View>
-            <Skeleton colorMode="light" show={areResourcesLoadingOnMount}>
+            <Skeleton colorMode="light" show={areResourcesLoadingInitially}>
               <Text className="font-Poppins_600SemiBold text-gray-light">
                 {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
               </Text>
@@ -182,8 +195,8 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         <View className="w-full flex-1">
           <Posts
-            isLoading={areResourcesLoadingOnMount}
-            isRefreshing={arePostsLoading}
+            isLoading={areResourcesLoadingInitially}
+            isRefreshing={arePostsRefreshing || arePostsFetching}
             posts={posts}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
