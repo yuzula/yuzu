@@ -5,7 +5,7 @@ import { postService } from '../services/post'
 import { FilterBy, SortBy } from '../types/post'
 
 interface UseCommunityPostsParams {
-  domainName: string
+  domainName?: string
 }
 
 export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
@@ -57,12 +57,11 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
     posts: data,
     error,
     isLoadingInitially,
-    isFetching,
     sortBy,
     filterBy,
     sort,
     filter,
     refresh,
-    isRefreshing
+    isRefreshing: isRefreshing || isFetching
   }
 }

@@ -41,7 +41,6 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const {
     posts,
     isLoadingInitially: arePostsLoadingInitially,
-    isFetching: arePostsFetching,
     sortBy,
     filterBy,
     sort: sortPosts,
@@ -196,7 +195,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
         <View className="w-full flex-1">
           <Posts
             isLoading={areResourcesLoadingInitially}
-            isRefreshing={arePostsRefreshing || arePostsFetching}
+            isRefreshing={arePostsRefreshing}
             posts={posts}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
