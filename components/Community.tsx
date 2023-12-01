@@ -17,7 +17,6 @@ import * as Sentry from 'sentry-expo'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useCommunityMemberCount } from '../hooks/useCommunityMemberCount'
 import { useCommunityPosts } from '../hooks/useCommunityPosts'
-import { usePosts } from '../hooks/usePosts'
 import { Button } from './Button'
 import { Posts } from './Posts'
 
@@ -48,20 +47,6 @@ export const Community: FunctionComponent<CommunityProps> = ({
     refresh: refreshPosts,
     isRefreshing: arePostsRefreshing
   } = useCommunityPosts({ domainName })
-
-  const {
-    // posts,
-    // isLoadingOnMount: arePostsLoadingOnMount,
-    // isLoading: arePostsLoading,
-    // sortBy,
-    // sortPosts,
-    // filterBy,
-    // filterPosts,
-    // refreshPosts,
-    votePost
-  } = usePosts({
-    communityDomainName: domainName
-  })
 
   const { memberCount, isLoading: isMemberCountLoading } =
     useCommunityMemberCount(domainName)
@@ -201,7 +186,6 @@ export const Community: FunctionComponent<CommunityProps> = ({
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}
             sortPosts={setSortBy}
-            votePost={votePost}
             onPostPress={onPostPress}
           />
         </View>

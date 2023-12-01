@@ -18,9 +18,9 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
 
   const { data, error, isFetching, refetch } = useQuery({
     queryKey: [
-      'communities',
-      domainName,
       'posts',
+      'community',
+      domainName,
       {
         sortBy,
         filterBy
@@ -32,7 +32,7 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
   })
 
   useEffect(() => {
-    if (isFetching) {
+    if (!isFetching) {
       setIsInitialLoading(false)
     }
   }, [isFetching])

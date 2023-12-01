@@ -19,6 +19,7 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
 import { postService } from '../services/post'
@@ -36,11 +37,6 @@ interface PostsProps {
   sortBy: SortBy
   shouldDisplayCommunityDomainName?: boolean
   shouldDisplayInternalPopover?: boolean
-  votePost: (params: {
-    postId: number
-    vote?: Vote
-    delta: number
-  }) => Promise<void>
   refreshPosts: () => void
   sortPosts: (sortBy: SortBy) => void
   onPostPress: (postId: number) => void
@@ -54,7 +50,6 @@ export const Posts: FunctionComponent<PostsProps> = ({
   sortBy,
   shouldDisplayCommunityDomainName = false,
   shouldDisplayInternalPopover = true,
-  votePost,
   sortPosts,
   refreshPosts,
   onPostPress,
@@ -64,6 +59,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const { user } = useAuthContext()
   const { profile } = useProfileContext()
+
+  const { votePost } = useVotePost()
 
   const handlePostVoteButtonPress = useCallback(
     async ({
@@ -77,7 +74,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      await votePost({ postId, vote: newVote, delta })
+      votePost({ postId, vote: newVote, delta })
     },
     [votePost]
   )
