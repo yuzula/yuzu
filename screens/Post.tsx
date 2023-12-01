@@ -639,6 +639,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </View>
               </>
             }
+            // TODO: refactor this into a useCallback
             renderItem={item => (
               <FlatList
                 ItemSeparatorComponent={Separator}
