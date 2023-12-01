@@ -45,6 +45,13 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
     setFilterBy(filterBy)
   }, [])
 
+  // We need to use a separate state to track refreshing since using `isFetching` or
+  // or `isRefetching` causes weird jumpy behavior in Flatlist's pull to refresh
+  //
+  // TODO: investigate why this happens
+  //
+  // https://github.com/TanStack/query/issues/2380
+  // https://github.com/facebook/react-native/issues/32836
   const refresh = useCallback(async () => {
     setIsRefreshing(true)
 
