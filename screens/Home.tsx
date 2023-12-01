@@ -18,12 +18,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const {
     posts,
-    isLoadingOnMount: arePostsLoadingOnMount,
-    isLoading: arePostsLoading,
+    isInitialLoading: arePostsInitialLoading,
     sortBy,
-    sortPosts,
-    refreshPosts,
-    votePost
+    setSortBy,
+    refresh: refreshPosts,
+    isRefreshing: arePostsRefreshing
   } = usePosts()
 
   const handlePostPress = useCallback(
@@ -62,13 +61,12 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       <View className="w-full flex-1">
         <Posts
           shouldDisplayCommunityDomainName
-          isLoading={arePostsLoadingOnMount}
-          isRefreshing={arePostsLoading}
+          isLoading={arePostsInitialLoading}
+          isRefreshing={arePostsRefreshing}
           posts={posts}
           refreshPosts={refreshPosts}
           sortBy={sortBy}
-          sortPosts={sortPosts}
-          votePost={votePost}
+          sortPosts={setSortBy}
           onPostCommunityDomainNamePress={handlePostCommunityDomainNamePress}
           onPostPress={handlePostPress}
         />

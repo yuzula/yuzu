@@ -1,132 +1,59 @@
-import * as Haptics from 'expo-haptics'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
-import { Alert } from 'react-native'
-import * as Sentry from 'sentry-expo'
 
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
-import { postModel } from '../models/post'
 import { postService } from '../services/post'
-import { FilterBy, SortBy } from '../types/post'
-import { Vote } from '../types/vote'
-import { useProfileContext } from './useProfileContext'
+import { SortBy } from '../types/post'
 
-interface UsePostsParams {
-  communityDomainName?: string
-}
+export const usePosts = () => {
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
-export const usePosts = ({ communityDomainName }: UsePostsParams = {}) => {
-  const { profile } = useProfileContext()
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const [posts, setPosts] = useState<postModel.Schema[]>([])
   const [sortBy, setSortBy] = useState<SortBy>('hot')
-  const [filterBy, setFilterBy] = useState<FilterBy>('all')
-  const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
 
-  const getPosts = useCallback(async () => {
-    if (!profile) {
-      Sentry.Native.captureException(new NotAuthenticatedError())
-
-      return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
-    }
-
-    setIsLoading(true)
-
-    try {
-      setPosts(
-        await postService.getAll({
-          communityDomainName,
-          sortBy,
-          filterBy
-        })
-      )
-    } catch (error) {
-      Sentry.Native.captureException(error)
-
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [communityDomainName, filterBy, profile, sortBy])
-
-  const sortPosts = useCallback(async (sortBy: SortBy) => {
-    setSortBy(sortBy)
-  }, [])
-
-  const filterPosts = useCallback(async (filterBy: FilterBy) => {
-    setFilterBy(filterBy)
-  }, [])
-
-  const refreshPosts = useCallback(async () => {
-    await getPosts()
-  }, [getPosts])
-
-  const votePost = useCallback(
-    async ({
-      postId,
-      vote,
-      delta
-    }: {
-      postId: number
-      vote?: Vote
-      delta: number
-    }) => {
-      if (!profile) {
-        Sentry.Native.captureException(new NotAuthenticatedError())
-
-        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
+  const { data, error, isFetching, refetch } = useQuery({
+    queryKey: [
+      'posts',
+      {
+        sortBy
       }
-
-      setPosts(prevPosts => {
-        const prevPostsCopy = [...prevPosts]
-
-        const post = prevPostsCopy.find(post => post.id === postId)
-
-        if (!post) {
-          Sentry.Native.captureException(new Error('Could not find voted post'))
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-
-          return prevPostsCopy
-        }
-
-        post.current_user_vote = vote
-        post.vote_count += delta
-
-        return prevPostsCopy
-      })
-
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-
-      await postService.registerVote({
-        postId,
-        userId: profile.id,
-        vote
-      })
-    },
-    [profile]
-  )
+    ],
+    queryFn: () =>
+      postService.getAll({
+        sortBy,
+        filterBy: 'all'
+      }),
+    placeholderData: keepPreviousData
+  })
 
   useEffect(() => {
-    getPosts()
-  }, [getPosts])
-
-  useEffect(() => {
-    if (!isLoading) {
-      setIsLoadingOnMount(false)
+    if (!isFetching) {
+      setIsInitialLoading(false)
     }
-  }, [isLoading])
+  }, [isFetching])
+
+  // We need to use a separate state to track refreshing since using `isFetching` or
+  // or `isRefetching` causes weird jumpy behavior in Flatlist's pull to refresh
+  //
+  // TODO: investigate why this happens
+  //
+  // https://github.com/TanStack/query/issues/2380
+  // https://github.com/facebook/react-native/issues/32836
+  const refresh = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await refetch()
+
+    setIsRefreshing(false)
+  }, [refetch])
 
   return {
-    posts,
-    isLoadingOnMount,
-    isLoading,
+    posts: data,
+    error,
+    isInitialLoading,
     sortBy,
-    sortPosts,
-    filterBy,
-    filterPosts,
-    refreshPosts,
-    votePost
+    setSortBy,
+    refresh,
+    isRefreshing: isRefreshing || isFetching
   }
 }
