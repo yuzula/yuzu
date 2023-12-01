@@ -72,8 +72,35 @@ export const Post: FunctionComponent<PostProps> = memo(
       onCommunityDomainNamePress?.(communityDomainName)
     }, [communityDomainName, onCommunityDomainNamePress])
 
+    const handlePress = useCallback(() => {
+      onPress(id)
+    }, [id, onPress])
+
+    const handleEllipsisButtonPress = useCallback(() => {
+      onEllipsisButtonPress({
+        postId: id,
+        postAuthorId: authorId
+      })
+    }, [authorId, id, onEllipsisButtonPress])
+
+    const handleUpvoteButtonPress = useCallback(() => {
+      onVoteButtonPress({
+        postId: id,
+        oldVote: currentUserVote,
+        vote: 'upvote'
+      })
+    }, [currentUserVote, id, onVoteButtonPress])
+
+    const handleDownvoteButtonPress = useCallback(() => {
+      onVoteButtonPress({
+        postId: id,
+        oldVote: currentUserVote,
+        vote: 'downvote'
+      })
+    }, [currentUserVote, id, onVoteButtonPress])
+
     return (
-      <Pressable className="active:bg-gray-200" onPress={() => onPress(id)}>
+      <Pressable className="active:bg-gray-200" id="BRUH" onPress={handlePress}>
         <View className="mx-auto w-5/6 space-y-2 py-4">
           {communityDomainName && (
             <View className="flex-row">
@@ -134,12 +161,7 @@ export const Post: FunctionComponent<PostProps> = memo(
             <View className="flex flex-row items-center space-x-1">
               <Pressable
                 className="rounded-lg p-2 active:bg-gray-200"
-                onPress={() =>
-                  onEllipsisButtonPress({
-                    postId: id,
-                    postAuthorId: authorId
-                  })
-                }
+                onPress={handleEllipsisButtonPress}
               >
                 <Text className="text-gray-light">
                   <FontAwesome5 name="ellipsis-h" size={18} />
@@ -154,13 +176,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                   },
                   'rounded-lg p-2'
                 )}
-                onPress={() =>
-                  onVoteButtonPress({
-                    postId: id,
-                    oldVote: currentUserVote,
-                    vote: 'upvote'
-                  })
-                }
+                onPress={handleUpvoteButtonPress}
               >
                 <Text
                   className={clsx({
@@ -180,13 +196,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                   },
                   'rounded-lg p-2'
                 )}
-                onPress={() =>
-                  onVoteButtonPress({
-                    postId: id,
-                    oldVote: currentUserVote,
-                    vote: 'downvote'
-                  })
-                }
+                onPress={handleDownvoteButtonPress}
               >
                 <Text
                   className={clsx({
@@ -202,5 +212,9 @@ export const Post: FunctionComponent<PostProps> = memo(
         </View>
       </Pressable>
     )
-  }
+  },
+  (prevProps, nextProps) =>
+    prevProps.voteCount === nextProps.voteCount &&
+    prevProps.currentUserVote === nextProps.currentUserVote &&
+    prevProps.commentCount === nextProps.commentCount
 )
