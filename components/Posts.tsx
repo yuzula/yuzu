@@ -232,22 +232,22 @@ export const Posts: FunctionComponent<PostsProps> = ({
   )
 
   const handleRenderPostItem = useCallback(
-    (item: ListRenderItemInfo<postModel.Schema>) => (
+    ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
       <Post
-        authorId={item.item.user_id}
-        authorUsername={item.item.username}
-        commentCount={item.item.comment_count}
-        content={item.item.content}
-        createdAt={item.item.created_at}
-        currentUserVote={item.item.current_user_vote}
-        id={item.item.id}
-        isDeleted={item.item.is_deleted}
-        isFlagged={item.item.is_flagged}
-        isPrivate={item.item.is_private}
-        voteCount={item.item.vote_count}
+        authorId={post.user_id}
+        authorUsername={post.username}
+        commentCount={post.comment_count}
+        content={post.content}
+        createdAt={post.created_at}
+        currentUserVote={post.current_user_vote}
+        id={post.id}
+        isDeleted={post.is_deleted}
+        isFlagged={post.is_flagged}
+        isPrivate={post.is_private}
+        voteCount={post.vote_count}
         communityDomainName={
           shouldDisplayCommunityDomainName
-            ? item.item.community_domain_name
+            ? post.community_domain_name
             : undefined
         }
         onCommunityDomainNamePress={onPostCommunityDomainNamePress}

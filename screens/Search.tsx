@@ -9,6 +9,7 @@ import {
   Alert,
   FlatList,
   KeyboardAvoidingView,
+  ListRenderItemInfo,
   Platform,
   Pressable,
   Text,
@@ -94,6 +95,26 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     await handleSearchSubmit()
   }, [handleSearchSubmit])
 
+  const handleRenderCommunityItem = useCallback(
+    ({ item: community }: ListRenderItemInfo<communityModel.Schema>) => (
+      <Pressable
+        className="active:bg-gray-200"
+        onPress={() => handleCommunityPress(community.domain_name)}
+      >
+        <View className="mx-auto w-5/6 space-y-2 py-4">
+          <Text className="font-Poppins_600SemiBold text-base">
+            @{community.domain_name}
+          </Text>
+          <Text className="font-Poppins_500Medium text-gray-light">
+            {community.member_count} member
+            {community.member_count > 1 ? 's' : null}
+          </Text>
+        </View>
+      </Pressable>
+    ),
+    [handleCommunityPress]
+  )
+
   useEffect(() => {
     if (!isLoading) {
       setIsLoadingOnMount(false)
@@ -144,22 +165,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
               keyExtractor={item => item.domain_name}
               keyboardDismissMode="interactive"
               refreshing={isLoading}
-              renderItem={({ item }) => (
-                <Pressable
-                  className="active:bg-gray-200"
-                  onPress={() => handleCommunityPress(item.domain_name)}
-                >
-                  <View className="mx-auto w-5/6 space-y-2 py-4">
-                    <Text className="font-Poppins_600SemiBold text-base">
-                      @{item.domain_name}
-                    </Text>
-                    <Text className="font-Poppins_500Medium text-gray-light">
-                      {item.member_count} member
-                      {item.member_count > 1 ? 's' : null}
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
+              renderItem={handleRenderCommunityItem}
               onRefresh={handleRefresh}
             />
           )}
