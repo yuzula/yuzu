@@ -40,7 +40,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
   const {
     posts,
-    isInitializing: arePostsInitializing,
+    isInitialLoading: arePostsInitialLoading,
     sortBy,
     filterBy,
     sort: sortPosts,
@@ -66,7 +66,8 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const { memberCount, isLoading: isMemberCountLoading } =
     useCommunityMemberCount(domainName)
 
-  const areResourcesInitializing = arePostsInitializing || isMemberCountLoading
+  const areResourcesInitialLoading =
+    arePostsInitialLoading || isMemberCountLoading
 
   const handleCreatePostButtonPress = useCallback(() => {
     onCreatePostButtonPress(filterBy === 'private')
@@ -156,7 +157,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
             )}
           </View>
           <View>
-            <Skeleton colorMode="light" show={areResourcesInitializing}>
+            <Skeleton colorMode="light" show={areResourcesInitialLoading}>
               <Text className="font-Poppins_600SemiBold text-gray-light">
                 {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
               </Text>
@@ -193,7 +194,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         <View className="w-full flex-1">
           <Posts
-            isLoading={areResourcesInitializing}
+            isLoading={areResourcesInitialLoading}
             isRefreshing={arePostsRefreshing}
             posts={posts}
             refreshPosts={refreshPosts}

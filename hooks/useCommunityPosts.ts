@@ -9,7 +9,7 @@ interface UseCommunityPostsParams {
 }
 
 export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
-  const [isInitializing, setIsInitializing] = useState(true)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -33,7 +33,7 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
 
   useEffect(() => {
     if (isFetching) {
-      setIsInitializing(false)
+      setIsInitialLoading(false)
     }
   }, [isFetching])
 
@@ -63,7 +63,7 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
   return {
     posts: data,
     error,
-    isInitializing,
+    isInitialLoading,
     sortBy,
     filterBy,
     sort,
