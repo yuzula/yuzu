@@ -231,7 +231,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
-  const handleRenderItem = useCallback(
+  const handleRenderPostItem = useCallback(
     (item: ListRenderItemInfo<postModel.Schema>) => (
       <Post
         authorId={item.item.user_id}
@@ -296,7 +296,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
       data={posts}
       keyExtractor={item => item.id.toString()}
       refreshing={isRefreshing}
-      renderItem={handleRenderItem}
+      renderItem={handleRenderPostItem}
       ListEmptyComponent={() => (
         <View className="flex-1 items-center justify-center">
           <Text className="font-Poppins_600SemiBold text-base text-gray-light">
