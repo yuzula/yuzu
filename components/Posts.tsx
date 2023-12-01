@@ -6,9 +6,7 @@ import {
   Alert,
   FlatList,
   ListRenderItemInfo,
-  Platform,
   Pressable,
-  StatusBar,
   Text,
   View
 } from 'react-native'
@@ -16,6 +14,7 @@ import Popover from 'react-native-popover-view'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
@@ -310,6 +309,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
             <SortByButton sortBy={sortBy} onChange={sortPosts} />
             {shouldDisplayInternalPopover && (
               <Popover
+                verticalOffset={POPOVER_VERTICAL_OFFSET}
                 from={
                   <Pressable>
                     <Text className="font-Poppins_600SemiBold text-gray-light">
@@ -317,11 +317,6 @@ export const Posts: FunctionComponent<PostsProps> = ({
                       <FontAwesome5 name="lock" /> ?
                     </Text>
                   </Pressable>
-                }
-                verticalOffset={
-                  Platform.OS === 'android' && StatusBar.currentHeight
-                    ? -StatusBar.currentHeight
-                    : 0
                 }
               >
                 <View className="space-y-2 p-4">

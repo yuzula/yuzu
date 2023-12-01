@@ -1,9 +1,10 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
 import React, { FunctionComponent, memo } from 'react'
-import { Platform, Pressable, StatusBar, Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import Popover from 'react-native-popover-view'
 
+import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { formatDuration } from '../helpers/time'
 import { Vote } from '../types/vote'
 
@@ -69,17 +70,13 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           {!isPostPrivate && isAuthorInternal && (
             <View>
               <Popover
+                verticalOffset={POPOVER_VERTICAL_OFFSET}
                 from={
                   <Pressable>
                     <Text className="text-gray-light">
                       <FontAwesome5 name="users" size={14} />
                     </Text>
                   </Pressable>
-                }
-                verticalOffset={
-                  Platform.OS === 'android' && StatusBar.currentHeight
-                    ? -StatusBar.currentHeight
-                    : 0
                 }
               >
                 <View className="space-y-2 p-4">

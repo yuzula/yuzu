@@ -2,19 +2,12 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Skeleton } from 'moti/skeleton'
 import React, { FunctionComponent, useCallback } from 'react'
-import {
-  Alert,
-  Linking,
-  Platform,
-  Pressable,
-  StatusBar,
-  Text,
-  View
-} from 'react-native'
+import { Alert, Linking, Pressable, Text, View } from 'react-native'
 import Popover from 'react-native-popover-view'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
+import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { useCommunityMemberCount } from '../hooks/useCommunityMemberCount'
 import { useCommunityPosts } from '../hooks/useCommunityPosts'
 import { Button } from './Button'
@@ -106,17 +99,13 @@ export const Community: FunctionComponent<CommunityProps> = ({
             {!isForeign && (
               <View>
                 <Popover
+                  verticalOffset={POPOVER_VERTICAL_OFFSET}
                   from={
                     <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
                       <Text className="text-gray-600">
                         <FontAwesome5 name="question" size={12} />
                       </Text>
                     </Pressable>
-                  }
-                  verticalOffset={
-                    Platform.OS === 'android' && StatusBar.currentHeight
-                      ? -StatusBar.currentHeight
-                      : 0
                   }
                 >
                   <View className="space-y-2 p-4">
