@@ -1,7 +1,7 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Skeleton } from 'moti/skeleton'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import {
   Alert,
   FlatList,
@@ -59,7 +59,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   const { user } = useAuthContext()
   const { profile } = useProfileContext()
 
-  const { votePost } = useVotePost()
+  const { votePost, error: votePostError } = useVotePost()
 
   const handlePostVoteButtonPress = useCallback(
     async ({
@@ -77,6 +77,12 @@ export const Posts: FunctionComponent<PostsProps> = ({
     },
     [votePost]
   )
+
+  useEffect(() => {
+    if (votePostError) {
+      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [votePostError])
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
