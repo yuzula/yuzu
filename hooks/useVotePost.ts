@@ -26,8 +26,6 @@ export const useVotePost = () => {
         throw new NotAuthenticatedError()
       }
 
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-
       return postService.registerVote({
         postId,
         userId: profile.id,
@@ -35,7 +33,7 @@ export const useVotePost = () => {
       })
     },
     // Optimistically update post vote across all posts
-    onMutate: ({ postId, vote, delta }) => {
+    onMutate: async ({ postId, vote, delta }) => {
       const prevPostsQueries = queryClient.getQueriesData({
         queryKey: ['posts']
       })
@@ -54,6 +52,8 @@ export const useVotePost = () => {
 
         return prevPosts
       })
+
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
       return { prevPostsQueries }
     },
