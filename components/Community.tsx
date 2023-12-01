@@ -43,8 +43,8 @@ export const Community: FunctionComponent<CommunityProps> = ({
     isInitialLoading: arePostsInitialLoading,
     sortBy,
     filterBy,
-    sort: sortPosts,
-    filter: filterPosts,
+    setSortBy,
+    setFilterBy,
     refresh: refreshPosts,
     isRefreshing: arePostsRefreshing
   } = useCommunityPosts({ domainName })
@@ -87,18 +87,18 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         switch (index) {
           case 0:
-            filterPosts('all')
+            setFilterBy('all')
             break
           case 1:
-            filterPosts('public')
+            setFilterBy('public')
             break
           case 2:
-            filterPosts('private')
+            setFilterBy('private')
             break
         }
       }
     )
-  }, [filterPosts, showActionSheetWithOptions])
+  }, [setFilterBy, showActionSheetWithOptions])
 
   const handleDomainNamePopoverLearnMorePress = useCallback(async () => {
     const url = 'https://yuzu.la/about'
@@ -200,7 +200,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}
-            sortPosts={sortPosts}
+            sortPosts={setSortBy}
             votePost={votePost}
             onPostPress={onPostPress}
           />

@@ -37,14 +37,6 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
     }
   }, [isFetching])
 
-  const sort = useCallback((sortBy: SortBy) => {
-    setSortBy(sortBy)
-  }, [])
-
-  const filter = useCallback((filterBy: FilterBy) => {
-    setFilterBy(filterBy)
-  }, [])
-
   // We need to use a separate state to track refreshing since using `isFetching` or
   // or `isRefetching` causes weird jumpy behavior in Flatlist's pull to refresh
   //
@@ -66,8 +58,8 @@ export const useCommunityPosts = ({ domainName }: UseCommunityPostsParams) => {
     isInitialLoading,
     sortBy,
     filterBy,
-    sort,
-    filter,
+    setSortBy,
+    setFilterBy,
     refresh,
     isRefreshing: isRefreshing || isFetching
   }
