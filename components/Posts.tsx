@@ -37,7 +37,7 @@ interface PostsProps {
   sortBy: SortBy
   shouldDisplayCommunityDomainName?: boolean
   shouldDisplayInternalPopover?: boolean
-  refreshPosts: () => void
+  refreshPosts: () => Promise<void>
   sortPosts: (sortBy: SortBy) => void
   onPostPress: (postId: number) => void
   onPostCommunityDomainNamePress?: (domainName: string) => void
