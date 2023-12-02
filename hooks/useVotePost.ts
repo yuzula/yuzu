@@ -38,26 +38,44 @@ export const useVotePost = () => {
         queryKey: ['posts']
       })
 
+      const prevPostQuery = queryClient.getQueryData(['post', postId])
+
       queryClient.setQueriesData({ queryKey: ['posts'] }, prevPostsData => {
-        const prevPosts = postModel.schema.array().parse(prevPostsData)
+        const prevPosts = postModel.schema
+          .array()
+          .optional()
+          .parse(prevPostsData)
 
-        const post = prevPosts.find(post => post.id === postId)
+        if (prevPosts) {
+          const prevPost = prevPosts.find(post => post.id === postId)
 
-        if (!post) {
-          throw new Error('Voted post not found')
+          if (!prevPost) {
+            throw new Error('Voted post not found')
+          }
+
+          prevPost.current_user_vote = vote
+          prevPost.vote_count += delta
         }
-
-        post.current_user_vote = vote
-        post.vote_count += delta
 
         return prevPosts
       })
 
+      queryClient.setQueryData(['post', postId], prevPostData => {
+        const prevPost = postModel.schema.optional().parse(prevPostData)
+
+        if (prevPost) {
+          prevPost.current_user_vote = vote
+          prevPost.vote_count += delta
+        }
+
+        return prevPost
+      })
+
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
 
-      return { prevPostsQueries }
+      return { prevPostsQueries, prevPostQuery }
     },
-    onError: (error, _, context) => {
+    onError: (error, { postId }, context) => {
       Sentry.Native.captureException(error)
 
       if (!context) {
@@ -69,6 +87,8 @@ export const useVotePost = () => {
         { queryKey: ['posts'] },
         context.prevPostsQueries
       )
+
+      queryClient.setQueryData(['post', postId], context.prevPostQuery)
     }
   })
 

@@ -3,7 +3,13 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import * as Haptics from 'expo-haptics'
-import React, { FunctionComponent, useCallback, useRef, useState } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
@@ -29,6 +35,7 @@ import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useComments } from '../hooks/useComments'
 import { usePost } from '../hooks/usePost'
+import { useVotePost } from '../hooks/useVotePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
@@ -65,13 +72,16 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const replyTextFieldRef = useRef<TextInput>(null)
 
   const { user } = useAuthContext()
+
   const {
     post,
-    getPost,
-    refreshPost,
-    isRefreshing: isPostRefreshing,
-    votePost
+    error: postError,
+    refresh: refreshPost,
+    isRefreshing: isPostRefreshing
   } = usePost(postId)
+
+  const { votePost, error: votePostError } = useVotePost()
+
   const {
     comments,
     getComments,
@@ -85,6 +95,18 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     number | undefined
   >()
   const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
+
+  useEffect(() => {
+    if (postError) {
+      Alert.alert('Could not fetch post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [postError])
+
+  useEffect(() => {
+    if (votePostError) {
+      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [votePostError])
 
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -383,7 +405,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             parentCommentId: replyParentCommentId
           })
 
-          await Promise.all([getPost(), getComments()])
+          await Promise.all([refreshPost(), getComments()])
 
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
@@ -407,7 +429,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         )
       }
     },
-    [getComments, getPost, post, replyParentCommentId, reset, user]
+    [getComments, post, refreshPost, replyParentCommentId, reset, user]
   )
 
   const handleCommentReplyButtonPress = useCallback((commentId: number) => {

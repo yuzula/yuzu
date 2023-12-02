@@ -1,86 +1,45 @@
-import * as Haptics from 'expo-haptics'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
-import { Alert } from 'react-native'
-import * as Sentry from 'sentry-expo'
 
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
-import { postModel } from '../models/post'
 import { postService } from '../services/post'
-import { Vote } from '../types/vote'
-import { useProfileContext } from './useProfileContext'
 
 export const usePost = (id: number) => {
-  const { profile } = useProfileContext()
-
-  const [post, setPost] = useState<postModel.Schema>()
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const getPost = useCallback(async () => {
-    try {
-      setPost(await postService.get(id))
-    } catch (error) {
-      Sentry.Native.captureException(error)
-
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    }
-  }, [id])
-
-  const refreshPost = useCallback(async () => {
-    setIsRefreshing(true)
-
-    await getPost()
-
-    setIsRefreshing(false)
-  }, [getPost])
-
-  const votePost = useCallback(
-    async ({
-      postId,
-      vote,
-      delta
-    }: {
-      postId: number
-      vote?: Vote
-      delta: number
-    }) => {
-      if (!profile) {
-        Sentry.Native.captureException(new NotAuthenticatedError())
-
-        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
-      }
-
-      if (!post) {
-        Sentry.Native.captureException(new Error('Voting on non-existent post'))
-
-        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-
-      setPost(prevPost =>
-        prevPost
-          ? {
-              ...prevPost,
-              current_user_vote: vote,
-              vote_count: prevPost.vote_count + delta
-            }
-          : undefined
-      )
-
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-
-      await postService.registerVote({
-        postId,
-        userId: profile.id,
-        vote
-      })
-    },
-    [post, profile]
-  )
+  const { data, error, isFetching, refetch } = useQuery({
+    queryKey: ['post', id],
+    queryFn: () => postService.get(id),
+    placeholderData: keepPreviousData
+  })
 
   useEffect(() => {
-    getPost()
-  }, [getPost])
+    if (!isFetching) {
+      setIsInitialLoading(false)
+    }
+  }, [isFetching])
 
-  return { post, getPost, refreshPost, isRefreshing, votePost }
+  // We need to use a separate state to track refreshing since using `isFetching` or
+  // or `isRefetching` causes weird jumpy behavior in Flatlist's pull to refresh
+  //
+  // TODO: investigate why this happens
+  //
+  // https://github.com/TanStack/query/issues/2380
+  // https://github.com/facebook/react-native/issues/32836
+  const refresh = useCallback(async () => {
+    setIsRefreshing(true)
+
+    await refetch()
+
+    setIsRefreshing(false)
+  }, [refetch])
+
+  return {
+    post: data,
+    error,
+    isInitialLoading,
+    refresh,
+    isRefreshing: isRefreshing || isFetching
+  }
 }
