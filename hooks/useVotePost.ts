@@ -75,8 +75,10 @@ export const useVotePost = () => {
 
       return { prevPostsQueries, prevPostQuery }
     },
-    onError: (error, { postId }, context) => {
+    onError: async (error, { postId }, context) => {
       Sentry.Native.captureException(error)
+
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
 
       if (!context) {
         Sentry.Native.captureException('Context is not defined')

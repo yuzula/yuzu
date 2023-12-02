@@ -1,8 +1,12 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
-import * as Haptics from 'expo-haptics'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Alert,
@@ -19,8 +23,8 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { useCreatePost } from '../hooks/useCreatePost'
 import { useProfileContext } from '../hooks/useProfileContext'
-import { postService } from '../services/post'
 import { RootStackScreenProps } from '../types'
 
 const createPostSchema = z.object({
@@ -53,42 +57,36 @@ export const CreatePost: FunctionComponent<
 
   const { profile } = useProfileContext()
 
+  const {
+    createPost,
+    error: createPostError,
+    isPending: isCreatePostPending
+  } = useCreatePost()
+
   const [isPrivate, setIsPrivate] = useState(initialIsPrivate)
 
-  const [isCreatePostLoading, setIsCreatePostLoading] = useState(false)
+  useEffect(() => {
+    if (createPostError) {
+      Alert.alert('Could not create post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [createPostError])
 
   const handleCreatePostSubmitButtonPress = useCallback(
     async ({ content }: CreatePostSchema) => {
-      if (profile) {
-        setIsCreatePostLoading(true)
-
-        try {
-          const postId = await postService.create({
-            communityDomainName,
-            content,
-            userId: profile.id,
-            isPrivate
-          })
-
-          await Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Success
-          )
-
-          navigation.replace('Post', { postId })
-        } catch (error) {
-          await Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Error
-          )
-
-          Sentry.Native.captureException(error)
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        } finally {
-          setIsCreatePostLoading(false)
+      createPost(
+        {
+          communityDomainName,
+          content,
+          isPrivate
+        },
+        {
+          onSuccess: post => {
+            navigation.replace('Post', { postId: post.id })
+          }
         }
-      }
+      )
     },
-    [communityDomainName, isPrivate, navigation, profile]
+    [communityDomainName, createPost, isPrivate, navigation]
   )
 
   const handleCreatePostCloseButtonPress = useCallback(() => {
@@ -172,13 +170,14 @@ export const CreatePost: FunctionComponent<
               <Button
                 className="flex-1"
                 isDisabled={!isValid}
-                isLoading={isCreatePostLoading}
+                isLoading={isCreatePostPending}
                 onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
               >
                 Post
               </Button>
               <Button
                 className="flex-1"
+                isDisabled={isCreatePostPending}
                 variant="secondary"
                 onPress={handleCreatePostCloseButtonPress}
               >
@@ -196,7 +195,7 @@ export const CreatePost: FunctionComponent<
                     autoFocus
                     multiline
                     className="mx-auto w-5/6 font-Poppins_600SemiBold text-lg"
-                    editable={!isCreatePostLoading}
+                    editable={!isCreatePostPending}
                     maxLength={300}
                     placeholder="What's happening?"
                     value={value}

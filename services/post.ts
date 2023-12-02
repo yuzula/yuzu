@@ -105,7 +105,9 @@ export const create = async ({
     throw response.error
   }
 
-  return z.number().parse(response.data[0]?.id)
+  const newPostId = z.number().parse(response.data[0]?.id)
+
+  return get(newPostId)
 }
 
 export const markAsDeleted = async (id: number) => {
