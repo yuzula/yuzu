@@ -18,12 +18,13 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
+import { useDebounce } from 'usehooks-ts'
 
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { useSearchCommunities } from '../hooks/useSearchCommunities'
 import { communityModel } from '../models/community'
-import { communityService } from '../services/community'
 import { RootTabScreenProps } from '../types'
 
 export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
@@ -33,28 +34,22 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 
   const { profile } = useProfileContext()
 
-  const [communities, setCommunities] = useState<communityModel.Schema[]>([])
-  const [searchText, setSearchText] = useState('')
-  const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+  const [query, setQuery] = useState('')
+  const debouncedQuery = useDebounce(query, 500)
 
-  const getCommunities = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      setCommunities(await communityService.getAll())
-    } catch (error) {
-      Sentry.Native.captureException(error)
-
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  const {
+    communities,
+    isInitialLoading: areCommunitiesInitialLoading,
+    error: communitiesError,
+    refresh: refreshCommunities,
+    isRefreshing: areCommunitiesRefreshing
+  } = useSearchCommunities({ query: debouncedQuery })
 
   useEffect(() => {
-    getCommunities()
-  }, [getCommunities])
+    if (communitiesError) {
+      Alert.alert('Could not get communities', GENERIC_ERROR_MESSAGE)
+    }
+  }, [communitiesError])
 
   const handleCommunityPress = useCallback(
     (domainName: string) => {
@@ -72,28 +67,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     },
     [navigation, profile]
   )
-
-  const handleSearchSubmit = useCallback(async () => {
-    if (!searchText.length) {
-      return getCommunities()
-    }
-
-    setIsLoading(true)
-
-    try {
-      setCommunities(await communityService.search(searchText))
-    } catch (error) {
-      Sentry.Native.captureException(error)
-
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [getCommunities, searchText])
-
-  const handleRefresh = useCallback(async () => {
-    await handleSearchSubmit()
-  }, [handleSearchSubmit])
 
   const handleRenderCommunityItem = useCallback(
     ({ item: community }: ListRenderItemInfo<communityModel.Schema>) => (
@@ -115,12 +88,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
     [handleCommunityPress]
   )
 
-  useEffect(() => {
-    if (!isLoading) {
-      setIsLoadingOnMount(false)
-    }
-  }, [isLoading])
-
   return (
     <View
       className="flex-1 items-center justify-center bg-white"
@@ -135,13 +102,13 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
             className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
             placeholder="Search communities"
             returnKeyType="search"
-            onChangeText={setSearchText}
-            onSubmitEditing={handleSearchSubmit}
+            onChangeText={setQuery}
+            onSubmitEditing={refreshCommunities}
           />
         </View>
 
         <View className="w-full flex-1 items-center justify-center">
-          {isLoadingOnMount ? (
+          {areCommunitiesInitialLoading ? (
             <View className="w-full grow border-t border-gray-100">
               {[...Array(4).keys()].map(i => (
                 <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
@@ -164,9 +131,9 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
               data={communities}
               keyExtractor={item => item.domain_name}
               keyboardDismissMode="interactive"
-              refreshing={isLoading}
+              refreshing={areCommunitiesRefreshing}
               renderItem={handleRenderCommunityItem}
-              onRefresh={handleRefresh}
+              onRefresh={refreshCommunities}
             />
           )}
         </View>
