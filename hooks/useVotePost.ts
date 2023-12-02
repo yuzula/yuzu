@@ -40,27 +40,30 @@ export const useVotePost = () => {
 
       const prevPostQuery = queryClient.getQueryData(['post', postId])
 
-      queryClient.setQueriesData({ queryKey: ['posts'] }, prevPostsData => {
-        const prevPosts = postModel.schema
-          .array()
-          .optional()
-          .parse(prevPostsData)
+      queryClient.setQueriesData(
+        { queryKey: ['posts'] },
+        (prevPostsData: unknown) => {
+          const prevPosts = postModel.schema
+            .array()
+            .optional()
+            .parse(prevPostsData)
 
-        if (prevPosts) {
-          const prevPost = prevPosts.find(post => post.id === postId)
+          if (prevPosts) {
+            const prevPost = prevPosts.find(post => post.id === postId)
 
-          if (!prevPost) {
-            throw new Error('Voted post not found')
+            if (!prevPost) {
+              throw new Error('Voted post not found')
+            }
+
+            prevPost.current_user_vote = vote
+            prevPost.vote_count += delta
           }
 
-          prevPost.current_user_vote = vote
-          prevPost.vote_count += delta
+          return prevPosts
         }
+      )
 
-        return prevPosts
-      })
-
-      queryClient.setQueryData(['post', postId], prevPostData => {
+      queryClient.setQueryData(['post', postId], (prevPostData: unknown) => {
         const prevPost = postModel.schema.optional().parse(prevPostData)
 
         if (prevPost) {
