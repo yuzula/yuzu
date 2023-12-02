@@ -51,12 +51,10 @@ export const useVotePost = () => {
           if (prevPosts) {
             const prevPost = prevPosts.find(post => post.id === postId)
 
-            if (!prevPost) {
-              throw new Error('Voted post not found')
+            if (prevPost) {
+              prevPost.current_user_vote = vote
+              prevPost.vote_count += delta
             }
-
-            prevPost.current_user_vote = vote
-            prevPost.vote_count += delta
           }
 
           return prevPosts
