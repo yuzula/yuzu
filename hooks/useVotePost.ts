@@ -20,7 +20,6 @@ export const useVotePost = () => {
   const { profile } = useProfileContext()
 
   const { mutate, error } = useMutation({
-    mutationKey: ['votePost'],
     mutationFn: async ({ postId, vote }: MutationParams) => {
       if (!profile) {
         throw new NotAuthenticatedError()
