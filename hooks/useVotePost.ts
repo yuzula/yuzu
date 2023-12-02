@@ -8,7 +8,7 @@ import { postService } from '../services/post'
 import { Vote } from '../types/vote'
 import { useProfileContext } from './useProfileContext'
 
-interface MutationParams {
+interface VotePostParams {
   postId: number
   vote?: Vote
   delta: number
@@ -20,7 +20,7 @@ export const useVotePost = () => {
   const { profile } = useProfileContext()
 
   const { mutate, error } = useMutation({
-    mutationFn: async ({ postId, vote }: MutationParams) => {
+    mutationFn: ({ postId, vote }: VotePostParams) => {
       if (!profile) {
         throw new NotAuthenticatedError()
       }
