@@ -1,7 +1,12 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Skeleton } from 'moti/skeleton'
-import React, { FunctionComponent, useCallback } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import { Alert, Linking, Pressable, Text, View } from 'react-native'
 import Popover from 'react-native-popover-view'
 import * as Sentry from 'sentry-expo'
@@ -10,6 +15,8 @@ import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { useCommunityMemberCount } from '../hooks/useCommunityMemberCount'
 import { useCommunityPosts } from '../hooks/useCommunityPosts'
+import { useUserRefresh } from '../hooks/useUserRefresh'
+import { FilterBy, SortBy } from '../types/post'
 import { Button } from './Button'
 import { Posts } from './Posts'
 
@@ -30,22 +37,33 @@ export const Community: FunctionComponent<CommunityProps> = ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
+  const [sortBy, setSortBy] = useState<SortBy>('hot')
+  const [filterBy, setFilterBy] = useState<FilterBy>('all')
+
+  const [arePostsInitialLoading, setArePostsInitialLoading] = useState(true)
+
   const {
-    posts,
-    isInitialLoading: arePostsInitialLoading,
-    sortBy,
-    filterBy,
-    setSortBy,
-    setFilterBy,
-    refresh: refreshPosts,
-    isRefreshing: arePostsRefreshing
-  } = useCommunityPosts({ domainName })
+    data: posts,
+    isPending: arePostsPending,
+    isFetching: arePostsFetching,
+    refetch: refetchPosts
+  } = useCommunityPosts({
+    variables: { communityDomainName: domainName, sortBy, filterBy }
+  })
+
+  const { refresh: refreshPosts } = useUserRefresh(refetchPosts)
 
   const { memberCount, isLoading: isMemberCountLoading } =
     useCommunityMemberCount(domainName)
 
   const areResourcesInitialLoading =
     arePostsInitialLoading || isMemberCountLoading
+
+  useEffect(() => {
+    if (!arePostsPending) {
+      setArePostsInitialLoading(false)
+    }
+  }, [arePostsPending])
 
   const handleCreatePostButtonPress = useCallback(() => {
     onCreatePostButtonPress(filterBy === 'private')
@@ -169,7 +187,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
         <View className="w-full flex-1">
           <Posts
             isLoading={areResourcesInitialLoading}
-            isRefreshing={arePostsRefreshing}
+            isRefreshing={arePostsFetching}
             posts={posts}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
