@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useCallback } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import { Alert, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
@@ -7,7 +12,9 @@ import { Posts } from '../components/Posts'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { usePosts } from '../hooks/usePosts'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { useUserRefresh } from '../hooks/useUserRefresh'
 import { RootTabScreenProps } from '../types'
+import { SortBy } from '../types/post'
 
 export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   navigation
@@ -16,14 +23,24 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const { profile } = useProfileContext()
 
+  const [sortBy, setSortBy] = useState<SortBy>('hot')
+
+  const [arePostsInitialLoading, setArePostsInitialLoading] = useState(true)
+
   const {
-    posts,
-    isInitialLoading: arePostsInitialLoading,
-    sortBy,
-    setSortBy,
-    refresh: refreshPosts,
-    isRefreshing: arePostsRefreshing
-  } = usePosts()
+    data: posts,
+    isPending: arePostsPending,
+    isFetching: arePostsFetching,
+    refetch: refetchPosts
+  } = usePosts({ variables: { sortBy, filterBy: 'all' } })
+
+  const { refresh: refreshPosts } = useUserRefresh(refetchPosts)
+
+  useEffect(() => {
+    if (!arePostsPending) {
+      setArePostsInitialLoading(false)
+    }
+  }, [arePostsPending])
 
   const handlePostPress = useCallback(
     (postId: number) => {
@@ -62,7 +79,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         <Posts
           shouldDisplayCommunityDomainName
           isLoading={arePostsInitialLoading}
-          isRefreshing={arePostsRefreshing}
+          isRefreshing={arePostsFetching}
           posts={posts}
           refreshPosts={refreshPosts}
           sortBy={sortBy}

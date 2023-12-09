@@ -1,59 +1,23 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
+import { keepPreviousData } from '@tanstack/react-query'
+import { createQuery } from 'react-query-kit'
 
+import { postModel } from '../models/post'
 import { postService } from '../services/post'
-import { SortBy } from '../types/post'
+import { FilterBy, SortBy } from '../types/post'
 
-export const usePosts = () => {
-  const [isInitialLoading, setIsInitialLoading] = useState(true)
+type Response = postModel.Schema[]
 
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const [sortBy, setSortBy] = useState<SortBy>('hot')
-
-  const { data, error, isFetching, refetch } = useQuery({
-    queryKey: [
-      'posts',
-      {
-        sortBy
-      }
-    ],
-    queryFn: () =>
-      postService.getAll({
-        sortBy,
-        filterBy: 'all'
-      }),
-    placeholderData: keepPreviousData
-  })
-
-  useEffect(() => {
-    if (!isFetching) {
-      setIsInitialLoading(false)
-    }
-  }, [isFetching])
-
-  // We need to use a separate state to track refreshing since using `isFetching` or
-  // or `isRefetching` causes weird jumpy behavior in Flatlist's pull to refresh
-  //
-  // TODO: investigate why this happens
-  //
-  // https://github.com/TanStack/query/issues/2380
-  // https://github.com/facebook/react-native/issues/32836
-  const refresh = useCallback(async () => {
-    setIsRefreshing(true)
-
-    await refetch()
-
-    setIsRefreshing(false)
-  }, [refetch])
-
-  return {
-    posts: data,
-    error,
-    isInitialLoading,
-    sortBy,
-    setSortBy,
-    refresh,
-    isRefreshing: isRefreshing || isFetching
-  }
+interface Variables {
+  sortBy: SortBy
+  filterBy: FilterBy
 }
+
+export const usePosts = createQuery<Response, Variables, Error>({
+  queryKey: ['posts'],
+  fetcher: variables =>
+    postService.getAll({
+      sortBy: variables.sortBy,
+      filterBy: variables.filterBy
+    }),
+  placeholderData: keepPreviousData
+})
