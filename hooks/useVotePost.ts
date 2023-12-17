@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
+import { z } from 'zod'
 
 import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { postModel } from '../models/post'
@@ -42,13 +43,18 @@ export const useVotePost = () => {
       queryClient.setQueriesData(
         { queryKey: ['posts'] },
         (prevPostsData: unknown) => {
-          const prevPosts = postModel.schema
-            .array()
+          const parsedPrevPostsData = z
+            .object({
+              pages: postModel.schema.array().array(),
+              pageParams: z.unknown()
+            })
             .optional()
             .parse(prevPostsData)
 
-          if (prevPosts) {
-            const prevPost = prevPosts.find(post => post.id === postId)
+          if (parsedPrevPostsData) {
+            const prevPost = parsedPrevPostsData.pages
+              .find(page => page.some(post => post.id === postId))
+              ?.find(post => post.id === postId)
 
             if (prevPost) {
               prevPost.current_user_vote = vote
@@ -56,19 +62,21 @@ export const useVotePost = () => {
             }
           }
 
-          return prevPosts
+          return parsedPrevPostsData
         }
       )
 
       queryClient.setQueryData(['post', postId], (prevPostData: unknown) => {
-        const prevPost = postModel.schema.optional().parse(prevPostData)
+        const parsedPrevPostData = postModel.schema
+          .optional()
+          .parse(prevPostData)
 
-        if (prevPost) {
-          prevPost.current_user_vote = vote
-          prevPost.vote_count += delta
+        if (parsedPrevPostData) {
+          parsedPrevPostData.current_user_vote = vote
+          parsedPrevPostData.vote_count += delta
         }
 
-        return prevPost
+        return parsedPrevPostData
       })
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)

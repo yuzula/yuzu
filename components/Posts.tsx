@@ -7,6 +7,7 @@ import React, {
   useMemo
 } from 'react'
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   ListRenderItemInfo,
@@ -39,6 +40,9 @@ interface PostsProps {
   isRefreshing: boolean
   isFetching: boolean
   isLoading: boolean
+  fetchNextPage: () => void
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
   sortBy: SortBy
   shouldDisplayCommunityDomainName?: boolean
   shouldDisplayInternalPopover?: boolean
@@ -53,6 +57,9 @@ export const Posts: FunctionComponent<PostsProps> = ({
   isRefreshing,
   isFetching,
   isLoading,
+  fetchNextPage,
+  isFetchingNextPage,
+  hasNextPage,
   sortBy,
   shouldDisplayCommunityDomainName = false,
   shouldDisplayInternalPopover = true,
@@ -347,6 +354,20 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
+  const renderListFooterComponent = useCallback(() => {
+    if (isFetchingNextPage) {
+      return <ActivityIndicator className="py-4" />
+    }
+
+    return null
+  }, [isFetchingNextPage])
+
+  const handleOnEndReached = useCallback(() => {
+    if (hasNextPage) {
+      fetchNextPage()
+    }
+  }, [fetchNextPage, hasNextPage])
+
   const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
 
   if (!user || !profile) {
@@ -361,6 +382,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     <FlatList
       ItemSeparatorComponent={Separator}
       ListEmptyComponent={renderListEmptyComponent}
+      ListFooterComponent={renderListFooterComponent}
       ListHeaderComponent={renderListHeaderComponent}
       className="w-full border-t border-gray-100"
       contentContainerStyle={listContentContainerStyle}
@@ -368,6 +390,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
       keyExtractor={item => item.id.toString()}
       refreshing={isRefreshing}
       renderItem={renderListItem}
+      onEndReached={handleOnEndReached}
+      onEndReachedThreshold={0.2}
       onRefresh={refreshPosts}
     />
   )

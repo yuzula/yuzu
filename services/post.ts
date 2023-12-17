@@ -5,6 +5,8 @@ import { postModel } from '../models/post'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
 
+const PAGE_SIZE = 10
+
 export const get = async (id: number) => {
   const response = await supabase
     .from('home_screen_posts')
@@ -28,12 +30,14 @@ interface GetAllParams {
   communityDomainName?: string
   sortBy: SortBy
   filterBy: 'all' | 'private' | 'public'
+  fetchedIds: number[]
 }
 
 export const getAll = async ({
   communityDomainName,
   sortBy = 'hot',
-  filterBy = 'all'
+  filterBy = 'all',
+  fetchedIds
 }: GetAllParams) => {
   const query = supabase
     .from('home_screen_posts')
@@ -48,7 +52,8 @@ export const getAll = async ({
         : 'comment_count',
       { ascending: false }
     )
-    .limit(40)
+    .not('id', 'in', `(${fetchedIds.join(',')})`)
+    .limit(PAGE_SIZE)
 
   if (communityDomainName) {
     query.eq('community_domain_name', communityDomainName)

@@ -1,4 +1,4 @@
-import { createQuery } from 'react-query-kit'
+import { createInfiniteQuery } from 'react-query-kit'
 
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
@@ -12,12 +12,24 @@ interface Variables {
   filterBy: FilterBy
 }
 
-export const useCommunityPosts = createQuery<Response, Variables, Error>({
+type PageParams = number[]
+
+export const useCommunityPosts = createInfiniteQuery<
+  Response,
+  Variables,
+  Error,
+  PageParams
+>({
   queryKey: ['posts', 'community'],
-  fetcher: variables =>
+  fetcher: (variables, { pageParam }) =>
     postService.getAll({
-      communityDomainName: variables.communityDomainName,
       sortBy: variables.sortBy,
-      filterBy: variables.filterBy
-    })
+      filterBy: variables.filterBy,
+      fetchedIds: pageParam
+    }),
+  getNextPageParam: (lastPage, _, lastPageParam) =>
+    lastPage.length > 0
+      ? [...lastPageParam, ...lastPage.map(post => post.id)]
+      : undefined,
+  initialPageParam: []
 })

@@ -43,10 +43,12 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const [arePostsInitialLoading, setArePostsInitialLoading] = useState(true)
 
   const {
-    data: posts,
-    isPending: arePostsPending,
+    data: postsData,
     isFetching: arePostsFetching,
-    refetch: refetchPosts
+    refetch: refetchPosts,
+    fetchNextPage: fetchPostsNextPage,
+    hasNextPage: hasPostsNextPage,
+    isFetchingNextPage: arePostsFetchingNextPage
   } = useCommunityPosts({
     variables: { communityDomainName: domainName, sortBy, filterBy }
   })
@@ -61,10 +63,10 @@ export const Community: FunctionComponent<CommunityProps> = ({
     arePostsInitialLoading || isMemberCountLoading
 
   useEffect(() => {
-    if (!arePostsPending) {
+    if (!arePostsFetching) {
       setArePostsInitialLoading(false)
     }
-  }, [arePostsPending])
+  }, [arePostsFetching])
 
   const handleCreatePostButtonPress = useCallback(() => {
     onCreatePostButtonPress(filterBy === 'private')
@@ -187,10 +189,13 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         <View className="w-full flex-1">
           <Posts
+            fetchNextPage={fetchPostsNextPage}
+            hasNextPage={hasPostsNextPage}
             isFetching={arePostsFetching}
+            isFetchingNextPage={arePostsFetchingNextPage}
             isLoading={areResourcesInitialLoading}
             isRefreshing={arePostsRefreshing}
-            posts={posts}
+            posts={postsData?.pages.flat(1)}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}

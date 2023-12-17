@@ -28,20 +28,22 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
   const [arePostsInitialLoading, setArePostsInitialLoading] = useState(true)
 
   const {
-    data: posts,
-    isPending: arePostsPending,
+    data: postsData,
     isFetching: arePostsFetching,
-    refetch: refetchPosts
+    refetch: refetchPosts,
+    fetchNextPage: fetchPostsNextPage,
+    hasNextPage: hasPostsNextPage,
+    isFetchingNextPage: arePostsFetchingNextPage
   } = usePosts({ variables: { sortBy, filterBy: 'all' } })
 
   const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
     useUserRefresh(refetchPosts)
 
   useEffect(() => {
-    if (!arePostsPending) {
+    if (!arePostsFetching) {
       setArePostsInitialLoading(false)
     }
-  }, [arePostsPending])
+  }, [arePostsFetching])
 
   const handlePostPress = useCallback(
     (postId: number) => {
@@ -79,10 +81,13 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       <View className="w-full flex-1">
         <Posts
           shouldDisplayCommunityDomainName
+          fetchNextPage={fetchPostsNextPage}
+          hasNextPage={hasPostsNextPage}
           isFetching={arePostsFetching}
+          isFetchingNextPage={arePostsFetchingNextPage}
           isLoading={arePostsInitialLoading}
           isRefreshing={arePostsRefreshing}
-          posts={posts}
+          posts={postsData?.pages.flat(1)}
           refreshPosts={refreshPosts}
           sortBy={sortBy}
           sortPosts={setSortBy}
