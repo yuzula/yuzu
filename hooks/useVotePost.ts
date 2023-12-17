@@ -45,9 +45,9 @@ export const useVotePost = () => {
         (prevPostsData: unknown) => {
           const parsedPrevPostsData = z
             .object({
-              pages: postModel.schema.array().array(),
-              pageParams: z.unknown()
+              pages: postModel.schema.array().array()
             })
+            .passthrough()
             .optional()
             .parse(prevPostsData)
 
