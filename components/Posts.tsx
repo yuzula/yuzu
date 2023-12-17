@@ -1,7 +1,11 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
-import { Skeleton } from 'moti/skeleton'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo
+} from 'react'
 import {
   Alert,
   FlatList,
@@ -26,12 +30,14 @@ import { reportService } from '../services/report'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
 import { Post } from './Post'
+import { PostsSkeleton } from './PostsSkeleton'
 import { Separator } from './Separator'
 import { SortByButton } from './SortByButton'
 
 interface PostsProps {
   posts?: postModel.Schema[]
   isRefreshing: boolean
+  isFetching: boolean
   isLoading: boolean
   sortBy: SortBy
   shouldDisplayCommunityDomainName?: boolean
@@ -45,6 +51,7 @@ interface PostsProps {
 export const Posts: FunctionComponent<PostsProps> = ({
   posts,
   isRefreshing,
+  isFetching,
   isLoading,
   sortBy,
   shouldDisplayCommunityDomainName = false,
@@ -233,7 +240,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
-  const handleRenderPostItem = useCallback(
+  const renderListItem = useCallback(
     ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
       <Post
         authorId={post.user_id}
@@ -267,39 +274,13 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
-  if (!user || !profile) {
-    return null
-  }
-
-  return isLoading ? (
-    <View className="w-full grow border-t border-gray-100">
-      {[...Array(4).keys()].map(i => (
-        <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
-          <View>
-            <Skeleton colorMode="light" radius="round" />
-          </View>
-          <View>
-            <Skeleton colorMode="light" height={12} width="60%" />
-          </View>
-          <View>
-            <Skeleton colorMode="light" height={12} width="80%" />
-          </View>
-          <View>
-            <Skeleton colorMode="light" height={12} width="90%" />
-          </View>
+  const renderListEmptyComponent = useCallback(
+    () =>
+      isFetching ? (
+        <View className="w-full grow border-t border-gray-100">
+          <PostsSkeleton />
         </View>
-      ))}
-    </View>
-  ) : (
-    <FlatList
-      ItemSeparatorComponent={Separator}
-      className="w-full border-t border-gray-100"
-      contentContainerStyle={{ flexGrow: 1 }}
-      data={posts}
-      keyExtractor={item => item.id.toString()}
-      refreshing={isRefreshing}
-      renderItem={handleRenderPostItem}
-      ListEmptyComponent={() => (
+      ) : (
         <View className="flex-1 items-center justify-center">
           <Text className="font-Poppins_600SemiBold text-base text-gray-light">
             No posts yet
@@ -308,52 +289,85 @@ export const Posts: FunctionComponent<PostsProps> = ({
             Be the first to post!
           </Text>
         </View>
-      )}
-      ListHeaderComponent={
-        <View className="bg-gray-100 py-4">
-          <View className="mx-auto flex w-5/6 flex-row justify-between">
-            <SortByButton sortBy={sortBy} onChange={sortPosts} />
-            {shouldDisplayInternalPopover && (
-              <Popover
-                verticalOffset={POPOVER_VERTICAL_OFFSET}
-                from={
-                  <Pressable>
-                    <Text className="font-Poppins_600SemiBold text-gray-light">
-                      What's{'  '}
-                      <FontAwesome5 name="lock" /> ?
-                    </Text>
-                  </Pressable>
-                }
-              >
-                <View className="space-y-2 p-4">
-                  <Text className="font-Poppins_600SemiBold text-base">
-                    Internal posts
+      ),
+    [isFetching]
+  )
+
+  const renderListHeaderComponent = useCallback(
+    () => (
+      <View className="bg-gray-100 py-4">
+        <View className="mx-auto flex w-5/6 flex-row justify-between">
+          <SortByButton sortBy={sortBy} onChange={sortPosts} />
+          {shouldDisplayInternalPopover && (
+            <Popover
+              verticalOffset={POPOVER_VERTICAL_OFFSET}
+              from={
+                <Pressable>
+                  <Text className="font-Poppins_600SemiBold text-gray-light">
+                    What's{'  '}
+                    <FontAwesome5 name="lock" /> ?
                   </Text>
-                  <Text className="font-Poppins_500Medium">
-                    Internal posts can only be created and viewed by members of
-                    the{' '}
-                    <Text className="font-Poppins_600SemiBold">
-                      @{profile.community_domain_name}
-                    </Text>{' '}
-                    community.
+                </Pressable>
+              }
+            >
+              <View className="space-y-2 p-4">
+                <Text className="font-Poppins_600SemiBold text-base">
+                  Internal posts
+                </Text>
+                <Text className="font-Poppins_500Medium">
+                  Internal posts can only be created and viewed by members of
+                  the{' '}
+                  <Text className="font-Poppins_600SemiBold">
+                    @{profile?.community_domain_name}
+                  </Text>{' '}
+                  community.
+                </Text>
+                <Text className="font-Poppins_500Medium">
+                  They are marked with the special{'  '}
+                  <Text className="text-yellow-light">
+                    <FontAwesome5 name="lock" />
                   </Text>
-                  <Text className="font-Poppins_500Medium">
-                    They are marked with the special{'  '}
-                    <Text className="text-yellow-light">
-                      <FontAwesome5 name="lock" />
-                    </Text>
-                    {'  '}icon.
-                  </Text>
-                  <Text className="font-Poppins_500Medium">
-                    Public posts don't have that icon and can be created &
-                    viewed by everyone.
-                  </Text>
-                </View>
-              </Popover>
-            )}
-          </View>
+                  {'  '}icon.
+                </Text>
+                <Text className="font-Poppins_500Medium">
+                  Public posts don't have that icon and can be created & viewed
+                  by everyone.
+                </Text>
+              </View>
+            </Popover>
+          )}
         </View>
-      }
+      </View>
+    ),
+    [
+      profile?.community_domain_name,
+      shouldDisplayInternalPopover,
+      sortBy,
+      sortPosts
+    ]
+  )
+
+  const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
+
+  if (!user || !profile) {
+    return null
+  }
+
+  return isLoading ? (
+    <View className="w-full grow border-t border-gray-100">
+      <PostsSkeleton />
+    </View>
+  ) : (
+    <FlatList
+      ItemSeparatorComponent={Separator}
+      ListEmptyComponent={renderListEmptyComponent}
+      ListHeaderComponent={renderListHeaderComponent}
+      className="w-full border-t border-gray-100"
+      contentContainerStyle={listContentContainerStyle}
+      data={posts}
+      keyExtractor={item => item.id.toString()}
+      refreshing={isRefreshing}
+      renderItem={renderListItem}
       onRefresh={refreshPosts}
     />
   )

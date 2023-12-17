@@ -34,7 +34,8 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     refetch: refetchPosts
   } = usePosts({ variables: { sortBy, filterBy: 'all' } })
 
-  const { refresh: refreshPosts } = useUserRefresh(refetchPosts)
+  const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
+    useUserRefresh(refetchPosts)
 
   useEffect(() => {
     if (!arePostsPending) {
@@ -78,8 +79,9 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       <View className="w-full flex-1">
         <Posts
           shouldDisplayCommunityDomainName
+          isFetching={arePostsFetching}
           isLoading={arePostsInitialLoading}
-          isRefreshing={arePostsFetching}
+          isRefreshing={arePostsRefreshing}
           posts={posts}
           refreshPosts={refreshPosts}
           sortBy={sortBy}

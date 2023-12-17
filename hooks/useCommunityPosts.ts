@@ -1,4 +1,3 @@
-import { keepPreviousData } from '@tanstack/react-query'
 import { createQuery } from 'react-query-kit'
 
 import { postModel } from '../models/post'
@@ -20,6 +19,5 @@ export const useCommunityPosts = createQuery<Response, Variables, Error>({
       communityDomainName: variables.communityDomainName,
       sortBy: variables.sortBy,
       filterBy: variables.filterBy
-    }),
-  placeholderData: keepPreviousData
+    })
 })

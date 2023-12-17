@@ -51,7 +51,8 @@ export const Community: FunctionComponent<CommunityProps> = ({
     variables: { communityDomainName: domainName, sortBy, filterBy }
   })
 
-  const { refresh: refreshPosts } = useUserRefresh(refetchPosts)
+  const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
+    useUserRefresh(refetchPosts)
 
   const { memberCount, isLoading: isMemberCountLoading } =
     useCommunityMemberCount(domainName)
@@ -186,8 +187,9 @@ export const Community: FunctionComponent<CommunityProps> = ({
 
         <View className="w-full flex-1">
           <Posts
+            isFetching={arePostsFetching}
             isLoading={areResourcesInitialLoading}
-            isRefreshing={arePostsFetching}
+            isRefreshing={arePostsRefreshing}
             posts={posts}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}

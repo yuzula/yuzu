@@ -1,4 +1,3 @@
-import { keepPreviousData } from '@tanstack/react-query'
 import { createQuery } from 'react-query-kit'
 
 import { postModel } from '../models/post'
@@ -18,6 +17,5 @@ export const usePosts = createQuery<Response, Variables, Error>({
     postService.getAll({
       sortBy: variables.sortBy,
       filterBy: variables.filterBy
-    }),
-  placeholderData: keepPreviousData
+    })
 })
