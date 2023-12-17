@@ -363,10 +363,10 @@ export const Posts: FunctionComponent<PostsProps> = ({
   }, [isFetchingNextPage])
 
   const handleOnEndReached = useCallback(() => {
-    if (hasNextPage) {
+    if (!isFetching && hasNextPage) {
       fetchNextPage()
     }
-  }, [fetchNextPage, hasNextPage])
+  }, [fetchNextPage, hasNextPage, isFetching])
 
   const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
 
