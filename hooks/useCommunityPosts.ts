@@ -23,6 +23,7 @@ export const useCommunityPosts = createInfiniteQuery<
   queryKey: ['posts', 'community'],
   fetcher: (variables, { pageParam }) =>
     postService.getAll({
+      communityDomainName: variables.communityDomainName,
       sortBy: variables.sortBy,
       filterBy: variables.filterBy,
       fetchedIds: pageParam

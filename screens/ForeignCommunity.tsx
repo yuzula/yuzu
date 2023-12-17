@@ -41,10 +41,7 @@ export const ForeignCommunity: FunctionComponent<
   }, [navigation])
 
   return (
-    <SafeAreaView
-      className="flex-1 items-center justify-center bg-white"
-      edges={['top']}
-    >
+    <SafeAreaView className="flex-1 items-center justify-center bg-white">
       <CommunityComponent
         isForeign
         domainName={domainName}
