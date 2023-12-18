@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { postService } from '../services/post'
-import { useProfileContext } from './useProfileContext'
+import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
 interface CreatePostParams {
   communityDomainName: string
@@ -15,25 +14,20 @@ interface CreatePostParams {
 export const useCreatePost = () => {
   const queryClient = useQueryClient()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const { mutate, error, isPending } = useMutation({
     mutationFn: ({
       communityDomainName,
       content,
       isPrivate
-    }: CreatePostParams) => {
-      if (!profile) {
-        throw new NotAuthenticatedError()
-      }
-
-      return postService.create({
+    }: CreatePostParams) =>
+      postService.create({
         communityDomainName,
         content,
         userId: profile.id,
         isPrivate
-      })
-    },
+      }),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
 

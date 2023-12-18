@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { blockService } from '../services/block'
-import { useProfileContext } from './useProfileContext'
+import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
 interface BlockUserParams {
   userId: string
@@ -13,19 +12,14 @@ interface BlockUserParams {
 export const useBlockUser = () => {
   const queryClient = useQueryClient()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   return useMutation({
-    mutationFn: ({ userId }: BlockUserParams) => {
-      if (!profile) {
-        throw new NotAuthenticatedError()
-      }
-
-      return blockService.blockUser({
+    mutationFn: ({ userId }: BlockUserParams) =>
+      blockService.blockUser({
         blockerId: profile.id,
         blockeeId: userId
-      })
-    },
+      }),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
 

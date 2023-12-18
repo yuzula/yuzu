@@ -6,14 +6,14 @@ import * as Sentry from 'sentry-expo'
 
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { useAuthContext } from '../hooks/useAuthContext'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useDeleteCurrentUser } from '../hooks/useDeleteCurrentUser'
 import { useLogOut } from '../hooks/useLogOut'
 
 export const Me: FunctionComponent = () => {
   const { showActionSheetWithOptions } = useActionSheet()
 
-  const { user } = useAuthContext()
+  const { profile } = useAuthenticatedProfile()
 
   const { logOut, isLoading: isLogOutLoading } = useLogOut()
 
@@ -68,10 +68,6 @@ export const Me: FunctionComponent = () => {
     ])
   }, [deleteCurrentUser, logOut])
 
-  if (!user) {
-    return null
-  }
-
   return (
     <SafeAreaView
       className="flex-1 items-center justify-center bg-white py-6"
@@ -80,7 +76,7 @@ export const Me: FunctionComponent = () => {
       <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
         <View className="space-y-4">
           <Text className="text-center font-Poppins_600SemiBold text-2xl">
-            {user.user_metadata.username}
+            {profile.username}
           </Text>
         </View>
         <View className="space-y-2">

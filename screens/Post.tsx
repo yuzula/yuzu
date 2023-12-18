@@ -32,7 +32,7 @@ import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import { useAuthContext } from '../hooks/useAuthContext'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useComments } from '../hooks/useComments'
 import { useDeletePost } from '../hooks/useDeletePost'
@@ -72,7 +72,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const replyTextFieldRef = useRef<TextInput>(null)
 
-  const { user } = useAuthContext()
+  const { profile } = useAuthenticatedProfile()
 
   const {
     post,
@@ -144,7 +144,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
       try {
-        if (user && post) {
+        if (post) {
           blockUser({ userId: authorId })
 
           if (authorId === post.user_id) {
@@ -163,101 +163,89 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [blockUser, navigation, post, user]
+    [blockUser, navigation, post]
   )
 
   const handleReportPostButtonPress = useCallback(
     (post: postModel.Schema) => {
       try {
-        if (user) {
-          reportPost({ postId: post.id })
+        reportPost({ postId: post.id })
 
-          Alert.alert('Post has been reported for moderation', undefined, [
-            {
-              onPress: () => {
-                Alert.alert(
-                  'Would you like to block the author of the post?',
-                  undefined,
-                  [
-                    {
-                      text: 'No'
-                    },
-                    {
-                      text: 'Yes',
-                      onPress: () => {
-                        if (post.user_id) {
-                          handleBlockAuthorButtonPress(post.user_id)
-                        }
+        Alert.alert('Post has been reported for moderation', undefined, [
+          {
+            onPress: () => {
+              Alert.alert(
+                'Would you like to block the author of the post?',
+                undefined,
+                [
+                  {
+                    text: 'No'
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      if (post.user_id) {
+                        handleBlockAuthorButtonPress(post.user_id)
                       }
                     }
-                  ]
-                )
-              }
+                  }
+                ]
+              )
             }
-          ])
-        } else {
-          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
-        }
+          }
+        ])
       } catch (error) {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handleBlockAuthorButtonPress, reportPost, user]
+    [handleBlockAuthorButtonPress, reportPost]
   )
 
   const handleReportCommentButtonPress = useCallback(
     async (comment: commentModel.BaseSchema) => {
       try {
-        if (user) {
-          await reportService.reportComment(comment.id)
+        await reportService.reportComment(comment.id)
 
-          Alert.alert('Comment has been reported for moderation', undefined, [
-            {
-              onPress: () => {
-                Alert.alert(
-                  'Would you like to block the author of the comment?',
-                  undefined,
-                  [
-                    {
-                      text: 'No'
-                    },
-                    {
-                      text: 'Yes',
-                      onPress: () => {
-                        if (comment.user_id) {
-                          handleBlockAuthorButtonPress(comment.user_id)
-                        }
+        Alert.alert('Comment has been reported for moderation', undefined, [
+          {
+            onPress: () => {
+              Alert.alert(
+                'Would you like to block the author of the comment?',
+                undefined,
+                [
+                  {
+                    text: 'No'
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      if (comment.user_id) {
+                        handleBlockAuthorButtonPress(comment.user_id)
                       }
                     }
-                  ]
-                )
-              }
+                  }
+                ]
+              )
             }
-          ])
-        } else {
-          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
-        }
+          }
+        ])
       } catch (error) {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handleBlockAuthorButtonPress, user]
+    [handleBlockAuthorButtonPress]
   )
 
   const handlePostEllipsisButtonPress = useCallback(() => {
-    if (!user) {
-      return Alert.alert('Could not get user details', GENERIC_ERROR_MESSAGE)
-    }
-
     if (!post) {
       return Alert.alert('Could not get post details', GENERIC_ERROR_MESSAGE)
     }
 
-    if (user.id === post.user_id) {
+    if (profile.id === post.user_id) {
       showActionSheetWithOptions(
         {
           title: 'More actions',
@@ -319,20 +307,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     navigation,
     post,
     postId,
-    showActionSheetWithOptions,
-    user
+    profile.id,
+    showActionSheetWithOptions
   ])
 
   const handleCommentEllipsisButtonPress = useCallback(
     (comment: commentModel.BaseSchema) => {
-      if (!user) {
-        return Alert.alert(
-          'Could not fetch user details',
-          GENERIC_ERROR_MESSAGE
-        )
-      }
-
-      if (user.id === comment.user_id) {
+      if (profile.id === comment.user_id) {
         showActionSheetWithOptions(
           {
             title: 'More actions',
@@ -398,8 +379,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       getComments,
       handleBlockAuthorButtonPress,
       handleReportCommentButtonPress,
-      showActionSheetWithOptions,
-      user
+      profile.id,
+      showActionSheetWithOptions
     ]
   )
 
@@ -409,13 +390,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const handleCreateCommentSendButtonPress = useCallback(
     async ({ content }: CreateCommentSchema) => {
-      if (post && user) {
+      if (post) {
         setIsCreateCommentLoading(true)
 
         try {
           await commentService.create({
             postId: post.id,
-            userId: user.id,
+            userId: profile.id,
             content,
             parentCommentId: replyParentCommentId
           })
@@ -444,7 +425,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         )
       }
     },
-    [getComments, post, refreshPost, replyParentCommentId, reset, user]
+    [getComments, post, profile.id, refreshPost, replyParentCommentId, reset]
   )
 
   const handleCommentReplyButtonPress = useCallback((commentId: number) => {
@@ -494,10 +475,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     },
     [voteComment]
   )
-
-  if (!user) {
-    return null
-  }
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">

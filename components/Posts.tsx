@@ -21,10 +21,9 @@ import * as Sentry from 'sentry-expo'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { getResultingVote } from '../helpers/vote'
-import { useAuthContext } from '../hooks/useAuthContext'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
-import { useProfileContext } from '../hooks/useProfileContext'
 import { useReportPost } from '../hooks/useReportPost'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
@@ -70,8 +69,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
-  const { user } = useAuthContext()
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const { votePost, error: votePostError } = useVotePost()
 
@@ -132,54 +130,43 @@ export const Posts: FunctionComponent<PostsProps> = ({
   const handleReportPostButtonPress = useCallback(
     ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
       try {
-        if (user) {
-          reportPost({ postId })
+        reportPost({ postId })
 
-          Alert.alert('Post has been reported for moderation', undefined, [
-            {
-              onPress: () => {
-                Alert.alert(
-                  'Would you like to block the author of the post?',
-                  undefined,
-                  [
-                    {
-                      text: 'No'
-                    },
-                    {
-                      text: 'Yes',
-                      onPress: () => {
-                        if (postAuthorId) {
-                          handleBlockAuthorButtonPress(postAuthorId)
-                        }
+        Alert.alert('Post has been reported for moderation', undefined, [
+          {
+            onPress: () => {
+              Alert.alert(
+                'Would you like to block the author of the post?',
+                undefined,
+                [
+                  {
+                    text: 'No'
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      if (postAuthorId) {
+                        handleBlockAuthorButtonPress(postAuthorId)
                       }
                     }
-                  ]
-                )
-              }
+                  }
+                ]
+              )
             }
-          ])
-        } else {
-          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
-        }
+          }
+        ])
       } catch (error) {
         Sentry.Native.captureException(error)
 
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handleBlockAuthorButtonPress, reportPost, user]
+    [handleBlockAuthorButtonPress, reportPost]
   )
 
   const handlePostEllipsisButtonPress = useCallback(
     ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-      if (!user) {
-        return Alert.alert(
-          'Could not fetch user details',
-          GENERIC_ERROR_MESSAGE
-        )
-      }
-
-      if (user.id === postAuthorId) {
+      if (profile.id === postAuthorId) {
         showActionSheetWithOptions(
           {
             title: 'More actions',
@@ -237,8 +224,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
       deletePost,
       handleBlockAuthorButtonPress,
       handleReportPostButtonPress,
-      showActionSheetWithOptions,
-      user
+      profile.id,
+      showActionSheetWithOptions
     ]
   )
 
@@ -320,7 +307,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
                   Internal posts can only be created and viewed by members of
                   the{' '}
                   <Text className="font-Poppins_600SemiBold">
-                    @{profile?.community_domain_name}
+                    @{profile.community_domain_name}
                   </Text>{' '}
                   community.
                 </Text>
@@ -342,7 +329,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
       </View>
     ),
     [
-      profile?.community_domain_name,
+      profile.community_domain_name,
       shouldDisplayInternalPopover,
       sortBy,
       sortPosts
@@ -364,10 +351,6 @@ export const Posts: FunctionComponent<PostsProps> = ({
   }, [fetchNextPage, hasNextPage, isFetching])
 
   const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
-
-  if (!user || !profile) {
-    return null
-  }
 
   return isLoading ? (
     <View className="w-full grow border-t border-gray-100">

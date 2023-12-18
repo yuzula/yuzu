@@ -1,11 +1,9 @@
 import React, { FunctionComponent, useCallback } from 'react'
-import { Alert, View } from 'react-native'
+import { View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 
 import { Community as CommunityComponent } from '../components/Community'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { useProfileContext } from '../hooks/useProfileContext'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { RootTabScreenProps } from '../types'
 
 export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
@@ -13,21 +11,14 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
 }) => {
   const insets = useSafeAreaInsets()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const handleCreatePostButtonPress = useCallback(
-    (initialIsPrivate: boolean) => {
-      if (!profile) {
-        Sentry.Native.captureException('Profile is not defined')
-
-        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-
+    (initialIsPrivate: boolean) =>
       navigation.navigate('CreatePost', {
         initialIsPrivate,
         communityDomainName: profile.community_domain_name
-      })
-    },
+      }),
     [navigation, profile]
   )
 

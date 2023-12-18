@@ -3,11 +3,10 @@ import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 import { z } from 'zod'
 
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { Vote } from '../types/vote'
-import { useProfileContext } from './useProfileContext'
+import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
 interface VotePostParams {
   postId: number
@@ -18,20 +17,15 @@ interface VotePostParams {
 export const useVotePost = () => {
   const queryClient = useQueryClient()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const { mutate, error } = useMutation({
-    mutationFn: ({ postId, vote }: VotePostParams) => {
-      if (!profile) {
-        throw new NotAuthenticatedError()
-      }
-
-      return postService.registerVote({
+    mutationFn: ({ postId, vote }: VotePostParams) =>
+      postService.registerVote({
         postId,
         userId: profile.id,
         vote
-      })
-    },
+      }),
     // Optimistically update post vote across all posts
     onMutate: async ({ postId, vote, delta }) => {
       const prevPostsQueries = queryClient.getQueriesData({

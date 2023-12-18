@@ -4,32 +4,29 @@ import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { NotAuthenticatedError } from '../errors/NotAuthenticatedError'
 import { commentModel } from '../models/comment'
 import { commentService } from '../services/comment'
 import { Vote } from '../types/vote'
-import { useProfileContext } from './useProfileContext'
+import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
 export const useComments = (postId: number) => {
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const [comments, setComments] = useState<commentModel.Schema[]>([])
   const [isLoadingOnMount, setIsLoadingOnMount] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const getComments = useCallback(async () => {
-    if (profile) {
-      try {
-        setComments(await commentService.getAllRoot(postId))
-      } catch (error) {
-        Sentry.Native.captureException(error)
+    try {
+      setComments(await commentService.getAllRoot(postId))
+    } catch (error) {
+      Sentry.Native.captureException(error)
 
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      } finally {
-        setIsLoadingOnMount(false)
-      }
+      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+    } finally {
+      setIsLoadingOnMount(false)
     }
-  }, [postId, profile])
+  }, [postId])
 
   const refreshComments = useCallback(async () => {
     setIsRefreshing(true)
@@ -51,12 +48,6 @@ export const useComments = (postId: number) => {
       vote?: Vote
       delta: number
     }) => {
-      if (!profile) {
-        Sentry.Native.captureException(new NotAuthenticatedError())
-
-        return Alert.alert('You are not authenticated', GENERIC_ERROR_MESSAGE)
-      }
-
       setComments(prevComments => {
         const prevCommentsCopy = [...prevComments]
 

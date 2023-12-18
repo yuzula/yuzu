@@ -17,12 +17,11 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 import { useDebounce } from 'usehooks-ts'
 
 import { Separator } from '../components/Separator'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { useProfileContext } from '../hooks/useProfileContext'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useSearchCommunities } from '../hooks/useSearchCommunities'
 import { communityModel } from '../models/community'
 import { RootTabScreenProps } from '../types'
@@ -32,7 +31,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 }) => {
   const insets = useSafeAreaInsets()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 500)
@@ -53,12 +52,6 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
 
   const handleCommunityPress = useCallback(
     (domainName: string) => {
-      if (!profile) {
-        Sentry.Native.captureException('Profile is not defined')
-
-        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-
       if (profile.community_domain_name === domainName) {
         navigation.navigate('Tabs', { screen: 'Community' })
       } else {

@@ -4,14 +4,12 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Alert, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 
 import { Posts } from '../components/Posts'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { usePosts } from '../hooks/usePosts'
-import { useProfileContext } from '../hooks/useProfileContext'
 import { useUserRefresh } from '../hooks/useUserRefresh'
 import { RootTabScreenProps } from '../types'
 import { SortBy } from '../types/post'
@@ -21,7 +19,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 }) => {
   const insets = useSafeAreaInsets()
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const [sortBy, setSortBy] = useState<SortBy>('hot')
 
@@ -54,12 +52,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const handlePostCommunityDomainNamePress = useCallback(
     (domainName: string) => {
-      if (!profile) {
-        Sentry.Native.captureException('Profile is not defined')
-
-        return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-
       if (profile.community_domain_name === domainName) {
         navigation.navigate('Tabs', { screen: 'Community' })
       } else {

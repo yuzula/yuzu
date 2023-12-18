@@ -23,8 +23,8 @@ import { z } from 'zod'
 
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useCreatePost } from '../hooks/useCreatePost'
-import { useProfileContext } from '../hooks/useProfileContext'
 import { RootStackScreenProps } from '../types'
 
 const createPostSchema = z.object({
@@ -55,7 +55,7 @@ export const CreatePost: FunctionComponent<
     resolver: zodResolver(createPostSchema)
   })
 
-  const { profile } = useProfileContext()
+  const { profile } = useAuthenticatedProfile()
 
   const {
     createPost,
@@ -125,12 +125,6 @@ export const CreatePost: FunctionComponent<
   }, [isDirty, navigation])
 
   const handleVisibilityButtonPress = useCallback(() => {
-    if (!profile) {
-      Sentry.Native.captureException('Profile is not defined')
-
-      return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    }
-
     if (isVisibilityChangeable) {
       Alert.alert(
         isPrivate ? 'Make post public' : 'Make post private',
