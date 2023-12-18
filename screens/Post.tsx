@@ -34,13 +34,13 @@ import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useComments } from '../hooks/useComments'
+import { useDeletePost } from '../hooks/useDeletePost'
 import { usePost } from '../hooks/usePost'
 import { useVotePost } from '../hooks/useVotePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
 import { commentService } from '../services/comment'
-import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
 import { Vote } from '../types/vote'
@@ -82,6 +82,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const { votePost, error: votePostError } = useVotePost()
 
+  const { mutate: deletePost, error: deletePostError } = useDeletePost()
+
   const {
     comments,
     getComments,
@@ -107,6 +109,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
     }
   }, [votePostError])
+
+  useEffect(() => {
+    if (deletePostError) {
+      Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [deletePostError])
 
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
@@ -256,18 +264,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               text: 'Yes',
               style: 'destructive',
               onPress: async () => {
-                try {
-                  await postService.markAsDeleted(post.id)
+                deletePost({ postId })
 
-                  if (navigation.canGoBack()) {
-                    navigation.goBack()
-                  } else {
-                    Sentry.Native.captureException('Cannot go back')
-                  }
-                } catch (error) {
-                  Sentry.Native.captureException(error)
-
-                  Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
+                if (navigation.canGoBack()) {
+                  navigation.goBack()
+                } else {
+                  navigation.replace('Tabs')
                 }
               }
             },
@@ -300,10 +302,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       )
     }
   }, [
+    deletePost,
     handleBlockAuthorButtonPress,
     handleReportPostButtonPress,
     navigation,
     post,
+    postId,
     showActionSheetWithOptions,
     user
   ])

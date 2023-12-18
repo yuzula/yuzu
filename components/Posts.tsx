@@ -22,11 +22,11 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useDeletePost } from '../hooks/useDeletePost'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
 import { blockService } from '../services/block'
-import { postService } from '../services/post'
 import { reportService } from '../services/report'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
@@ -75,6 +75,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const { votePost, error: votePostError } = useVotePost()
 
+  const { mutate: deletePost, error: deletePostError } = useDeletePost()
+
   const handlePostVoteButtonPress = useCallback(
     async ({
       postId,
@@ -97,6 +99,12 @@ export const Posts: FunctionComponent<PostsProps> = ({
       Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
     }
   }, [votePostError])
+
+  useEffect(() => {
+    if (deletePostError) {
+      Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [deletePostError])
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
@@ -196,16 +204,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
                 {
                   text: 'Yes',
                   style: 'destructive',
-                  onPress: async () => {
-                    try {
-                      await postService.markAsDeleted(postId)
-
-                      refreshPosts()
-                    } catch (error) {
-                      Sentry.Native.captureException(error)
-
-                      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-                    }
+                  onPress: () => {
+                    deletePost({ postId })
                   }
                 },
                 {
@@ -239,9 +239,9 @@ export const Posts: FunctionComponent<PostsProps> = ({
       }
     },
     [
+      deletePost,
       handleBlockAuthorButtonPress,
       handleReportPostButtonPress,
-      refreshPosts,
       showActionSheetWithOptions,
       user
     ]
