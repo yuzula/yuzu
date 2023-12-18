@@ -49,9 +49,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
     fetchNextPage: fetchPostsNextPage,
     hasNextPage: hasPostsNextPage,
     isFetchingNextPage: arePostsFetchingNextPage
-  } = useCommunityPosts({
-    variables: { communityDomainName: domainName, sortBy, filterBy }
-  })
+  } = useCommunityPosts({ communityDomainName: domainName, sortBy, filterBy })
 
   const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
     useUserRefresh(refetchPosts)

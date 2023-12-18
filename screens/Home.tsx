@@ -34,7 +34,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     fetchNextPage: fetchPostsNextPage,
     hasNextPage: hasPostsNextPage,
     isFetchingNextPage: arePostsFetchingNextPage
-  } = usePosts({ variables: { sortBy, filterBy: 'all' } })
+  } = usePosts({ sortBy, filterBy: 'all' })
 
   const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
     useUserRefresh(refetchPosts)
