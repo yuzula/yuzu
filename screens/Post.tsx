@@ -509,11 +509,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           className="w-full flex-1"
         >
           <View className="border-b border-gray-100">
-            <View className="flex-row items-center justify-between px-3 py-2">
-              <Pressable
-                className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
-                onPress={handleBackButtonPress}
-              >
+            <View className="mx-auto w-5/6 flex-row items-center justify-between">
+              <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
                 <Text className="text-gray-light">
                   <FontAwesome5 name="chevron-left" size={16} />
                 </Text>
@@ -523,10 +520,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 ellipsizeMode="tail"
                 numberOfLines={1}
               >
-                @{post.community_domain_name}
+                Post
               </Text>
               <Pressable
-                className="h-10 w-10 items-center justify-center rounded-lg active:bg-gray-200"
+                className="py-4 pl-4"
                 onPress={handlePostEllipsisButtonPress}
               >
                 <Text className="text-gray-light">
@@ -581,8 +578,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                           })}
                         >
                           {post.is_deleted ? 'Deleted' : post.username}
+                        </Text>{' '}
+                        in{' '}
+                        <Text className="font-Poppins_600SemiBold">
+                          @{post.community_domain_name}
                         </Text>
                       </Text>
+
                       <View className="flex flex-row items-center space-x-2">
                         <Text className="font-Poppins_500Medium text-gray-light">
                           <FontAwesome5 name="arrow-up" size={14} />{' '}
