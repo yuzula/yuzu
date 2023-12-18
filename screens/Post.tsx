@@ -168,37 +168,31 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const handleReportPostButtonPress = useCallback(
     (post: postModel.Schema) => {
-      try {
-        reportPost({ postId: post.id })
+      reportPost({ postId: post.id })
 
-        Alert.alert('Post has been reported for moderation', undefined, [
-          {
-            onPress: () => {
-              Alert.alert(
-                'Would you like to block the author of the post?',
-                undefined,
-                [
-                  {
-                    text: 'No'
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      if (post.user_id) {
-                        handleBlockAuthorButtonPress(post.user_id)
-                      }
+      Alert.alert('Post has been reported for moderation', undefined, [
+        {
+          onPress: () => {
+            Alert.alert(
+              'Would you like to block the author of the post?',
+              undefined,
+              [
+                {
+                  text: 'No'
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => {
+                    if (post.user_id) {
+                      handleBlockAuthorButtonPress(post.user_id)
                     }
                   }
-                ]
-              )
-            }
+                }
+              ]
+            )
           }
-        ])
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
+        }
+      ])
     },
     [handleBlockAuthorButtonPress, reportPost]
   )

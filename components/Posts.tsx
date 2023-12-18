@@ -16,9 +16,8 @@ import {
   View
 } from 'react-native'
 import Popover from 'react-native-popover-view'
-import * as Sentry from 'sentry-expo'
 
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
@@ -129,37 +128,31 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const handleReportPostButtonPress = useCallback(
     ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-      try {
-        reportPost({ postId })
+      reportPost({ postId })
 
-        Alert.alert('Post has been reported for moderation', undefined, [
-          {
-            onPress: () => {
-              Alert.alert(
-                'Would you like to block the author of the post?',
-                undefined,
-                [
-                  {
-                    text: 'No'
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      if (postAuthorId) {
-                        handleBlockAuthorButtonPress(postAuthorId)
-                      }
+      Alert.alert('Post has been reported for moderation', undefined, [
+        {
+          onPress: () => {
+            Alert.alert(
+              'Would you like to block the author of the post?',
+              undefined,
+              [
+                {
+                  text: 'No'
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => {
+                    if (postAuthorId) {
+                      handleBlockAuthorButtonPress(postAuthorId)
                     }
                   }
-                ]
-              )
-            }
+                }
+              ]
+            )
           }
-        ])
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
+        }
+      ])
     },
     [handleBlockAuthorButtonPress, reportPost]
   )
