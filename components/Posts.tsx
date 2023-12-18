@@ -22,11 +22,11 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
-import { blockService } from '../services/block'
 import { reportService } from '../services/report'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
@@ -77,6 +77,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
+  const { mutate: blockUser, error: blockUserError } = useBlockUser()
+
   const handlePostVoteButtonPress = useCallback(
     async ({
       postId,
@@ -106,26 +108,17 @@ export const Posts: FunctionComponent<PostsProps> = ({
     }
   }, [deletePostError])
 
+  useEffect(() => {
+    if (blockUserError) {
+      Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+    }
+  }, [blockUserError])
+
   const handleBlockAuthorButtonPress = useCallback(
-    async (authorId: string) => {
-      try {
-        if (user) {
-          await blockService.blockUser({
-            blockerId: user.id,
-            blockeeId: authorId
-          })
-
-          await refreshPosts()
-        } else {
-          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
-        }
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
+    (authorId: string) => {
+      blockUser({ userId: authorId })
     },
-    [refreshPosts, user]
+    [blockUser]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -192,7 +185,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
             destructiveButtonIndex: 0,
             cancelButtonIndex: 1
           },
-          async index => {
+          index => {
             if (index === 1) {
               return
             }
@@ -232,7 +225,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
             if (index === 0) {
               await handleReportPostButtonPress({ postId, postAuthorId })
             } else if (index === 1 && postAuthorId) {
-              await handleBlockAuthorButtonPress(postAuthorId)
+              handleBlockAuthorButtonPress(postAuthorId)
             }
           }
         )

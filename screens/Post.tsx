@@ -33,13 +33,13 @@ import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthContext } from '../hooks/useAuthContext'
+import { useBlockUser } from '../hooks/useBlockUser'
 import { useComments } from '../hooks/useComments'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { usePost } from '../hooks/usePost'
 import { useVotePost } from '../hooks/useVotePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
-import { blockService } from '../services/block'
 import { commentService } from '../services/comment'
 import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
@@ -84,6 +84,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
+  const { mutate: blockUser, error: blockUserError } = useBlockUser()
+
   const {
     comments,
     getComments,
@@ -116,6 +118,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [deletePostError])
 
+  useEffect(() => {
+    if (blockUserError) {
+      Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+    }
+  }, [blockUserError])
+
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -128,20 +136,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     async (authorId: string) => {
       try {
         if (user && post) {
-          await blockService.blockUser({
-            blockerId: user.id,
-            blockeeId: authorId
-          })
+          blockUser({ userId: authorId })
 
           if (authorId === post.user_id) {
             if (navigation.canGoBack()) {
               navigation.goBack()
             } else {
-              Sentry.Native.captureException('Cannot go back')
+              navigation.replace('Tabs')
             }
-          } else {
-            await refreshPost()
-            await refreshComments()
           }
         } else {
           Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
@@ -152,7 +154,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [navigation, post, refreshComments, refreshPost, user]
+    [blockUser, navigation, post, user]
   )
 
   const handleReportPostButtonPress = useCallback(
@@ -254,7 +256,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           destructiveButtonIndex: 0,
           cancelButtonIndex: 1
         },
-        async index => {
+        index => {
           if (index === 1) {
             return
           }
@@ -263,7 +265,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             {
               text: 'Yes',
               style: 'destructive',
-              onPress: async () => {
+              onPress: () => {
                 deletePost({ postId })
 
                 if (navigation.canGoBack()) {
