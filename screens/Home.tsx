@@ -87,7 +87,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           isFetchingNextPage={arePostsFetchingNextPage}
           isLoading={arePostsInitialLoading}
           isRefreshing={arePostsRefreshing}
-          posts={postsData?.pages.flat(1)}
+          posts={postsData?.pages.map(page => page.posts).flat(1)}
           refreshPosts={refreshPosts}
           sortBy={sortBy}
           sortPosts={setSortBy}

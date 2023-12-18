@@ -53,7 +53,7 @@ export const getAll = async ({
       { ascending: false }
     )
     .not('id', 'in', `(${fetchedIds.join(',')})`)
-    .limit(PAGE_SIZE)
+    .limit(PAGE_SIZE + 1)
 
   if (communityDomainName) {
     query.eq('community_domain_name', communityDomainName)
@@ -73,14 +73,17 @@ export const getAll = async ({
     throw response.error
   }
 
-  return postModel.schema.array().parse(
-    response.data.map(data => ({
-      ...data,
-      user_id: data.user_id ?? undefined,
-      content: data.content ?? undefined,
-      current_user_vote: data.current_user_vote ?? undefined
-    }))
-  )
+  return {
+    posts: postModel.schema.array().parse(
+      response.data.slice(0, PAGE_SIZE).map(data => ({
+        ...data,
+        user_id: data.user_id ?? undefined,
+        content: data.content ?? undefined,
+        current_user_vote: data.current_user_vote ?? undefined
+      }))
+    ),
+    hasNextPage: response.data.length === PAGE_SIZE + 1
+  }
 }
 
 interface CreateParams {

@@ -45,7 +45,12 @@ export const useVotePost = () => {
         (prevPostsData: unknown) => {
           const parsedPrevPostsData = z
             .object({
-              pages: postModel.schema.array().array()
+              pages: z
+                .object({
+                  posts: postModel.schema.array(),
+                  hasNextPage: z.boolean()
+                })
+                .array()
             })
             .passthrough()
             .optional()
@@ -53,8 +58,8 @@ export const useVotePost = () => {
 
           if (parsedPrevPostsData) {
             const prevPost = parsedPrevPostsData.pages
-              .find(page => page.some(post => post.id === postId))
-              ?.find(post => post.id === postId)
+              .find(page => page.posts.some(post => post.id === postId))
+              ?.posts.find(post => post.id === postId)
 
             if (prevPost) {
               prevPost.current_user_vote = vote

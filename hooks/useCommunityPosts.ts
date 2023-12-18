@@ -4,7 +4,10 @@ import { postModel } from '../models/post'
 import { postService } from '../services/post'
 import { FilterBy, SortBy } from '../types/post'
 
-type Response = postModel.Schema[]
+interface Data {
+  posts: postModel.Schema[]
+  hasNextPage: boolean
+}
 
 interface Variables {
   communityDomainName: string
@@ -15,7 +18,7 @@ interface Variables {
 type PageParams = number[]
 
 export const useCommunityPosts = createInfiniteQuery<
-  Response,
+  Data,
   Variables,
   Error,
   PageParams
@@ -29,8 +32,8 @@ export const useCommunityPosts = createInfiniteQuery<
       fetchedIds: pageParam
     }),
   getNextPageParam: (lastPage, _, lastPageParam) =>
-    lastPage.length > 0
-      ? [...lastPageParam, ...lastPage.map(post => post.id)]
+    lastPage.hasNextPage
+      ? [...lastPageParam, ...lastPage.posts.map(post => post.id)]
       : undefined,
   initialPageParam: []
 })

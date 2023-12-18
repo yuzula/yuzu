@@ -195,7 +195,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
             isFetchingNextPage={arePostsFetchingNextPage}
             isLoading={areResourcesInitialLoading}
             isRefreshing={arePostsRefreshing}
-            posts={postsData?.pages.flat(1)}
+            posts={postsData?.pages.map(page => page.posts).flat(1)}
             refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}
