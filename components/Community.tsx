@@ -151,7 +151,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
           </View>
           <View>
             <Skeleton colorMode="light" show={areResourcesInitialLoading}>
-              <Text className="font-Poppins_700Bold text-gray-light">
+              <Text className="font-Poppins_600SemiBold text-gray-light">
                 {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
               </Text>
             </Skeleton>
