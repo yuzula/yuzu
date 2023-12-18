@@ -25,9 +25,9 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { useReportPost } from '../hooks/useReportPost'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
-import { reportService } from '../services/report'
 import { SortBy } from '../types/post'
 import { Vote } from '../types/vote'
 import { Post } from './Post'
@@ -79,6 +79,8 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
+  const { mutate: reportPost, error: reportPostError } = useReportPost()
+
   const handlePostVoteButtonPress = useCallback(
     async ({
       postId,
@@ -114,6 +116,12 @@ export const Posts: FunctionComponent<PostsProps> = ({
     }
   }, [blockUserError])
 
+  useEffect(() => {
+    if (reportPostError) {
+      Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [reportPostError])
+
   const handleBlockAuthorButtonPress = useCallback(
     (authorId: string) => {
       blockUser({ userId: authorId })
@@ -122,16 +130,10 @@ export const Posts: FunctionComponent<PostsProps> = ({
   )
 
   const handleReportPostButtonPress = useCallback(
-    async ({
-      postId,
-      postAuthorId
-    }: {
-      postId: number
-      postAuthorId?: string
-    }) => {
+    ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
       try {
         if (user) {
-          await reportService.reportPost(postId)
+          reportPost({ postId })
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -165,7 +167,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handleBlockAuthorButtonPress, user]
+    [handleBlockAuthorButtonPress, reportPost, user]
   )
 
   const handlePostEllipsisButtonPress = useCallback(
@@ -223,7 +225,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
             }
 
             if (index === 0) {
-              await handleReportPostButtonPress({ postId, postAuthorId })
+              handleReportPostButtonPress({ postId, postAuthorId })
             } else if (index === 1 && postAuthorId) {
               handleBlockAuthorButtonPress(postAuthorId)
             }

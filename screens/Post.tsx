@@ -37,6 +37,7 @@ import { useBlockUser } from '../hooks/useBlockUser'
 import { useComments } from '../hooks/useComments'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { usePost } from '../hooks/usePost'
+import { useReportPost } from '../hooks/useReportPost'
 import { useVotePost } from '../hooks/useVotePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
@@ -86,6 +87,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
+  const { mutate: reportPost, error: reportPostError } = useReportPost()
+
   const {
     comments,
     getComments,
@@ -124,6 +127,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [blockUserError])
 
+  useEffect(() => {
+    if (reportPostError) {
+      Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [reportPostError])
+
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -158,10 +167,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   )
 
   const handleReportPostButtonPress = useCallback(
-    async (post: postModel.Schema) => {
+    (post: postModel.Schema) => {
       try {
         if (user) {
-          await reportService.reportPost(post.id)
+          reportPost({ postId: post.id })
 
           Alert.alert('Post has been reported for moderation', undefined, [
             {
@@ -195,7 +204,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
-    [handleBlockAuthorButtonPress, user]
+    [handleBlockAuthorButtonPress, reportPost, user]
   )
 
   const handleReportCommentButtonPress = useCallback(
@@ -296,7 +305,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           }
 
           if (index === 0) {
-            await handleReportPostButtonPress(post)
+            handleReportPostButtonPress(post)
           } else if (index === 1 && post.user_id) {
             await handleBlockAuthorButtonPress(post.user_id)
           }
