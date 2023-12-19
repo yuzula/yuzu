@@ -1,33 +1,21 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
-import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
-import * as Haptics from 'expo-haptics'
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   Text,
-  TextInput,
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
-import { z } from 'zod'
 
-import { Button } from '../components/Button'
 import { Comment } from '../components/Comment'
+import { PostSkeleton } from '../components/PostSkeleton'
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
@@ -46,31 +34,13 @@ import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
 import { Vote } from '../types/vote'
 
-const createCommentSchema = z.object({
-  content: z.string().trim().min(1).max(600)
-})
-
-type CreateCommentSchema = z.infer<typeof createCommentSchema>
-
 export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   navigation,
   route: {
     params: { postId }
   }
 }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid },
-    reset
-  } = useForm<CreateCommentSchema>({
-    mode: 'all',
-    resolver: zodResolver(createCommentSchema)
-  })
-
   const { showActionSheetWithOptions } = useActionSheet()
-
-  const replyTextFieldRef = useRef<TextInput>(null)
 
   const { profile } = useAuthenticatedProfile()
 
@@ -97,11 +67,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     isRefreshing: areCommentsRefreshing,
     isLoadingOnMount: areCommentsLoadingOnMount
   } = useComments(postId)
-
-  const [replyParentCommentId, setReplyParentCommentId] = useState<
-    number | undefined
-  >()
-  const [isCreateCommentLoading, setIsCreateCommentLoading] = useState(false)
 
   useEffect(() => {
     if (postError) {
@@ -382,57 +347,13 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     await Promise.all([refreshPost(), refreshComments()])
   }, [refreshComments, refreshPost])
 
-  const handleCreateCommentSendButtonPress = useCallback(
-    async ({ content }: CreateCommentSchema) => {
-      if (post) {
-        setIsCreateCommentLoading(true)
-
-        try {
-          await commentService.create({
-            postId: post.id,
-            userId: profile.id,
-            content,
-            parentCommentId: replyParentCommentId
-          })
-
-          await Promise.all([refreshPost(), getComments()])
-
-          await Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Success
-          )
-        } catch (error) {
-          await Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Error
-          )
-
-          Sentry.Native.captureException(error)
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        } finally {
-          reset()
-
-          setIsCreateCommentLoading(false)
-        }
-      } else {
-        Sentry.Native.captureException(
-          new Error('`post` and `user` are not defined when submitting comment')
-        )
-      }
-    },
-    [getComments, post, profile.id, refreshPost, replyParentCommentId, reset]
+  const handleCommentReplyButtonPress = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (commentId: number) => {},
+    []
   )
 
-  const handleCommentReplyButtonPress = useCallback((commentId: number) => {
-    setReplyParentCommentId(commentId)
-
-    replyTextFieldRef.current?.focus()
-  }, [])
-
-  const handleReplyButtonPress = useCallback(() => {
-    setReplyParentCommentId(undefined)
-
-    replyTextFieldRef.current?.focus()
-  }, [])
+  const handlePostReplyButtonPress = useCallback(() => {}, [])
 
   const handlePostVoteButtonPress = useCallback(
     async ({
@@ -446,7 +367,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      await votePost({ postId, vote: newVote, delta })
+      votePost({ postId, vote: newVote, delta })
     },
     [votePost]
   )
@@ -470,40 +391,42 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     [voteComment]
   )
 
+  const areResourcesLoading = !post || !comments || areCommentsLoadingOnMount
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      {!post || !comments || areCommentsLoadingOnMount ? (
-        <ActivityIndicator />
-      ) : (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="w-full flex-1"
-        >
-          <View className="border-b border-gray-100">
-            <View className="mx-auto w-5/6 flex-row items-center justify-between">
-              <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
-                <Text className="text-gray-light">
-                  <FontAwesome5 name="chevron-left" size={16} />
-                </Text>
-              </Pressable>
-              <Text
-                className="shrink text-center font-Poppins_700Bold text-base"
-                ellipsizeMode="tail"
-                numberOfLines={1}
-              >
-                Post
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="w-full flex-1"
+      >
+        <View className="border-b border-gray-100">
+          <View className="mx-auto w-5/6 flex-row items-center justify-between">
+            <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
+              <Text className="text-gray-light">
+                <FontAwesome5 name="chevron-left" size={16} />
               </Text>
-              <Pressable
-                className="py-4 pl-4"
-                onPress={handlePostEllipsisButtonPress}
-              >
-                <Text className="text-gray-light">
-                  <FontAwesome5 name="ellipsis-h" size={16} />
-                </Text>
-              </Pressable>
-            </View>
+            </Pressable>
+            <Text
+              className="shrink text-center font-Poppins_700Bold text-base"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
+              Post
+            </Text>
+            <Pressable
+              className="py-4 pl-4"
+              onPress={handlePostEllipsisButtonPress}
+            >
+              <Text className="text-gray-light">
+                <FontAwesome5 name="ellipsis-h" size={16} />
+              </Text>
+            </Pressable>
           </View>
+        </View>
 
+        {areResourcesLoading ? (
+          <PostSkeleton />
+        ) : (
           <FlatList
             ItemSeparatorComponent={Separator}
             className="w-full"
@@ -562,7 +485,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                           {post.vote_count}
                         </Text>
                         <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="comment-dots" size={14} />{' '}
+                          <FontAwesome5 name="comment" size={14} />{' '}
                           {post.comment_count}
                         </Text>
                         <Text className="font-Poppins_500Medium text-gray-light">
@@ -639,10 +562,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                     </Pressable>
                     <Pressable
                       className="rounded-lg p-2 active:bg-gray-200"
-                      onPress={handleReplyButtonPress}
+                      onPress={handlePostReplyButtonPress}
                     >
                       <Text className="text-gray-light">
-                        <FontAwesome5 name="comment-dots" size={18} />
+                        <FontAwesome5 name="comment" size={18} />
                       </Text>
                     </Pressable>
                   </View>
@@ -730,58 +653,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             )}
             onRefresh={handleRefresh}
           />
-
-          <View className="space-y-2 border-t border-gray-200 py-2">
-            {replyParentCommentId && (
-              <View className="mx-auto w-5/6">
-                <Text className="font-Poppins_500Medium">
-                  Replying to{' '}
-                  <Text className="font-Poppins_600SemiBold">
-                    {
-                      comments.find(
-                        comment => comment.id === replyParentCommentId
-                      )?.username
-                    }
-                  </Text>
-                </Text>
-              </View>
-            )}
-
-            <View className="mx-auto w-5/6 flex-row space-x-2">
-              <Controller
-                control={control}
-                name="content"
-                rules={{ required: true }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    ref={replyTextFieldRef}
-                    multiline
-                    className="max-h-44 basis-9/12 rounded-xl bg-gray-100 p-2 font-Poppins_500Medium"
-                    editable={!isCreateCommentLoading}
-                    maxLength={600}
-                    placeholder="Add a comment"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={() => {
-                      setReplyParentCommentId(undefined)
-                      onBlur()
-                    }}
-                  />
-                )}
-              />
-              <Button
-                className="basis-3/12"
-                isDisabled={!isValid}
-                isFixedHeight={false}
-                isLoading={isCreateCommentLoading}
-                onPress={handleSubmit(handleCreateCommentSendButtonPress)}
-              >
-                Send
-              </Button>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      )}
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

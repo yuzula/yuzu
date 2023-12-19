@@ -144,7 +144,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                   <FontAwesome5 name="arrow-up" size={14} /> {voteCount}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="comment-dots" size={14} /> {commentCount}
+                  <FontAwesome5 name="comment" size={14} /> {commentCount}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
                   <FontAwesome5 name="clock" size={14} />{' '}
