@@ -73,7 +73,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
                 verticalOffset={POPOVER_VERTICAL_OFFSET}
                 from={
                   <Pressable>
-                    <Text className="text-gray-light">
+                    <Text className=" text-gray-light">
                       <FontAwesome5 name="users" size={14} />
                     </Text>
                   </Pressable>
@@ -133,56 +133,68 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         </Text>
       </View>
 
-      <View className="mx-auto w-5/6 flex-row items-center justify-end space-x-1">
-        {variant === 'parent' && (
-          <Pressable
-            className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onReplyButtonPress?.(id)}
+      <View className="mx-auto w-5/6 flex-row items-center justify-between">
+        <View className="shrink flex-row">
+          <Text
+            className="font-Poppins_500Medium text-gray-light"
+            ellipsizeMode="tail"
+            numberOfLines={1}
           >
-            <Text className="text-gray-light">
-              <FontAwesome5 name="reply" size={14} />{' '}
-              <Text className="font-Poppins_500Medium">Reply</Text>
+            3 replies
+          </Text>
+        </View>
+
+        <View className="flex-row items-center space-x-1">
+          {variant === 'parent' && (
+            <Pressable
+              className="rounded-lg p-2 active:bg-gray-200"
+              onPress={() => onReplyButtonPress?.(id)}
+            >
+              <Text className="text-gray-light">
+                <FontAwesome5 name="comment" size={14} />
+              </Text>
+            </Pressable>
+          )}
+          <Pressable
+            className={clsx(
+              {
+                'bg-pink-light active:opacity-90': currentUserVote === 'upvote',
+                'active:bg-gray-200': currentUserVote !== 'upvote'
+              },
+              'rounded-lg p-2'
+            )}
+            onPress={() => onUpvoteButtonPress?.(id)}
+          >
+            <Text
+              className={clsx({
+                'text-white': currentUserVote === 'upvote',
+                'text-gray-light': currentUserVote !== 'upvote'
+              })}
+            >
+              <FontAwesome5 name="arrow-up" size={14} />
             </Text>
           </Pressable>
-        )}
-        <Pressable
-          className={clsx(
-            {
-              'bg-pink-light active:opacity-90': currentUserVote === 'upvote',
-              'active:bg-gray-200': currentUserVote !== 'upvote'
-            },
-            'rounded-lg p-2'
-          )}
-          onPress={() => onUpvoteButtonPress?.(id)}
-        >
-          <Text
-            className={clsx({
-              'text-white': currentUserVote === 'upvote',
-              'text-gray-light': currentUserVote !== 'upvote'
-            })}
+          <Pressable
+            className={clsx(
+              {
+                'bg-blue-light active:opacity-90':
+                  currentUserVote === 'downvote',
+                'active:bg-gray-200': currentUserVote !== 'downvote'
+              },
+              'rounded-lg p-2'
+            )}
+            onPress={() => onDownvoteButtonPress?.(id)}
           >
-            <FontAwesome5 name="arrow-up" size={14} />
-          </Text>
-        </Pressable>
-        <Pressable
-          className={clsx(
-            {
-              'bg-blue-light active:opacity-90': currentUserVote === 'downvote',
-              'active:bg-gray-200': currentUserVote !== 'downvote'
-            },
-            'rounded-lg p-2'
-          )}
-          onPress={() => onDownvoteButtonPress?.(id)}
-        >
-          <Text
-            className={clsx({
-              'text-white': currentUserVote === 'downvote',
-              'text-gray-light': currentUserVote !== 'downvote'
-            })}
-          >
-            <FontAwesome5 name="arrow-down" size={14} />
-          </Text>
-        </Pressable>
+            <Text
+              className={clsx({
+                'text-white': currentUserVote === 'downvote',
+                'text-gray-light': currentUserVote !== 'downvote'
+              })}
+            >
+              <FontAwesome5 name="arrow-down" size={14} />
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   )
