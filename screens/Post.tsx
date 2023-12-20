@@ -402,9 +402,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         <View className="border-b border-gray-100">
           <View className="mx-auto w-5/6 flex-row items-center justify-between">
             <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
-              <Text className="text-gray-light">
-                <FontAwesome5 name="chevron-left" size={16} />
-              </Text>
+              <FontAwesome5 name="chevron-left" size={16} />
             </Pressable>
             <Text
               className="shrink text-center font-Poppins_700Bold text-base"
@@ -417,9 +415,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               className="py-4 pl-4"
               onPress={handlePostEllipsisButtonPress}
             >
-              <Text className="text-gray-light">
-                <FontAwesome5 name="ellipsis-h" size={16} />
-              </Text>
+              <FontAwesome5 name="ellipsis-h" size={16} />
             </Pressable>
           </View>
         </View>
@@ -581,6 +577,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 scrollEnabled={false}
                 ListHeaderComponent={() => (
                   <Comment
+                    commentCount={item.item.comment_count}
                     communityDomainName={post.community_domain_name}
                     content={item.item.content}
                     createdAt={item.item.created_at}
@@ -616,6 +613,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 )}
                 renderItem={item => (
                   <Comment
+                    commentCount={item.item.comment_count}
                     communityDomainName={post.community_domain_name}
                     content={item.item.content}
                     createdAt={item.item.created_at}

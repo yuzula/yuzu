@@ -12,6 +12,7 @@ interface CommentProps {
   id: number
   username?: string
   voteCount: number
+  commentCount: number
   createdAt: Date
   isDeleted: boolean
   isFlagged: boolean
@@ -34,6 +35,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     id,
     username,
     voteCount,
+    commentCount,
     createdAt,
     content,
     communityDomainName,
@@ -135,15 +137,16 @@ export const Comment: FunctionComponent<CommentProps> = memo(
 
       <View className="mx-auto w-5/6 flex-row items-center justify-between">
         <View className="shrink flex-row">
-          <Text
-            className="font-Poppins_500Medium text-gray-light"
-            ellipsizeMode="tail"
-            numberOfLines={1}
-          >
-            3 replies
-          </Text>
+          {commentCount > 0 && (
+            <Text
+              className="font-Poppins_500Medium text-gray-light"
+              ellipsizeMode="tail"
+              numberOfLines={1}
+            >
+              {commentCount} {commentCount > 1 ? 'replies' : 'reply'}
+            </Text>
+          )}
         </View>
-
         <View className="flex-row items-center space-x-1">
           {variant === 'parent' && (
             <Pressable
