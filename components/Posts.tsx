@@ -351,9 +351,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
 
   return isLoading ? (
-    <View className="w-full grow border-t border-gray-100">
-      <PostsSkeleton />
-    </View>
+    <PostsSkeleton />
   ) : (
     <FlatList
       ItemSeparatorComponent={Separator}
