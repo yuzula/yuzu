@@ -194,11 +194,11 @@ export const Community: FunctionComponent<CommunityProps> = ({
             isLoading={areResourcesInitialLoading}
             isRefreshing={arePostsRefreshing}
             posts={postsData?.pages.map(page => page.posts).flat(1)}
-            refreshPosts={refreshPosts}
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}
             sortPosts={setSortBy}
             onPostPress={onPostPress}
+            onRefresh={refreshPosts}
           />
         </View>
       </View>

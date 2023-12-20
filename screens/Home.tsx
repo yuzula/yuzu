@@ -80,11 +80,11 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           isLoading={arePostsInitialLoading}
           isRefreshing={arePostsRefreshing}
           posts={postsData?.pages.map(page => page.posts).flat(1)}
-          refreshPosts={refreshPosts}
           sortBy={sortBy}
           sortPosts={setSortBy}
           onPostCommunityDomainNamePress={handlePostCommunityDomainNamePress}
           onPostPress={handlePostPress}
+          onRefresh={refreshPosts}
         />
       </View>
     </View>

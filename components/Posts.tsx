@@ -44,8 +44,8 @@ interface PostsProps {
   sortBy: SortBy
   shouldDisplayCommunityDomainName?: boolean
   shouldDisplayInternalPopover?: boolean
-  refreshPosts: () => Promise<void>
   sortPosts: (sortBy: SortBy) => void
+  onRefresh: () => Promise<void>
   onPostPress: (postId: number) => void
   onPostCommunityDomainNamePress?: (domainName: string) => void
 }
@@ -62,7 +62,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   shouldDisplayCommunityDomainName = false,
   shouldDisplayInternalPopover = true,
   sortPosts,
-  refreshPosts,
+  onRefresh,
   onPostPress,
   onPostCommunityDomainNamePress
 }) => {
@@ -366,7 +366,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
       renderItem={renderListItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.2}
-      onRefresh={refreshPosts}
+      onRefresh={onRefresh}
     />
   )
 }
