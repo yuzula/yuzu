@@ -1,8 +1,14 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react'
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   KeyboardAvoidingView,
@@ -22,10 +28,12 @@ import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
-import { useComments } from '../hooks/useComments'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { usePost } from '../hooks/usePost'
 import { useReportPost } from '../hooks/useReportPost'
+import { useRootComments } from '../hooks/useRootComments'
+import { useUserRefresh } from '../hooks/useUserRefresh'
+import { useVoteComment } from '../hooks/useVoteComment'
 import { useVotePost } from '../hooks/useVotePost'
 import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
@@ -40,18 +48,24 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     params: { postId }
   }
 }) => {
+  const [areCommentsInitialLoading, setAreCommentsInitialLoading] =
+    useState(true)
+  const [isPostInitialLoading, setIsPostInitialLoading] = useState(true)
+
   const { showActionSheetWithOptions } = useActionSheet()
 
   const { profile } = useAuthenticatedProfile()
 
   const {
-    post,
+    data: post,
     error: postError,
-    refresh: refreshPost,
-    isRefreshing: isPostRefreshing
+    isFetching: isPostFetching,
+    refetch: refetchPost
   } = usePost(postId)
 
-  const { votePost, error: votePostError } = useVotePost()
+  const { mutate: votePost, error: votePostError } = useVotePost()
+
+  const { mutate: voteComment, error: voteCommentError } = useVoteComment()
 
   const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
@@ -60,16 +74,35 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const { mutate: reportPost, error: reportPostError } = useReportPost()
 
   const {
-    comments,
-    getComments,
-    refreshComments,
-    voteComment,
-    isRefreshing: areCommentsRefreshing,
-    isLoadingOnMount: areCommentsLoadingOnMount
-  } = useComments(postId)
+    data: commentsData,
+    isFetching: areCommentsFetching,
+    refetch: refetchComments,
+    fetchNextPage: fetchCommentsNextPage,
+    hasNextPage: hasCommentsNextPage,
+    isFetchingNextPage: areCommentsFetchingNextPage
+  } = useRootComments({ postId })
+
+  const { refresh: refreshComments, isRefreshing: areCommentsRefreshing } =
+    useUserRefresh(refetchComments)
+  const { refresh: refreshPost, isRefreshing: isPostRefreshing } =
+    useUserRefresh(refetchPost)
+
+  useEffect(() => {
+    if (!areCommentsFetching) {
+      setAreCommentsInitialLoading(false)
+    }
+  }, [areCommentsFetching])
+
+  useEffect(() => {
+    if (!isPostFetching) {
+      setIsPostInitialLoading(false)
+    }
+  }, [areCommentsFetching, isPostFetching])
 
   useEffect(() => {
     if (postError) {
+      Sentry.Native.captureException(postError)
+
       Alert.alert('Could not fetch post', GENERIC_ERROR_MESSAGE)
     }
   }, [postError])
@@ -79,6 +112,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
     }
   }, [votePostError])
+
+  useEffect(() => {
+    if (voteCommentError) {
+      Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
+    }
+  }, [voteCommentError])
 
   useEffect(() => {
     if (deletePostError) {
@@ -163,7 +202,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   )
 
   const handleReportCommentButtonPress = useCallback(
-    async (comment: commentModel.BaseSchema) => {
+    async (comment: commentModel.Schema) => {
       try {
         await reportService.reportComment(comment.id)
 
@@ -271,7 +310,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   ])
 
   const handleCommentEllipsisButtonPress = useCallback(
-    (comment: commentModel.BaseSchema) => {
+    (comment: commentModel.Schema) => {
       if (profile.id === comment.user_id) {
         showActionSheetWithOptions(
           {
@@ -295,8 +334,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   onPress: async () => {
                     try {
                       await commentService.markAsDeleted(comment.id)
-
-                      getComments()
                     } catch (error) {
                       Sentry.Native.captureException(error)
 
@@ -335,17 +372,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       }
     },
     [
-      getComments,
       handleBlockAuthorButtonPress,
       handleReportCommentButtonPress,
       profile.id,
       showActionSheetWithOptions
     ]
   )
-
-  const handleRefresh = useCallback(async () => {
-    await Promise.all([refreshPost(), refreshComments()])
-  }, [refreshComments, refreshPost])
 
   const handleCommentReplyButtonPress = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -375,23 +407,38 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   const handleCommentVoteButtonPress = useCallback(
     async ({
       commentId,
-      parentCommentId,
       oldVote,
       vote
     }: {
       commentId: number
-      parentCommentId?: number
       oldVote?: Vote
       vote: Vote
     }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      await voteComment({ commentId, parentCommentId, vote: newVote, delta })
+      voteComment({ commentId, vote: newVote, delta })
     },
     [voteComment]
   )
 
-  const areResourcesLoading = !post || !comments || areCommentsLoadingOnMount
+  const handleEndReached = useCallback(() => {
+    if (!areCommentsFetching && hasCommentsNextPage) {
+      fetchCommentsNextPage()
+    }
+  }, [areCommentsFetching, fetchCommentsNextPage, hasCommentsNextPage])
+
+  const renderListFooterComponent = useCallback(() => {
+    if (areCommentsFetchingNextPage) {
+      return <ActivityIndicator className="py-4" />
+    }
+
+    return null
+  }, [areCommentsFetchingNextPage])
+
+  const handleListRefresh = useCallback(() => {
+    refreshPost()
+    refreshComments()
+  }, [refreshComments, refreshPost])
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
@@ -420,14 +467,15 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           </View>
         </View>
 
-        {areResourcesLoading ? (
+        {isPostInitialLoading || areCommentsInitialLoading || !post ? (
           <PostSkeleton />
         ) : (
           <FlatList
             ItemSeparatorComponent={Separator}
+            ListFooterComponent={renderListFooterComponent}
             className="w-full"
             contentContainerStyle={{ flexGrow: 1 }}
-            data={comments}
+            data={commentsData?.pages.map(page => page.comments).flat(1)}
             keyExtractor={item => item.id.toString()}
             keyboardDismissMode="interactive"
             refreshing={isPostRefreshing || areCommentsRefreshing}
@@ -568,88 +616,43 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                 </View>
               </>
             }
-            // TODO: refactor this into a useCallback
             renderItem={item => (
-              <FlatList
-                ItemSeparatorComponent={Separator}
-                data={item.item.children}
-                keyExtractor={item => item.id.toString()}
-                scrollEnabled={false}
-                ListHeaderComponent={() => (
-                  <Comment
-                    commentCount={item.item.comment_count}
-                    communityDomainName={post.community_domain_name}
-                    content={item.item.content}
-                    createdAt={item.item.created_at}
-                    currentUserVote={item.item.current_user_vote}
-                    id={item.item.id}
-                    isAuthorInternal={item.item.is_author_internal}
-                    isDeleted={item.item.is_deleted}
-                    isFlagged={item.item.is_flagged}
-                    isPostPrivate={post.is_private}
-                    username={item.item.username}
-                    voteCount={item.item.vote_count}
-                    onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
-                    onDownvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
-                        commentId: item.item.id,
-                        parentCommentId: item.item.parent_comment_id,
-                        oldVote: item.item.current_user_vote,
-                        vote: 'downvote'
-                      })
-                    }
-                    onEllipsisButtonPress={() =>
-                      handleCommentEllipsisButtonPress(item.item)
-                    }
-                    onUpvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
-                        commentId: item.item.id,
-                        parentCommentId: item.item.parent_comment_id,
-                        oldVote: item.item.current_user_vote,
-                        vote: 'upvote'
-                      })
-                    }
-                  />
-                )}
-                renderItem={item => (
-                  <Comment
-                    commentCount={item.item.comment_count}
-                    communityDomainName={post.community_domain_name}
-                    content={item.item.content}
-                    createdAt={item.item.created_at}
-                    currentUserVote={item.item.current_user_vote}
-                    id={item.item.id}
-                    isAuthorInternal={item.item.is_author_internal}
-                    isDeleted={item.item.is_deleted}
-                    isFlagged={item.item.is_flagged}
-                    isPostPrivate={post.is_private}
-                    username={item.item.username}
-                    variant="child"
-                    voteCount={item.item.vote_count}
-                    onDownvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
-                        commentId: item.item.id,
-                        parentCommentId: item.item.parent_comment_id,
-                        oldVote: item.item.current_user_vote,
-                        vote: 'downvote'
-                      })
-                    }
-                    onEllipsisButtonPress={() =>
-                      handleCommentEllipsisButtonPress(item.item)
-                    }
-                    onUpvoteButtonPress={() =>
-                      handleCommentVoteButtonPress({
-                        commentId: item.item.id,
-                        parentCommentId: item.item.parent_comment_id,
-                        oldVote: item.item.current_user_vote,
-                        vote: 'upvote'
-                      })
-                    }
-                  />
-                )}
+              <Comment
+                commentCount={item.item.comment_count}
+                communityDomainName={post.community_domain_name}
+                content={item.item.content}
+                createdAt={item.item.created_at}
+                currentUserVote={item.item.current_user_vote}
+                id={item.item.id}
+                isAuthorInternal={item.item.is_author_internal}
+                isDeleted={item.item.is_deleted}
+                isFlagged={item.item.is_flagged}
+                isPostPrivate={post.is_private}
+                username={item.item.username}
+                voteCount={item.item.vote_count}
+                onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
+                onDownvoteButtonPress={() =>
+                  handleCommentVoteButtonPress({
+                    commentId: item.item.id,
+                    oldVote: item.item.current_user_vote,
+                    vote: 'downvote'
+                  })
+                }
+                onEllipsisButtonPress={() =>
+                  handleCommentEllipsisButtonPress(item.item)
+                }
+                onUpvoteButtonPress={() =>
+                  handleCommentVoteButtonPress({
+                    commentId: item.item.id,
+                    oldVote: item.item.current_user_vote,
+                    vote: 'upvote'
+                  })
+                }
               />
             )}
-            onRefresh={handleRefresh}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.2}
+            onRefresh={handleListRefresh}
           />
         )}
       </KeyboardAvoidingView>

@@ -70,7 +70,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
 
   const { profile } = useAuthenticatedProfile()
 
-  const { votePost, error: votePostError } = useVotePost()
+  const { mutate: votePost, error: votePostError } = useVotePost()
 
   const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
@@ -329,6 +329,11 @@ export const Posts: FunctionComponent<PostsProps> = ({
     ]
   )
 
+  const listKeyExtractor = useCallback(
+    (post: postModel.Schema) => post.id.toString(),
+    []
+  )
+
   const renderListFooterComponent = useCallback(() => {
     if (isFetchingNextPage) {
       return <ActivityIndicator className="py-4" />
@@ -337,7 +342,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
     return null
   }, [isFetchingNextPage])
 
-  const handleOnEndReached = useCallback(() => {
+  const handleEndReached = useCallback(() => {
     if (!isFetching && hasNextPage) {
       fetchNextPage()
     }
@@ -358,10 +363,10 @@ export const Posts: FunctionComponent<PostsProps> = ({
       className="w-full border-t border-gray-100"
       contentContainerStyle={listContentContainerStyle}
       data={posts}
-      keyExtractor={item => item.id.toString()}
+      keyExtractor={listKeyExtractor}
       refreshing={isRefreshing}
       renderItem={renderListItem}
-      onEndReached={handleOnEndReached}
+      onEndReached={handleEndReached}
       onEndReachedThreshold={0.2}
       onRefresh={refreshPosts}
     />

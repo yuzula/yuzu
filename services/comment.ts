@@ -2,6 +2,8 @@ import { supabase } from '../clients/supabase'
 import { commentModel } from '../models/comment'
 import { Vote } from '../types/vote'
 
+const PAGE_SIZE = 10
+
 interface CreateParams {
   postId: number
   userId: string
@@ -27,58 +29,71 @@ export const create = async ({
   }
 }
 
-const getAllChildren = async (commentId: number) => {
+interface GetAllChildrenParams {
+  commentId: number
+  fetchedIds: number[]
+}
+
+export const getAllChildren = async ({
+  commentId,
+  fetchedIds
+}: GetAllChildrenParams) => {
   const response = await supabase
     .from('post_screen_comments')
     .select('*')
-    .eq('parent_comment_id', commentId)
+    .is('parent_comment_id', null)
+    .eq('post_id', commentId)
     .order('vote_count', { ascending: false })
+    .not('id', 'in', `(${fetchedIds.join(',')})`)
+    .limit(PAGE_SIZE + 1)
 
   if (response.error) {
     throw response.error
   }
 
-  return commentModel.baseSchema.array().parse(
-    response.data.map(data => ({
-      ...data,
-      parent_comment_id: commentId,
-      user_id: data.user_id ?? undefined,
-      content: data.content ?? undefined,
-      current_user_vote: data.current_user_vote ?? undefined
-    }))
-  )
+  return {
+    comments: commentModel.schema.array().parse(
+      response.data.slice(0, PAGE_SIZE).map(data => ({
+        ...data,
+        user_id: data.user_id ?? undefined,
+        content: data.content ?? undefined,
+        current_user_vote: data.current_user_vote ?? undefined
+      }))
+    ),
+    hasNextPage: response.data.length === PAGE_SIZE + 1
+  }
 }
 
-export const getAllRoot = async (postId: number) => {
+interface GetAllRootParams {
+  postId: number
+  fetchedIds: number[]
+}
+
+export const getAllRoot = async ({ postId, fetchedIds }: GetAllRootParams) => {
   const response = await supabase
     .from('post_screen_comments')
     .select('*')
     .is('parent_comment_id', null)
     .eq('post_id', postId)
     .order('vote_count', { ascending: false })
+    .not('id', 'in', `(${fetchedIds.join(',')})`)
+    .limit(PAGE_SIZE + 1)
 
   if (response.error) {
     throw response.error
   }
 
-  const rootComments = commentModel.baseSchema.array().parse(
-    response.data.map(data => ({
-      ...data,
-      parent_comment_id: undefined,
-      user_id: data.user_id ?? undefined,
-      content: data.content ?? undefined,
-      current_user_vote: data.current_user_vote ?? undefined
-    }))
-  )
-
-  return commentModel.schema.array().parse(
-    await Promise.all(
-      rootComments.map(async comment => ({
-        ...comment,
-        children: await getAllChildren(comment.id)
+  return {
+    comments: commentModel.schema.array().parse(
+      response.data.slice(0, PAGE_SIZE).map(data => ({
+        ...data,
+        user_id: data.user_id ?? undefined,
+        content: data.content ?? undefined,
+        current_user_vote: data.current_user_vote ?? undefined
       }))
-    )
-  )
+    ),
+    hasNextPage: response.data.length === PAGE_SIZE + 1
+  }
 }
 
 export const markAsDeleted = async (id: number) => {

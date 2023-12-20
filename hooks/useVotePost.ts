@@ -19,7 +19,7 @@ export const useVotePost = () => {
 
   const { profile } = useAuthenticatedProfile()
 
-  const { mutate, error } = useMutation({
+  return useMutation({
     mutationFn: ({ postId, vote }: VotePostParams) =>
       postService.registerVote({
         postId,
@@ -100,9 +100,4 @@ export const useVotePost = () => {
       queryClient.setQueryData(['post', postId], context.prevPostQuery)
     }
   })
-
-  return {
-    votePost: mutate,
-    error
-  }
 }

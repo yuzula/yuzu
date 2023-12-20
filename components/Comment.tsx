@@ -200,5 +200,9 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         </View>
       </View>
     </View>
-  )
+  ),
+  (prevProps, nextProps) =>
+    prevProps.voteCount === nextProps.voteCount &&
+    prevProps.currentUserVote === nextProps.currentUserVote &&
+    prevProps.commentCount === nextProps.commentCount
 )

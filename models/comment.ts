@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const baseSchema = z.object({
+export const schema = z.object({
   id: z.number(),
   username: z.string().optional(),
   user_id: z.string().optional(),
@@ -9,18 +9,11 @@ export const baseSchema = z.object({
   vote_count: z.number(),
   comment_count: z.number(),
   is_author_internal: z.boolean(),
-  parent_comment_id: z.number().optional(),
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),
   is_deleted: z.boolean(),
   is_flagged: z.boolean(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date().optional()
-})
-
-export type BaseSchema = z.infer<typeof baseSchema>
-
-export const schema = baseSchema.extend({
-  children: baseSchema.array()
 })
 
 export type Schema = z.infer<typeof schema>
