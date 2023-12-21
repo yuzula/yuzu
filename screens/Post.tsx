@@ -1,6 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
-import clsx from 'clsx'
 import React, {
   FunctionComponent,
   useCallback,
@@ -8,9 +7,7 @@ import React, {
   useState
 } from 'react'
 import {
-  ActivityIndicator,
   Alert,
-  FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -20,12 +17,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
-import { Comment } from '../components/Comment'
+import { Comments } from '../components/Comments'
+import { PostCommentsHeader } from '../components/PostCommentsHeader'
 import { PostSkeleton } from '../components/PostSkeleton'
-import { Separator } from '../components/Separator'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { formatDuration } from '../helpers/time'
-import { getResultingVote } from '../helpers/vote'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
@@ -33,14 +28,8 @@ import { usePost } from '../hooks/usePost'
 import { useReportPost } from '../hooks/useReportPost'
 import { useRootComments } from '../hooks/useRootComments'
 import { useUserRefresh } from '../hooks/useUserRefresh'
-import { useVoteComment } from '../hooks/useVoteComment'
-import { useVotePost } from '../hooks/useVotePost'
-import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
-import { commentService } from '../services/comment'
-import { reportService } from '../services/report'
 import { RootStackScreenProps } from '../types'
-import { Vote } from '../types/vote'
 
 export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   navigation,
@@ -62,10 +51,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     isFetching: isPostFetching,
     refetch: refetchPost
   } = usePost(postId)
-
-  const { mutate: votePost, error: votePostError } = useVotePost()
-
-  const { mutate: voteComment, error: voteCommentError } = useVoteComment()
 
   const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
@@ -108,18 +93,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   }, [postError])
 
   useEffect(() => {
-    if (votePostError) {
-      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-    }
-  }, [votePostError])
-
-  useEffect(() => {
-    if (voteCommentError) {
-      Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
-    }
-  }, [voteCommentError])
-
-  useEffect(() => {
     if (deletePostError) {
       Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
     }
@@ -147,24 +120,18 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const handleBlockAuthorButtonPress = useCallback(
     async (authorId: string) => {
-      try {
-        if (post) {
-          blockUser({ userId: authorId })
+      if (!post) {
+        return Alert.alert('Could not get post', GENERIC_ERROR_MESSAGE)
+      }
 
-          if (authorId === post.user_id) {
-            if (navigation.canGoBack()) {
-              navigation.goBack()
-            } else {
-              navigation.replace('Tabs')
-            }
-          }
+      blockUser({ userId: authorId })
+
+      if (authorId === post.user_id) {
+        if (navigation.canGoBack()) {
+          navigation.goBack()
         } else {
-          Alert.alert('Could not get current user', GENERIC_ERROR_MESSAGE)
+          navigation.replace('Tabs')
         }
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
     },
     [blockUser, navigation, post]
@@ -201,42 +168,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     [handleBlockAuthorButtonPress, reportPost]
   )
 
-  const handleReportCommentButtonPress = useCallback(
-    async (comment: commentModel.Schema) => {
-      try {
-        await reportService.reportComment(comment.id)
-
-        Alert.alert('Comment has been reported for moderation', undefined, [
-          {
-            onPress: () => {
-              Alert.alert(
-                'Would you like to block the author of the comment?',
-                undefined,
-                [
-                  {
-                    text: 'No'
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      if (comment.user_id) {
-                        handleBlockAuthorButtonPress(comment.user_id)
-                      }
-                    }
-                  }
-                ]
-              )
-            }
-          }
-        ])
-      } catch (error) {
-        Sentry.Native.captureException(error)
-
-        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-      }
-    },
-    [handleBlockAuthorButtonPress]
-  )
+  const handleListRefresh = useCallback(() => {
+    refreshPost()
+    refreshComments()
+  }, [refreshComments, refreshPost])
 
   const handlePostEllipsisButtonPress = useCallback(() => {
     if (!post) {
@@ -309,136 +244,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     showActionSheetWithOptions
   ])
 
-  const handleCommentEllipsisButtonPress = useCallback(
-    (comment: commentModel.Schema) => {
-      if (profile.id === comment.user_id) {
-        showActionSheetWithOptions(
-          {
-            title: 'More actions',
-            options: ['Delete this comment', 'Cancel'],
-            destructiveButtonIndex: 0,
-            cancelButtonIndex: 1
-          },
-          async index => {
-            if (index === 1) {
-              return
-            }
-
-            Alert.alert(
-              'Are you sure you want to delete this comment?',
-              undefined,
-              [
-                {
-                  text: 'Yes',
-                  style: 'destructive',
-                  onPress: async () => {
-                    try {
-                      await commentService.markAsDeleted(comment.id)
-                    } catch (error) {
-                      Sentry.Native.captureException(error)
-
-                      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-                    }
-                  }
-                },
-                {
-                  text: 'Cancel',
-                  style: 'cancel'
-                }
-              ]
-            )
-          }
-        )
-      } else {
-        showActionSheetWithOptions(
-          {
-            title: 'More actions',
-            options: ['Report this comment', 'Block the author', 'Cancel'],
-            destructiveButtonIndex: 1,
-            cancelButtonIndex: 2
-          },
-          async index => {
-            if (index === 2) {
-              return
-            }
-
-            if (index === 0) {
-              await handleReportCommentButtonPress(comment)
-            } else if (index === 1 && comment.user_id) {
-              await handleBlockAuthorButtonPress(comment.user_id)
-            }
-          }
-        )
-      }
-    },
-    [
-      handleBlockAuthorButtonPress,
-      handleReportCommentButtonPress,
-      profile.id,
-      showActionSheetWithOptions
-    ]
+  const renderListHeader = useCallback(
+    () => (post ? <PostCommentsHeader post={post} /> : null),
+    [post]
   )
-
-  const handleCommentReplyButtonPress = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (commentId: number) => {},
-    []
-  )
-
-  const handlePostReplyButtonPress = useCallback(() => {}, [])
-
-  const handlePostVoteButtonPress = useCallback(
-    async ({
-      postId,
-      oldVote,
-      vote
-    }: {
-      postId: number
-      oldVote?: Vote
-      vote: Vote
-    }) => {
-      const { newVote, delta } = getResultingVote({ oldVote, vote })
-
-      votePost({ postId, vote: newVote, delta })
-    },
-    [votePost]
-  )
-
-  const handleCommentVoteButtonPress = useCallback(
-    async ({
-      commentId,
-      oldVote,
-      vote
-    }: {
-      commentId: number
-      oldVote?: Vote
-      vote: Vote
-    }) => {
-      const { newVote, delta } = getResultingVote({ oldVote, vote })
-
-      voteComment({ commentId, vote: newVote, delta })
-    },
-    [voteComment]
-  )
-
-  const handleEndReached = useCallback(() => {
-    if (!areCommentsFetching && hasCommentsNextPage) {
-      fetchCommentsNextPage()
-    }
-  }, [areCommentsFetching, fetchCommentsNextPage, hasCommentsNextPage])
-
-  const renderListFooterComponent = useCallback(() => {
-    if (areCommentsFetchingNextPage) {
-      return <ActivityIndicator className="py-4" />
-    }
-
-    return null
-  }, [areCommentsFetchingNextPage])
-
-  const handleListRefresh = useCallback(() => {
-    refreshPost()
-    refreshComments()
-  }, [refreshComments, refreshPost])
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
@@ -470,188 +279,16 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         {isPostInitialLoading || areCommentsInitialLoading || !post ? (
           <PostSkeleton />
         ) : (
-          <FlatList
-            ItemSeparatorComponent={Separator}
-            ListFooterComponent={renderListFooterComponent}
-            className="w-full"
-            contentContainerStyle={{ flexGrow: 1 }}
-            data={commentsData?.pages.map(page => page.comments).flat(1)}
-            keyExtractor={item => item.id.toString()}
-            keyboardDismissMode="interactive"
-            refreshing={isPostRefreshing || areCommentsRefreshing}
-            ListEmptyComponent={() => (
-              <View className="flex-1 items-center justify-center">
-                <Text className="font-Poppins_600SemiBold text-base text-gray-light">
-                  No comments yet
-                </Text>
-                <Text className="font-Poppins_500Medium text-gray-light">
-                  Be the first to comment!
-                </Text>
-              </View>
-            )}
-            ListHeaderComponent={
-              <>
-                <View className="w-full border-b border-gray-200">
-                  <View className="mx-auto w-5/6 space-y-2 py-4">
-                    <Text
-                      className={clsx('font-Poppins_600SemiBold text-base', {
-                        'font-Poppins_600SemiBold_Italic text-gray-light':
-                          post.is_deleted || post.is_flagged
-                      })}
-                    >
-                      {post.is_deleted
-                        ? 'Deleted'
-                        : post.is_flagged
-                        ? 'Flagged'
-                        : post.content}
-                    </Text>
-
-                    <View className="space-y-1">
-                      <Text className="font-Poppins_500Medium text-gray-light">
-                        by{' '}
-                        <Text
-                          className={clsx('font-Poppins_600SemiBold', {
-                            'font-Poppins_600SemiBold_Italic text-gray-light':
-                              post.is_deleted
-                          })}
-                        >
-                          {post.is_deleted ? 'Deleted' : post.username}
-                        </Text>{' '}
-                        in{' '}
-                        <Text className="font-Poppins_600SemiBold">
-                          @{post.community_domain_name}
-                        </Text>
-                      </Text>
-
-                      <View className="flex flex-row items-center space-x-2">
-                        <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="arrow-up" size={14} />{' '}
-                          {post.vote_count}
-                        </Text>
-                        <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="comment" size={14} />{' '}
-                          {post.comment_count}
-                        </Text>
-                        <Text className="font-Poppins_500Medium text-gray-light">
-                          <FontAwesome5 name="clock" size={14} />{' '}
-                          {formatDuration(
-                            Date.now() - post.created_at.getTime()
-                          )}
-                        </Text>
-                        {post.is_private && (
-                          <Text className="text-yellow-light">
-                            <FontAwesome5 name="lock" size={14} />
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                </View>
-                <View className="border-b border-gray-200">
-                  <View className="mx-auto w-5/6 flex-row justify-between py-2">
-                    <Pressable
-                      className={clsx(
-                        {
-                          'bg-pink-light active:opacity-90':
-                            post.current_user_vote === 'upvote',
-                          'active:bg-gray-200':
-                            post.current_user_vote !== 'upvote'
-                        },
-                        'rounded-lg p-2'
-                      )}
-                      onPress={() =>
-                        handlePostVoteButtonPress({
-                          postId: post.id,
-                          oldVote: post.current_user_vote,
-                          vote: 'upvote'
-                        })
-                      }
-                    >
-                      <Text
-                        className={clsx({
-                          'text-white': post.current_user_vote === 'upvote',
-                          'text-gray-light': post.current_user_vote !== 'upvote'
-                        })}
-                      >
-                        <FontAwesome5 name="arrow-up" size={18} />
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      className={clsx(
-                        {
-                          'bg-blue-light active:opacity-90':
-                            post.current_user_vote === 'downvote',
-                          'active:bg-gray-200':
-                            post.current_user_vote !== 'downvote'
-                        },
-                        'rounded-lg p-2'
-                      )}
-                      onPress={() =>
-                        handlePostVoteButtonPress({
-                          postId: post.id,
-                          oldVote: post.current_user_vote,
-                          vote: 'downvote'
-                        })
-                      }
-                    >
-                      <Text
-                        className={clsx({
-                          'text-white': post.current_user_vote === 'downvote',
-                          'text-gray-light':
-                            post.current_user_vote !== 'downvote'
-                        })}
-                      >
-                        <FontAwesome5 name="arrow-down" size={18} />
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      className="rounded-lg p-2 active:bg-gray-200"
-                      onPress={handlePostReplyButtonPress}
-                    >
-                      <Text className="text-gray-light">
-                        <FontAwesome5 name="comment" size={18} />
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-              </>
-            }
-            renderItem={item => (
-              <Comment
-                commentCount={item.item.comment_count}
-                communityDomainName={post.community_domain_name}
-                content={item.item.content}
-                createdAt={item.item.created_at}
-                currentUserVote={item.item.current_user_vote}
-                id={item.item.id}
-                isAuthorInternal={item.item.is_author_internal}
-                isDeleted={item.item.is_deleted}
-                isFlagged={item.item.is_flagged}
-                isPostPrivate={post.is_private}
-                username={item.item.username}
-                voteCount={item.item.vote_count}
-                onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
-                onDownvoteButtonPress={() =>
-                  handleCommentVoteButtonPress({
-                    commentId: item.item.id,
-                    oldVote: item.item.current_user_vote,
-                    vote: 'downvote'
-                  })
-                }
-                onEllipsisButtonPress={() =>
-                  handleCommentEllipsisButtonPress(item.item)
-                }
-                onUpvoteButtonPress={() =>
-                  handleCommentVoteButtonPress({
-                    commentId: item.item.id,
-                    oldVote: item.item.current_user_vote,
-                    vote: 'upvote'
-                  })
-                }
-              />
-            )}
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={0.2}
+          <Comments
+            areCommentsFetching={areCommentsFetching}
+            areCommentsFetchingNextPage={areCommentsFetchingNextPage}
+            comments={commentsData?.pages.map(page => page.comments).flat(1)}
+            communityDomainName={post.community_domain_name}
+            fetchCommentsNextPage={fetchCommentsNextPage}
+            hasCommentsNextPage={hasCommentsNextPage}
+            isPostPrivate={post.is_private}
+            isRefreshing={isPostRefreshing || areCommentsRefreshing}
+            renderListHeader={renderListHeader}
             onRefresh={handleListRefresh}
           />
         )}
