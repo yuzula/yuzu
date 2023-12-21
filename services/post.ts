@@ -190,7 +190,12 @@ export const registerVote = async ({ postId, userId, vote }: VoteParams) => {
     })
 
     if (response.error) {
-      throw response.error
+      // `Duplicate key value violates unique constraint` error, happens when users vote, retract
+      // their vote, then place the same vote again in rapid succession. For voting purposes
+      // we'll just count it as an expected error
+      if (response.error.code !== '23505') {
+        throw response.error
+      }
     }
   }
 }
