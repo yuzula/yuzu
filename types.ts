@@ -34,6 +34,13 @@ interface CreatePostScreenParams {
   communityDomainName: string
 }
 
+interface CreatePostCommentScreenParams {
+  postId: number
+  postAuthorUsername?: string
+  postContent?: string
+  postCreatedAtTs: number
+}
+
 export type RootStackParamList = {
   Root: undefined
   Register: undefined
@@ -43,6 +50,7 @@ export type RootStackParamList = {
   ForeignCommunity: ForeignCommunityScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
   CreatePost: CreatePostScreenParams
+  CreatePostComment: CreatePostCommentScreenParams
   NotFound: undefined
 }
 

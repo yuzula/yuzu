@@ -12,10 +12,12 @@ import { Vote } from '../types/vote'
 
 interface PostCommentsHeaderProps {
   post: postModel.Schema
+  onReplyButtonPress: () => void
 }
 
 export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
-  post
+  post,
+  onReplyButtonPress
 }) => {
   const { mutate: votePost, error: votePostError } = useVotePost()
 
@@ -24,8 +26,6 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
       Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
     }
   }, [votePostError])
-
-  const handlePostReplyButtonPress = useCallback(() => {}, [])
 
   const handlePostVoteButtonPress = useCallback(
     async ({
@@ -154,7 +154,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
           </Pressable>
           <Pressable
             className="rounded-lg p-2 active:bg-gray-200"
-            onPress={handlePostReplyButtonPress}
+            onPress={onReplyButtonPress}
           >
             <Text className="text-gray-light">
               <FontAwesome5 name="comment" size={18} />

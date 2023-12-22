@@ -8,6 +8,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
 import { Community } from '../screens/Community'
 import { CreatePost } from '../screens/CreatePost'
+import { CreatePostComment } from '../screens/CreatePostComment'
 import { EmailVerification } from '../screens/EmailVerification'
 import { ForeignCommunity } from '../screens/ForeignCommunity'
 import { Home } from '../screens/Home'
@@ -99,6 +100,11 @@ const RootNavigator: FunctionComponent = () => {
           <Stack.Screen
             component={CreatePost}
             name="CreatePost"
+            options={{ presentation: 'fullScreenModal' }}
+          />
+          <Stack.Screen
+            component={CreatePostComment}
+            name="CreatePostComment"
             options={{ presentation: 'fullScreenModal' }}
           />
         </>

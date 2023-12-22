@@ -244,9 +244,30 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     showActionSheetWithOptions
   ])
 
+  const handleHeaderReplyButtonPress = useCallback(() => {
+    if (!post) {
+      Sentry.Native.captureException('Post is not defined')
+
+      return Alert.alert('Could not reply to post', GENERIC_ERROR_MESSAGE)
+    }
+
+    navigation.push('CreatePostComment', {
+      postId: post.id,
+      postAuthorUsername: post.username,
+      postContent: post.content,
+      postCreatedAtTs: post.created_at.getTime()
+    })
+  }, [navigation, post])
+
   const renderListHeader = useCallback(
-    () => (post ? <PostCommentsHeader post={post} /> : null),
-    [post]
+    () =>
+      post ? (
+        <PostCommentsHeader
+          post={post}
+          onReplyButtonPress={handleHeaderReplyButtonPress}
+        />
+      ) : null,
+    [handleHeaderReplyButtonPress, post]
   )
 
   return (

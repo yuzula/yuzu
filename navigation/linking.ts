@@ -18,6 +18,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Register: 'register',
       Post: 'post',
       CreatePost: 'createPost',
+      CreatePostComment: 'createPostComment',
       Tabs: {
         screens: {
           Home: {
