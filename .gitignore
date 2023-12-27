@@ -39,7 +39,7 @@ yarn-error.*
 # Service account
 google_service_account.json
 
-# Binaries
+# App binaries
 *.aab
 *.ipa
 
