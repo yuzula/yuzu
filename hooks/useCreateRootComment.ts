@@ -2,34 +2,28 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import { postService } from '../services/post'
+import { commentService } from '../services/comment'
 import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
-interface CreatePostParams {
-  communityDomainName: string
+interface CreateRootCommentParams {
+  postId: number
   content: string
-  isPrivate: boolean
 }
 
-export const useCreatePost = () => {
+export const useCreateRootComment = () => {
   const queryClient = useQueryClient()
 
   const { profile } = useAuthenticatedProfile()
 
   return useMutation({
-    mutationFn: ({
-      communityDomainName,
-      content,
-      isPrivate
-    }: CreatePostParams) =>
-      postService.create({
-        communityDomainName,
-        content,
+    mutationFn: ({ postId, content }: CreateRootCommentParams) =>
+      commentService.create({
+        postId,
         userId: profile.id,
-        isPrivate
+        content
       }),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      queryClient.invalidateQueries({ queryKey: ['comments'] })
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },

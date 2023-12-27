@@ -58,7 +58,7 @@ export const CreatePost: FunctionComponent<
   const { profile } = useAuthenticatedProfile()
 
   const {
-    createPost,
+    mutate: createPost,
     error: createPostError,
     isPending: isCreatePostPending
   } = useCreatePost()
