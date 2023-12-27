@@ -42,3 +42,6 @@ google_service_account.json
 # Binaries
 *.aab
 *.ipa
+
+# Clojure
+.clj-kondo/
