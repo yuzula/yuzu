@@ -1,3 +1,4 @@
+import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -163,7 +164,8 @@ export const CreatePostComment: FunctionComponent<
                     ellipsizeMode="tail"
                     numberOfLines={1}
                   >
-                    Replying to{' '}
+                    <FontAwesome5 name="reply" />
+                    {'  '}Replying to{' '}
                     <Text className="font-Poppins_600SemiBold">
                       {postAuthorUsername}
                     </Text>
