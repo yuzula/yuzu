@@ -5,25 +5,29 @@ import * as Sentry from 'sentry-expo'
 import { commentService } from '../services/comment'
 import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
-interface CreateRootCommentParams {
+interface CreateCommentParams {
   postId: number
   content: string
+  parentCommentId?: number
 }
 
-export const useCreateRootComment = () => {
+export const useCreateComment = () => {
   const queryClient = useQueryClient()
 
   const { profile } = useAuthenticatedProfile()
 
   return useMutation({
-    mutationFn: ({ postId, content }: CreateRootCommentParams) =>
+    mutationFn: ({ postId, content, parentCommentId }: CreateCommentParams) =>
       commentService.create({
         postId,
         userId: profile.id,
-        content
+        content,
+        parentCommentId
       }),
-    onSuccess: async () => {
+    onSuccess: async (_, { postId }) => {
       queryClient.invalidateQueries({ queryKey: ['comments'] })
+      queryClient.invalidateQueries({ queryKey: ['post', postId], exact: true })
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },

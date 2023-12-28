@@ -17,17 +17,17 @@ import { z } from 'zod'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
-import { useCreateRootComment } from '../hooks/useCreateRootComment'
+import { useCreateComment } from '../hooks/useCreateComment'
 import { RootStackScreenProps } from '../types'
 
-const createPostCommentSchema = z.object({
+const createCommentSchema = z.object({
   content: z.string().trim().min(1).max(600)
 })
 
-type CreatePostCommentSchema = z.infer<typeof createPostCommentSchema>
+type CreateCommentSchema = z.infer<typeof createCommentSchema>
 
-export const CreatePostComment: FunctionComponent<
-  RootStackScreenProps<'CreatePostComment'>
+export const CreateComment: FunctionComponent<
+  RootStackScreenProps<'CreateComment'>
 > = ({
   navigation,
   route: {
@@ -38,17 +38,17 @@ export const CreatePostComment: FunctionComponent<
     control,
     handleSubmit,
     formState: { isValid, isDirty }
-  } = useForm<CreatePostCommentSchema>({
+  } = useForm<CreateCommentSchema>({
     defaultValues: { content: '' },
     mode: 'all',
-    resolver: zodResolver(createPostCommentSchema)
+    resolver: zodResolver(createCommentSchema)
   })
 
   const {
     mutate: createRootComment,
     error: createRootCommentError,
     isPending: isCreateRootCommentPending
-  } = useCreateRootComment()
+  } = useCreateComment()
 
   useEffect(() => {
     if (createRootCommentError) {
@@ -57,17 +57,17 @@ export const CreatePostComment: FunctionComponent<
   }, [createRootCommentError])
 
   const handleCreatePostSubmitButtonPress = useCallback(
-    async ({ content }: CreatePostCommentSchema) => {
+    async ({ content }: CreateCommentSchema) => {
       createRootComment(
         {
           postId,
           content
-        },
-        {
-          // onSuccess: post => {
-          //   navigation.replace('Post', { postId: post.id })
-          // }
         }
+        // {
+        //   onSuccess: post => {
+        //     navigation.replace('Post', { postId: post.id })
+        //   }
+        // }
       )
     },
     [createRootComment, postId]

@@ -251,7 +251,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       return Alert.alert('Could not reply to post', GENERIC_ERROR_MESSAGE)
     }
 
-    navigation.push('CreatePostComment', {
+    navigation.push('CreateComment', {
       postId: post.id,
       postAuthorUsername: post.username,
       postContent: post.content,
