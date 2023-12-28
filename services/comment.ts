@@ -41,8 +41,7 @@ export const getAllChildren = async ({
   const response = await supabase
     .from('post_screen_comments')
     .select('*')
-    .is('parent_comment_id', null)
-    .eq('post_id', commentId)
+    .eq('parent_comment_id', commentId)
     .order('vote_count', { ascending: false })
     .not('id', 'in', `(${fetchedIds.join(',')})`)
     .limit(PAGE_SIZE + 1)
