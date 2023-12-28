@@ -4,6 +4,25 @@ import { Vote } from '../types/vote'
 
 const PAGE_SIZE = 10
 
+export const get = async (id: number) => {
+  const response = await supabase
+    .from('post_screen_comments')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (response.error) {
+    throw response.error
+  }
+
+  return commentModel.schema.parse({
+    ...response.data,
+    user_id: response.data.user_id ?? undefined,
+    content: response.data.content ?? undefined,
+    current_user_vote: response.data.current_user_vote ?? undefined
+  })
+}
+
 interface CreateParams {
   postId: number
   userId: string
