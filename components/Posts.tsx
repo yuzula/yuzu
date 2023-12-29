@@ -259,9 +259,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
   const renderListEmptyComponent = useCallback(
     () =>
       isFetching ? (
-        <View className="w-full grow border-t border-gray-100">
-          <PostsSkeleton />
-        </View>
+        <PostsSkeleton />
       ) : (
         <View className="flex-1 items-center justify-center">
           <Text className="font-Poppins_600SemiBold text-base text-gray-light">
@@ -358,7 +356,7 @@ export const Posts: FunctionComponent<PostsProps> = ({
       ListEmptyComponent={renderListEmptyComponent}
       ListFooterComponent={renderListFooterComponent}
       ListHeaderComponent={renderListHeaderComponent}
-      className="w-full border-t border-gray-100"
+      className="w-full"
       contentContainerStyle={listContentContainerStyle}
       data={posts}
       keyExtractor={listKeyExtractor}

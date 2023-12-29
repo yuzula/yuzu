@@ -70,7 +70,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
         <Text className="font-Poppins_700Bold text-xl">Home</Text>
       </View>
 
-      <View className="w-full flex-1">
+      <View className="w-full flex-1 border-t border-gray-100">
         <Posts
           shouldDisplayCommunityDomainName
           fetchNextPage={fetchPostsNextPage}

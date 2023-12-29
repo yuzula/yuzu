@@ -90,7 +90,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="w-full flex-1"
       >
-        <View className="w-full items-center justify-center space-y-2 border-b border-gray-100 py-4">
+        <View className="w-full items-center justify-center space-y-2 py-4">
           <TextInput
             className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
             placeholder="Search communities"
@@ -100,9 +100,9 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
           />
         </View>
 
-        <View className="w-full flex-1 items-center justify-center">
+        <View className="w-full flex-1 items-center justify-center border-t border-gray-100">
           {areCommunitiesInitialLoading ? (
-            <View className="w-full grow border-t border-gray-100">
+            <View className="w-full grow">
               {[...Array(4).keys()].map(i => (
                 <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
                   <View>
@@ -120,7 +120,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
           ) : (
             <FlatList
               ItemSeparatorComponent={Separator}
-              className="w-full border-t border-gray-100"
+              className="w-full"
               data={communities}
               keyExtractor={item => item.domain_name}
               keyboardDismissMode="interactive"

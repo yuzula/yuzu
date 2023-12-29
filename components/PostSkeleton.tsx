@@ -1,8 +1,8 @@
 import { Skeleton } from 'moti/skeleton'
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, memo } from 'react'
 import { View } from 'react-native'
 
-export const PostSkeleton: FunctionComponent = () => (
+export const PostSkeleton: FunctionComponent = memo(() => (
   <View className="mx-auto w-5/6 space-y-4 py-4">
     <View className="space-y-2">
       <View>
@@ -44,4 +44,4 @@ export const PostSkeleton: FunctionComponent = () => (
       ))}
     </View>
   </View>
-)
+))

@@ -1,6 +1,6 @@
-import React, { FunctionComponent } from 'react'
-import { View, ViewProps } from 'react-native'
+import React, { FunctionComponent, memo } from 'react'
+import { View } from 'react-native'
 
-export const Separator: FunctionComponent<ViewProps> = () => (
-  <View className="h-1 w-full bg-gray-200" />
-)
+export const Separator: FunctionComponent = memo(() => (
+  <View className="w-full border-t border-gray-100" />
+))

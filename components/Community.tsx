@@ -185,7 +185,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
           )}
         </View>
 
-        <View className="w-full flex-1">
+        <View className="w-full flex-1 border-t border-gray-100">
           <Posts
             fetchNextPage={fetchPostsNextPage}
             hasNextPage={hasPostsNextPage}

@@ -46,7 +46,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
 
   return (
     <>
-      <View className="w-full border-b border-gray-200">
+      <View className="w-full border-b border-gray-100">
         <View className="mx-auto w-5/6 space-y-2 py-4">
           <Text
             className={clsx('font-Poppins_600SemiBold text-base', {
@@ -98,7 +98,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
           </View>
         </View>
       </View>
-      <View className="border-b border-gray-200">
+      <View className="border-b border-gray-100">
         <View className="mx-auto w-5/6 flex-row justify-between py-2">
           <Pressable
             className={clsx(
