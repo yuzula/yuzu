@@ -81,7 +81,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
     const { mutate: reportPost, error: reportPostError } = useReportPost()
 
     const handlePostVoteButtonPress = useCallback(
-      async ({
+      ({
         postId,
         oldVote,
         vote
@@ -201,7 +201,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
               destructiveButtonIndex: 1,
               cancelButtonIndex: 2
             },
-            async index => {
+            index => {
               if (index === 2) {
                 return
               }

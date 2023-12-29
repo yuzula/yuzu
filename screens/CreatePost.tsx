@@ -72,7 +72,7 @@ export const CreatePost: FunctionComponent<
   }, [createPostError])
 
   const handleCreatePostSubmitButtonPress = useCallback(
-    async ({ content }: CreatePostSchema) => {
+    ({ content }: CreatePostSchema) => {
       createPost(
         {
           communityDomainName,

@@ -77,7 +77,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
         options: ['All', 'Public', 'Internal', 'Cancel'],
         cancelButtonIndex: 3
       },
-      async index => {
+      index => {
         if (index === 3) {
           return
         }

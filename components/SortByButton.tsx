@@ -21,7 +21,7 @@ export const SortByButton: FunctionComponent<SortByButtonProps> = memo(
           options: ['Hot', 'New', 'Controversial', 'Cancel'],
           cancelButtonIndex: 3
         },
-        async index => {
+        index => {
           if (index === 3) {
             return
           }

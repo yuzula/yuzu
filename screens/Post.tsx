@@ -119,7 +119,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   }, [navigation])
 
   const handleBlockAuthorButtonPress = useCallback(
-    async (authorId: string) => {
+    (authorId: string) => {
       if (!post) {
         return Alert.alert('Could not get post', GENERIC_ERROR_MESSAGE)
       }

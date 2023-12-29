@@ -57,7 +57,7 @@ export const CreateComment: FunctionComponent<
   }, [createRootCommentError])
 
   const handleCreatePostSubmitButtonPress = useCallback(
-    async ({ content }: CreateCommentSchema) => {
+    ({ content }: CreateCommentSchema) => {
       createRootComment(
         {
           postId,

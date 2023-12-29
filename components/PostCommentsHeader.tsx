@@ -28,7 +28,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
   }, [votePostError])
 
   const handlePostVoteButtonPress = useCallback(
-    async ({
+    ({
       postId,
       oldVote,
       vote

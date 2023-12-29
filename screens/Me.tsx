@@ -20,7 +20,7 @@ export const Me: FunctionComponent = () => {
   const { deleteCurrentUser, isLoading: isDeleteCurrentUserLoading } =
     useDeleteCurrentUser()
 
-  const handleLogOutButtonPress = useCallback(async () => {
+  const handleLogOutButtonPress = useCallback(() => {
     showActionSheetWithOptions(
       {
         title: 'Are you sure you want to log out?',
@@ -45,7 +45,7 @@ export const Me: FunctionComponent = () => {
     )
   }, [logOut, showActionSheetWithOptions])
 
-  const handleDeleteAccountButtonPress = useCallback(async () => {
+  const handleDeleteAccountButtonPress = useCallback(() => {
     Alert.alert('Are you sure you want to delete your account?', undefined, [
       {
         text: 'Yes',

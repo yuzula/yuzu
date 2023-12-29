@@ -17,6 +17,7 @@
     "@typescript-eslint/prefer-for-of": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/prefer-as-const": "error",
+    "require-await": "error",
     "no-await-in-loop": "error",
     "no-console": "error",
     "no-promise-executor-return": "error",

@@ -15,16 +15,15 @@ import {
   Text,
   View
 } from 'react-native'
-import * as Sentry from 'sentry-expo'
 
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
+import { useDeleteComment } from '../hooks/useDeleteComment'
 import { useReportComment } from '../hooks/useReportComment'
 import { useVoteComment } from '../hooks/useVoteComment'
 import { commentModel } from '../models/comment'
-import { commentService } from '../services/comment'
 import { Vote } from '../types/vote'
 import { Comment } from './Comment'
 import { Separator } from './Separator'
@@ -61,10 +60,19 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
 
     const { mutate: voteComment, error: voteCommentError } = useVoteComment()
 
+    const { mutate: deleteComment, error: deleteCommentError } =
+      useDeleteComment()
+
     const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
     const { mutate: reportComment, error: reportCommentError } =
       useReportComment()
+
+    useEffect(() => {
+      if (deleteCommentError) {
+        Alert.alert('Could not delete comment', GENERIC_ERROR_MESSAGE)
+      }
+    }, [deleteCommentError])
 
     useEffect(() => {
       if (reportCommentError) {
@@ -85,7 +93,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     }, [voteCommentError])
 
     const handleBlockAuthorButtonPress = useCallback(
-      async (authorId: string) => {
+      (authorId: string) => {
         blockUser({ userId: authorId })
 
         onRefresh()
@@ -94,38 +102,32 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     )
 
     const handleReportCommentButtonPress = useCallback(
-      async (comment: commentModel.Schema) => {
-        try {
-          reportComment({ commentId: comment.id })
+      (comment: commentModel.Schema) => {
+        reportComment({ commentId: comment.id })
 
-          Alert.alert('Comment has been reported for moderation', undefined, [
-            {
-              onPress: () => {
-                Alert.alert(
-                  'Would you like to block the author of the comment?',
-                  undefined,
-                  [
-                    {
-                      text: 'No'
-                    },
-                    {
-                      text: 'Yes',
-                      onPress: () => {
-                        if (comment.user_id) {
-                          handleBlockAuthorButtonPress(comment.user_id)
-                        }
+        Alert.alert('Comment has been reported for moderation', undefined, [
+          {
+            onPress: () => {
+              Alert.alert(
+                'Would you like to block the author of the comment?',
+                undefined,
+                [
+                  {
+                    text: 'No'
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      if (comment.user_id) {
+                        handleBlockAuthorButtonPress(comment.user_id)
                       }
                     }
-                  ]
-                )
-              }
+                  }
+                ]
+              )
             }
-          ])
-        } catch (error) {
-          Sentry.Native.captureException(error)
-
-          Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-        }
+          }
+        ])
       },
       [handleBlockAuthorButtonPress, reportComment]
     )
@@ -140,7 +142,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
               destructiveButtonIndex: 0,
               cancelButtonIndex: 1
             },
-            async index => {
+            index => {
               if (index === 1) {
                 return
               }
@@ -152,15 +154,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
                   {
                     text: 'Yes',
                     style: 'destructive',
-                    onPress: async () => {
-                      try {
-                        await commentService.markAsDeleted(comment.id)
-                      } catch (error) {
-                        Sentry.Native.captureException(error)
-
-                        Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-                      }
-                    }
+                    onPress: () => deleteComment({ commentId: comment.id })
                   },
                   {
                     text: 'Cancel',
@@ -178,21 +172,22 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
               destructiveButtonIndex: 1,
               cancelButtonIndex: 2
             },
-            async index => {
+            index => {
               if (index === 2) {
                 return
               }
 
               if (index === 0) {
-                await handleReportCommentButtonPress(comment)
+                handleReportCommentButtonPress(comment)
               } else if (index === 1 && comment.user_id) {
-                await handleBlockAuthorButtonPress(comment.user_id)
+                handleBlockAuthorButtonPress(comment.user_id)
               }
             }
           )
         }
       },
       [
+        deleteComment,
         handleBlockAuthorButtonPress,
         handleReportCommentButtonPress,
         profile.id,
@@ -207,7 +202,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     )
 
     const handleCommentVoteButtonPress = useCallback(
-      async ({
+      ({
         commentId,
         oldVote,
         vote
