@@ -41,8 +41,6 @@ interface PostProps {
   onCommunityDomainNamePress?: (domainName: string) => void
 }
 
-// This needs to be memo'ed since otherwise it will re-render when any
-// post is updated in the flatlist
 export const Post: FunctionComponent<PostProps> = memo(
   ({
     id,

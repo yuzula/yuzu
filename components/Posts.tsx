@@ -2,6 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import React, {
   FunctionComponent,
+  memo,
   useCallback,
   useEffect,
   useMemo
@@ -50,321 +51,323 @@ interface PostsProps {
   onPostCommunityDomainNamePress?: (domainName: string) => void
 }
 
-export const Posts: FunctionComponent<PostsProps> = ({
-  posts,
-  isRefreshing,
-  isFetching,
-  isLoading,
-  fetchNextPage,
-  isFetchingNextPage,
-  hasNextPage,
-  sortBy,
-  shouldDisplayCommunityDomainName = false,
-  shouldDisplayInternalPopover = true,
-  sortPosts,
-  onRefresh,
-  onPostPress,
-  onPostCommunityDomainNamePress
-}) => {
-  const { showActionSheetWithOptions } = useActionSheet()
+export const Posts: FunctionComponent<PostsProps> = memo(
+  ({
+    posts,
+    isRefreshing,
+    isFetching,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    sortBy,
+    shouldDisplayCommunityDomainName = false,
+    shouldDisplayInternalPopover = true,
+    sortPosts,
+    onRefresh,
+    onPostPress,
+    onPostCommunityDomainNamePress
+  }) => {
+    const { showActionSheetWithOptions } = useActionSheet()
 
-  const { profile } = useAuthenticatedProfile()
+    const { profile } = useAuthenticatedProfile()
 
-  const { mutate: votePost, error: votePostError } = useVotePost()
+    const { mutate: votePost, error: votePostError } = useVotePost()
 
-  const { mutate: deletePost, error: deletePostError } = useDeletePost()
+    const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
-  const { mutate: blockUser, error: blockUserError } = useBlockUser()
+    const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
-  const { mutate: reportPost, error: reportPostError } = useReportPost()
+    const { mutate: reportPost, error: reportPostError } = useReportPost()
 
-  const handlePostVoteButtonPress = useCallback(
-    async ({
-      postId,
-      oldVote,
-      vote
-    }: {
-      postId: number
-      oldVote?: Vote
-      vote: Vote
-    }) => {
-      const { newVote, delta } = getResultingVote({ oldVote, vote })
+    const handlePostVoteButtonPress = useCallback(
+      async ({
+        postId,
+        oldVote,
+        vote
+      }: {
+        postId: number
+        oldVote?: Vote
+        vote: Vote
+      }) => {
+        const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      votePost({ postId, vote: newVote, delta })
-    },
-    [votePost]
-  )
+        votePost({ postId, vote: newVote, delta })
+      },
+      [votePost]
+    )
 
-  useEffect(() => {
-    if (votePostError) {
-      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-    }
-  }, [votePostError])
+    useEffect(() => {
+      if (votePostError) {
+        Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [votePostError])
 
-  useEffect(() => {
-    if (deletePostError) {
-      Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
-    }
-  }, [deletePostError])
+    useEffect(() => {
+      if (deletePostError) {
+        Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [deletePostError])
 
-  useEffect(() => {
-    if (blockUserError) {
-      Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
-    }
-  }, [blockUserError])
+    useEffect(() => {
+      if (blockUserError) {
+        Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+      }
+    }, [blockUserError])
 
-  useEffect(() => {
-    if (reportPostError) {
-      Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
-    }
-  }, [reportPostError])
+    useEffect(() => {
+      if (reportPostError) {
+        Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [reportPostError])
 
-  const handleBlockAuthorButtonPress = useCallback(
-    (authorId: string) => {
-      blockUser({ userId: authorId })
-    },
-    [blockUser]
-  )
+    const handleBlockAuthorButtonPress = useCallback(
+      (authorId: string) => {
+        blockUser({ userId: authorId })
+      },
+      [blockUser]
+    )
 
-  const handleReportPostButtonPress = useCallback(
-    ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-      reportPost({ postId })
+    const handleReportPostButtonPress = useCallback(
+      ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
+        reportPost({ postId })
 
-      Alert.alert('Post has been reported for moderation', undefined, [
-        {
-          onPress: () => {
-            Alert.alert(
-              'Would you like to block the author of the post?',
-              undefined,
-              [
-                {
-                  text: 'No'
-                },
-                {
-                  text: 'Yes',
-                  onPress: () => {
-                    if (postAuthorId) {
-                      handleBlockAuthorButtonPress(postAuthorId)
+        Alert.alert('Post has been reported for moderation', undefined, [
+          {
+            onPress: () => {
+              Alert.alert(
+                'Would you like to block the author of the post?',
+                undefined,
+                [
+                  {
+                    text: 'No'
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      if (postAuthorId) {
+                        handleBlockAuthorButtonPress(postAuthorId)
+                      }
                     }
                   }
-                }
-              ]
-            )
-          }
-        }
-      ])
-    },
-    [handleBlockAuthorButtonPress, reportPost]
-  )
-
-  const handlePostEllipsisButtonPress = useCallback(
-    ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-      if (profile.id === postAuthorId) {
-        showActionSheetWithOptions(
-          {
-            title: 'More actions',
-            options: ['Delete this post', 'Cancel'],
-            destructiveButtonIndex: 0,
-            cancelButtonIndex: 1
-          },
-          index => {
-            if (index === 1) {
-              return
+                ]
+              )
             }
+          }
+        ])
+      },
+      [handleBlockAuthorButtonPress, reportPost]
+    )
 
-            Alert.alert(
-              'Are you sure you want to delete this post?',
-              undefined,
-              [
-                {
-                  text: 'Yes',
-                  style: 'destructive',
-                  onPress: () => {
-                    deletePost({ postId })
+    const handlePostEllipsisButtonPress = useCallback(
+      ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
+        if (profile.id === postAuthorId) {
+          showActionSheetWithOptions(
+            {
+              title: 'More actions',
+              options: ['Delete this post', 'Cancel'],
+              destructiveButtonIndex: 0,
+              cancelButtonIndex: 1
+            },
+            index => {
+              if (index === 1) {
+                return
+              }
+
+              Alert.alert(
+                'Are you sure you want to delete this post?',
+                undefined,
+                [
+                  {
+                    text: 'Yes',
+                    style: 'destructive',
+                    onPress: () => {
+                      deletePost({ postId })
+                    }
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
                   }
-                },
-                {
-                  text: 'Cancel',
-                  style: 'cancel'
-                }
-              ]
-            )
-          }
-        )
-      } else {
-        showActionSheetWithOptions(
-          {
-            title: 'More actions',
-            options: ['Report this post', 'Block the author', 'Cancel'],
-            destructiveButtonIndex: 1,
-            cancelButtonIndex: 2
-          },
-          async index => {
-            if (index === 2) {
-              return
+                ]
+              )
             }
+          )
+        } else {
+          showActionSheetWithOptions(
+            {
+              title: 'More actions',
+              options: ['Report this post', 'Block the author', 'Cancel'],
+              destructiveButtonIndex: 1,
+              cancelButtonIndex: 2
+            },
+            async index => {
+              if (index === 2) {
+                return
+              }
 
-            if (index === 0) {
-              handleReportPostButtonPress({ postId, postAuthorId })
-            } else if (index === 1 && postAuthorId) {
-              handleBlockAuthorButtonPress(postAuthorId)
+              if (index === 0) {
+                handleReportPostButtonPress({ postId, postAuthorId })
+              } else if (index === 1 && postAuthorId) {
+                handleBlockAuthorButtonPress(postAuthorId)
+              }
             }
-          }
-        )
-      }
-    },
-    [
-      deletePost,
-      handleBlockAuthorButtonPress,
-      handleReportPostButtonPress,
-      profile.id,
-      showActionSheetWithOptions
-    ]
-  )
-
-  const renderListItem = useCallback(
-    ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
-      <Post
-        authorId={post.user_id}
-        authorUsername={post.username}
-        commentCount={post.comment_count}
-        content={post.content}
-        createdAt={post.created_at}
-        currentUserVote={post.current_user_vote}
-        id={post.id}
-        isDeleted={post.is_deleted}
-        isFlagged={post.is_flagged}
-        isPrivate={post.is_private}
-        voteCount={post.vote_count}
-        communityDomainName={
-          shouldDisplayCommunityDomainName
-            ? post.community_domain_name
-            : undefined
+          )
         }
-        onCommunityDomainNamePress={onPostCommunityDomainNamePress}
-        onEllipsisButtonPress={handlePostEllipsisButtonPress}
-        onPress={onPostPress}
-        onVoteButtonPress={handlePostVoteButtonPress}
-      />
-    ),
-    [
-      handlePostEllipsisButtonPress,
-      handlePostVoteButtonPress,
-      onPostCommunityDomainNamePress,
-      onPostPress,
-      shouldDisplayCommunityDomainName
-    ]
-  )
+      },
+      [
+        deletePost,
+        handleBlockAuthorButtonPress,
+        handleReportPostButtonPress,
+        profile.id,
+        showActionSheetWithOptions
+      ]
+    )
 
-  const renderListEmptyComponent = useCallback(
-    () =>
-      isFetching ? (
-        <PostsSkeleton />
-      ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="font-Poppins_600SemiBold text-base text-gray-light">
-            No posts yet
-          </Text>
-          <Text className="font-Poppins_500Medium text-gray-light">
-            Be the first to post!
-          </Text>
+    const renderListItem = useCallback(
+      ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
+        <Post
+          authorId={post.user_id}
+          authorUsername={post.username}
+          commentCount={post.comment_count}
+          content={post.content}
+          createdAt={post.created_at}
+          currentUserVote={post.current_user_vote}
+          id={post.id}
+          isDeleted={post.is_deleted}
+          isFlagged={post.is_flagged}
+          isPrivate={post.is_private}
+          voteCount={post.vote_count}
+          communityDomainName={
+            shouldDisplayCommunityDomainName
+              ? post.community_domain_name
+              : undefined
+          }
+          onCommunityDomainNamePress={onPostCommunityDomainNamePress}
+          onEllipsisButtonPress={handlePostEllipsisButtonPress}
+          onPress={onPostPress}
+          onVoteButtonPress={handlePostVoteButtonPress}
+        />
+      ),
+      [
+        handlePostEllipsisButtonPress,
+        handlePostVoteButtonPress,
+        onPostCommunityDomainNamePress,
+        onPostPress,
+        shouldDisplayCommunityDomainName
+      ]
+    )
+
+    const renderListEmptyComponent = useCallback(
+      () =>
+        isFetching ? (
+          <PostsSkeleton />
+        ) : (
+          <View className="flex-1 items-center justify-center">
+            <Text className="font-Poppins_600SemiBold text-base text-gray-light">
+              No posts yet
+            </Text>
+            <Text className="font-Poppins_500Medium text-gray-light">
+              Be the first to post!
+            </Text>
+          </View>
+        ),
+      [isFetching]
+    )
+
+    const renderListHeaderComponent = useCallback(
+      () => (
+        <View className="bg-gray-100 py-4">
+          <View className="mx-auto flex w-5/6 flex-row justify-between">
+            <SortByButton sortBy={sortBy} onChange={sortPosts} />
+            {shouldDisplayInternalPopover && (
+              <Popover
+                verticalOffset={POPOVER_VERTICAL_OFFSET}
+                from={
+                  <Pressable>
+                    <Text className="font-Poppins_600SemiBold text-gray-light">
+                      What's{'  '}
+                      <FontAwesome5 name="lock" /> ?
+                    </Text>
+                  </Pressable>
+                }
+              >
+                <View className="space-y-2 p-4">
+                  <Text className="font-Poppins_600SemiBold text-base">
+                    Internal posts
+                  </Text>
+                  <Text className="font-Poppins_500Medium">
+                    Internal posts can only be created and viewed by members of
+                    the{' '}
+                    <Text className="font-Poppins_600SemiBold">
+                      @{profile.community_domain_name}
+                    </Text>{' '}
+                    community.
+                  </Text>
+                  <Text className="font-Poppins_500Medium">
+                    They are marked with the special{'  '}
+                    <Text className="text-yellow-light">
+                      <FontAwesome5 name="lock" />
+                    </Text>
+                    {'  '}icon.
+                  </Text>
+                  <Text className="font-Poppins_500Medium">
+                    Public posts don't have that icon and can be created &
+                    viewed by everyone.
+                  </Text>
+                </View>
+              </Popover>
+            )}
+          </View>
         </View>
       ),
-    [isFetching]
-  )
+      [
+        profile.community_domain_name,
+        shouldDisplayInternalPopover,
+        sortBy,
+        sortPosts
+      ]
+    )
 
-  const renderListHeaderComponent = useCallback(
-    () => (
-      <View className="bg-gray-100 py-4">
-        <View className="mx-auto flex w-5/6 flex-row justify-between">
-          <SortByButton sortBy={sortBy} onChange={sortPosts} />
-          {shouldDisplayInternalPopover && (
-            <Popover
-              verticalOffset={POPOVER_VERTICAL_OFFSET}
-              from={
-                <Pressable>
-                  <Text className="font-Poppins_600SemiBold text-gray-light">
-                    What's{'  '}
-                    <FontAwesome5 name="lock" /> ?
-                  </Text>
-                </Pressable>
-              }
-            >
-              <View className="space-y-2 p-4">
-                <Text className="font-Poppins_600SemiBold text-base">
-                  Internal posts
-                </Text>
-                <Text className="font-Poppins_500Medium">
-                  Internal posts can only be created and viewed by members of
-                  the{' '}
-                  <Text className="font-Poppins_600SemiBold">
-                    @{profile.community_domain_name}
-                  </Text>{' '}
-                  community.
-                </Text>
-                <Text className="font-Poppins_500Medium">
-                  They are marked with the special{'  '}
-                  <Text className="text-yellow-light">
-                    <FontAwesome5 name="lock" />
-                  </Text>
-                  {'  '}icon.
-                </Text>
-                <Text className="font-Poppins_500Medium">
-                  Public posts don't have that icon and can be created & viewed
-                  by everyone.
-                </Text>
-              </View>
-            </Popover>
-          )}
-        </View>
-      </View>
-    ),
-    [
-      profile.community_domain_name,
-      shouldDisplayInternalPopover,
-      sortBy,
-      sortPosts
-    ]
-  )
+    const listKeyExtractor = useCallback(
+      (post: postModel.Schema) => post.id.toString(),
+      []
+    )
 
-  const listKeyExtractor = useCallback(
-    (post: postModel.Schema) => post.id.toString(),
-    []
-  )
+    const renderListFooterComponent = useCallback(() => {
+      if (isFetchingNextPage) {
+        return <ActivityIndicator className="py-4" />
+      }
 
-  const renderListFooterComponent = useCallback(() => {
-    if (isFetchingNextPage) {
-      return <ActivityIndicator className="py-4" />
-    }
+      return null
+    }, [isFetchingNextPage])
 
-    return null
-  }, [isFetchingNextPage])
+    const handleEndReached = useCallback(() => {
+      if (!isFetching && hasNextPage) {
+        fetchNextPage()
+      }
+    }, [fetchNextPage, hasNextPage, isFetching])
 
-  const handleEndReached = useCallback(() => {
-    if (!isFetching && hasNextPage) {
-      fetchNextPage()
-    }
-  }, [fetchNextPage, hasNextPage, isFetching])
+    const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
 
-  const listContentContainerStyle = useMemo(() => ({ flexGrow: 1 }), [])
-
-  return isLoading ? (
-    <PostsSkeleton />
-  ) : (
-    <FlatList
-      ItemSeparatorComponent={Separator}
-      ListEmptyComponent={renderListEmptyComponent}
-      ListFooterComponent={renderListFooterComponent}
-      ListHeaderComponent={renderListHeaderComponent}
-      className="w-full"
-      contentContainerStyle={listContentContainerStyle}
-      data={posts}
-      keyExtractor={listKeyExtractor}
-      refreshing={isRefreshing}
-      renderItem={renderListItem}
-      onEndReached={handleEndReached}
-      onEndReachedThreshold={0.2}
-      onRefresh={onRefresh}
-    />
-  )
-}
+    return isLoading ? (
+      <PostsSkeleton />
+    ) : (
+      <FlatList
+        ItemSeparatorComponent={Separator}
+        ListEmptyComponent={renderListEmptyComponent}
+        ListFooterComponent={renderListFooterComponent}
+        ListHeaderComponent={renderListHeaderComponent}
+        className="w-full"
+        contentContainerStyle={listContentContainerStyle}
+        data={posts}
+        keyExtractor={listKeyExtractor}
+        refreshing={isRefreshing}
+        renderItem={renderListItem}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.2}
+        onRefresh={onRefresh}
+      />
+    )
+  }
+)

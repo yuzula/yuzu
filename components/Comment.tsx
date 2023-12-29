@@ -28,8 +28,6 @@ interface CommentProps {
   onDownvoteButtonPress?: (id: number) => void
 }
 
-// This needs to be memo'ed since otherwise it will re-render when any
-// comment is updated in the flatlist
 export const Comment: FunctionComponent<CommentProps> = memo(
   ({
     id,
