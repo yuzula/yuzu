@@ -24,6 +24,10 @@ interface PostScreenParams {
   postId: number
 }
 
+interface CommentScreenParams {
+  commentId: number
+}
+
 interface ForeignCommunityScreenParams {
   domainName: string
 }
@@ -47,6 +51,7 @@ export type RootStackParamList = {
   Login: undefined
   EmailVerification: EmailVerificationScreenParams
   Post: PostScreenParams
+  Comment: CommentScreenParams
   ForeignCommunity: ForeignCommunityScreenParams
   Tabs: NavigatorScreenParams<RootTabParamList> | undefined
   CreatePost: CreatePostScreenParams

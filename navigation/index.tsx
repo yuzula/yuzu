@@ -6,6 +6,7 @@ import { FunctionComponent } from 'react'
 
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useProfileContext } from '../hooks/useProfileContext'
+import { Comment } from '../screens/Comment'
 import { Community } from '../screens/Community'
 import { CreateComment } from '../screens/CreateComment'
 import { CreatePost } from '../screens/CreatePost'
@@ -97,6 +98,7 @@ const RootNavigator: FunctionComponent = () => {
           <Stack.Screen component={BottomTabNavigator} name="Tabs" />
           <Stack.Screen component={ForeignCommunity} name="ForeignCommunity" />
           <Stack.Screen component={Post} name="Post" />
+          <Stack.Screen component={Comment} name="Comment" />
           <Stack.Screen
             component={CreatePost}
             name="CreatePost"
