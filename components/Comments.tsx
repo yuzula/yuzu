@@ -39,6 +39,7 @@ interface CommentsProps {
   fetchCommentsNextPage: () => void
   renderListHeader: () => ReactNode
   onRefresh: () => void
+  onCommentPress: (id: number) => void
 }
 
 export const Comments: FunctionComponent<CommentsProps> = memo(
@@ -52,7 +53,8 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     areCommentsFetchingNextPage,
     fetchCommentsNextPage,
     renderListHeader,
-    onRefresh
+    onRefresh,
+    onCommentPress
   }) => {
     const { showActionSheetWithOptions } = useActionSheet()
 
@@ -247,6 +249,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           isPostPrivate={isPostPrivate}
           username={comment.username}
           voteCount={comment.vote_count}
+          onPress={onCommentPress}
           onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
           onDownvoteButtonPress={() =>
             handleCommentVoteButtonPress({
@@ -272,7 +275,8 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
         handleCommentEllipsisButtonPress,
         handleCommentReplyButtonPress,
         handleCommentVoteButtonPress,
-        isPostPrivate
+        isPostPrivate,
+        onCommentPress
       ]
     )
 

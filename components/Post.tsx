@@ -98,7 +98,7 @@ export const Post: FunctionComponent<PostProps> = memo(
     }, [currentUserVote, id, onVoteButtonPress])
 
     return (
-      <Pressable className="active:bg-gray-200" id="BRUH" onPress={handlePress}>
+      <Pressable className="active:bg-gray-200" onPress={handlePress}>
         <View className="mx-auto w-5/6 space-y-2 py-4">
           {communityDomainName && (
             <View className="flex-row">

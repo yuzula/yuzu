@@ -22,6 +22,7 @@ interface CommentProps {
   isAuthorInternal: boolean
   currentUserVote?: Vote
   variant?: 'parent' | 'child'
+  onPress?: (id: number) => void
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
   onUpvoteButtonPress?: (id: number) => void
@@ -43,18 +44,20 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     variant = 'parent',
     isDeleted,
     isFlagged,
+    onPress,
     onEllipsisButtonPress,
     onReplyButtonPress,
     onUpvoteButtonPress,
     onDownvoteButtonPress
   }) => (
-    <View
+    <Pressable
       className={clsx(
         {
           'pl-6 bg-gray-100': variant === 'child'
         },
-        'space-y-1 py-2'
+        'space-y-1 py-2 active:bg-gray-200'
       )}
+      onPress={() => onPress?.(id)}
     >
       <View className="mx-auto w-5/6 flex-row items-center justify-between space-x-2">
         <View className="shrink flex-row items-center space-x-2">
@@ -197,7 +200,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           </Pressable>
         </View>
       </View>
-    </View>
+    </Pressable>
   ),
   (prevProps, nextProps) =>
     prevProps.voteCount === nextProps.voteCount &&

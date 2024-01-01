@@ -60,6 +60,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
   const {
     data: commentsData,
+    error: commentsError,
     isFetching: areCommentsFetching,
     refetch: refetchComments,
     fetchNextPage: fetchCommentsNextPage,
@@ -91,6 +92,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
       Alert.alert('Could not fetch post', GENERIC_ERROR_MESSAGE)
     }
   }, [postError])
+
+  useEffect(() => {
+    if (commentsError) {
+      Sentry.Native.captureException(commentsError)
+
+      Alert.alert('Could not fetch comments', GENERIC_ERROR_MESSAGE)
+    }
+  }, [commentsError, postError])
 
   useEffect(() => {
     if (deletePostError) {
@@ -220,7 +229,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           destructiveButtonIndex: 1,
           cancelButtonIndex: 2
         },
-        async index => {
+        index => {
           if (index === 2) {
             return
           }
@@ -228,7 +237,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           if (index === 0) {
             handleReportPostButtonPress(post)
           } else if (index === 1 && post.user_id) {
-            await handleBlockAuthorButtonPress(post.user_id)
+            handleBlockAuthorButtonPress(post.user_id)
           }
         }
       )
@@ -268,6 +277,22 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         />
       ) : null,
     [handleHeaderReplyButtonPress, post]
+  )
+
+  const handleCommentPress = useCallback(
+    (commentId: number) => {
+      if (!post) {
+        Sentry.Native.captureException('Post is not defined')
+
+        return Alert.alert(
+          'Could not fetch post details',
+          GENERIC_ERROR_MESSAGE
+        )
+      }
+
+      navigation.push('Comment', { commentId, postId: post.id })
+    },
+    [navigation, post]
   )
 
   return (
@@ -310,6 +335,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             isPostPrivate={post.is_private}
             isRefreshing={isPostRefreshing || areCommentsRefreshing}
             renderListHeader={renderListHeader}
+            onCommentPress={handleCommentPress}
             onRefresh={handleListRefresh}
           />
         )}

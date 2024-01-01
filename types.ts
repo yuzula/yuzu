@@ -25,6 +25,7 @@ interface PostScreenParams {
 }
 
 interface CommentScreenParams {
+  postId: number
   commentId: number
 }
 
