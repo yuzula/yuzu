@@ -53,7 +53,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     <Pressable
       className={clsx(
         {
-          'pl-6 bg-gray-100': variant === 'child'
+          'pl-6': variant === 'child'
         },
         'space-y-1 py-2 active:bg-gray-200'
       )}

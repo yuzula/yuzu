@@ -30,6 +30,7 @@ import { Separator } from './Separator'
 
 interface CommentsProps {
   comments?: commentModel.Schema[]
+  variant?: 'parent' | 'child'
   communityDomainName: string
   isPostPrivate: boolean
   areCommentsFetching: boolean
@@ -44,6 +45,7 @@ interface CommentsProps {
 
 export const Comments: FunctionComponent<CommentsProps> = memo(
   ({
+    variant,
     comments,
     communityDomainName,
     isPostPrivate,
@@ -248,6 +250,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           isFlagged={comment.is_flagged}
           isPostPrivate={isPostPrivate}
           username={comment.username}
+          variant={variant}
           voteCount={comment.vote_count}
           onPress={onCommentPress}
           onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
@@ -276,7 +279,8 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
         handleCommentReplyButtonPress,
         handleCommentVoteButtonPress,
         isPostPrivate,
-        onCommentPress
+        onCommentPress,
+        variant
       ]
     )
 

@@ -17,10 +17,11 @@ import {
 } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
-import { CommentCommentsHeader } from '../components/CommentCommentsHeader'
+import { Comment as CommentComponent } from '../components/Comment'
 import { Comments } from '../components/Comments'
 import { CommentSkeleton } from '../components/CommentSkeleton'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
+import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useChildComments } from '../hooks/useChildComments'
@@ -29,8 +30,10 @@ import { useDeleteComment } from '../hooks/useDeleteComment'
 import { usePost } from '../hooks/usePost'
 import { useReportComment } from '../hooks/useReportComment'
 import { useUserRefresh } from '../hooks/useUserRefresh'
+import { useVoteComment } from '../hooks/useVoteComment'
 import { commentModel } from '../models/comment'
 import { RootStackScreenProps } from '../types'
+import { Vote } from '../types/vote'
 
 export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   navigation,
@@ -81,6 +84,8 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   const { mutate: deleteComment, error: deleteCommentError } =
     useDeleteComment()
 
+  const { mutate: voteComment, error: voteCommentError } = useVoteComment()
+
   const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
   const { mutate: reportComment, error: reportCommentError } =
@@ -103,6 +108,12 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       setIsCommentInitialLoading(false)
     }
   }, [areCommentsFetching, isCommentFetching])
+
+  useEffect(() => {
+    if (voteCommentError) {
+      Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
+    }
+  }, [voteCommentError])
 
   useEffect(() => {
     if (postError) {
@@ -301,16 +312,66 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     })
   }, [navigation, post])
 
+  const handleCommentVoteButtonPress = useCallback(
+    ({
+      commentId,
+      oldVote,
+      vote
+    }: {
+      commentId: number
+      oldVote?: Vote
+      vote: Vote
+    }) => {
+      const { newVote, delta } = getResultingVote({ oldVote, vote })
+
+      voteComment({ commentId, vote: newVote, delta })
+    },
+    [voteComment]
+  )
+
   const renderListHeader = useCallback(
     () =>
       post && comment ? (
-        <CommentCommentsHeader
-          comment={comment}
-          post={post}
-          onReplyButtonPress={handleHeaderReplyButtonPress}
-        />
+        <View className="border-b border-gray-100">
+          <CommentComponent
+            commentCount={comment.comment_count}
+            communityDomainName={post.community_domain_name}
+            content={comment.content}
+            createdAt={comment.created_at}
+            currentUserVote={comment.current_user_vote}
+            id={comment.id}
+            isAuthorInternal={comment.is_author_internal}
+            isDeleted={comment.is_deleted}
+            isFlagged={comment.is_flagged}
+            isPostPrivate={post.is_private}
+            username={comment.username}
+            voteCount={comment.vote_count}
+            onEllipsisButtonPress={handleCommentEllipsisButtonPress}
+            onReplyButtonPress={handleHeaderReplyButtonPress}
+            onDownvoteButtonPress={() =>
+              handleCommentVoteButtonPress({
+                commentId: comment.id,
+                oldVote: comment.current_user_vote,
+                vote: 'downvote'
+              })
+            }
+            onUpvoteButtonPress={() =>
+              handleCommentVoteButtonPress({
+                commentId: comment.id,
+                oldVote: comment.current_user_vote,
+                vote: 'upvote'
+              })
+            }
+          />
+        </View>
       ) : null,
-    [comment, handleHeaderReplyButtonPress, post]
+    [
+      comment,
+      handleCommentEllipsisButtonPress,
+      handleCommentVoteButtonPress,
+      handleHeaderReplyButtonPress,
+      post
+    ]
   )
 
   const handleCommentPress = useCallback(
@@ -379,6 +440,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             hasCommentsNextPage={hasCommentsNextPage}
             isPostPrivate={post.is_private}
             renderListHeader={renderListHeader}
+            variant="child"
             isRefreshing={
               isPostRefreshing || isCommentRefreshing || areCommentsRefreshing
             }
