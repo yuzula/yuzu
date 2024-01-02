@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 import { supabase } from '../clients/supabase'
 import { commentModel } from '../models/comment'
 import { Vote } from '../types/vote'
@@ -36,16 +38,22 @@ export const create = async ({
   content,
   parentCommentId
 }: CreateParams) => {
-  const response = await supabase.from('comments').insert({
-    post_id: postId,
-    user_id: userId,
-    parent_comment_id: parentCommentId,
-    content
-  })
+  const response = await supabase
+    .from('comments')
+    .insert({
+      post_id: postId,
+      user_id: userId,
+      parent_comment_id: parentCommentId,
+      content
+    })
+    .select('id')
+    .single()
 
   if (response.error) {
     throw response.error
   }
+
+  return z.number().parse(response.data.id)
 }
 
 interface GetAllChildrenParams {
