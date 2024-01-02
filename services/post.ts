@@ -107,15 +107,14 @@ export const create = async ({
       user_id: userId,
       is_private: isPrivate
     })
-    .select()
+    .select('id')
+    .single()
 
   if (response.error) {
     throw response.error
   }
 
-  const newPostId = z.number().parse(response.data[0]?.id)
-
-  return get(newPostId)
+  return z.number().parse(response.data.id)
 }
 
 export const markAsDeleted = async (id: number) => {

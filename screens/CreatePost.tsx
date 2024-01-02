@@ -80,8 +80,8 @@ export const CreatePost: FunctionComponent<
           isPrivate
         },
         {
-          onSuccess: post => {
-            navigation.replace('Post', { postId: post.id })
+          onSuccess: postId => {
+            navigation.replace('Post', { postId })
           }
         }
       )
