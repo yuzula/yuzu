@@ -56,7 +56,7 @@ export const CreateComment: FunctionComponent<
     }
   }, [createRootCommentError])
 
-  const handleCreatePostSubmitButtonPress = useCallback(
+  const handleCreateCommentSubmitButtonPress = useCallback(
     ({ content }: CreateCommentSchema) => {
       createRootComment(
         {
@@ -121,7 +121,7 @@ export const CreateComment: FunctionComponent<
                 className="flex-1"
                 isDisabled={!isValid}
                 isLoading={isCreateRootCommentPending}
-                onPress={handleSubmit(handleCreatePostSubmitButtonPress)}
+                onPress={handleSubmit(handleCreateCommentSubmitButtonPress)}
               >
                 Comment
               </Button>
