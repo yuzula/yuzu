@@ -53,9 +53,10 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     <Pressable
       className={clsx(
         {
-          'pl-6': variant === 'child'
+          'pl-6': variant === 'child',
+          'active:bg-gray-200': !!onPress
         },
-        'space-y-1 py-2 active:bg-gray-200'
+        'space-y-1 py-2'
       )}
       onPress={() => onPress?.(id)}
     >
