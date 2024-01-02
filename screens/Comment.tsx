@@ -298,19 +298,19 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   ])
 
   const handleHeaderReplyButtonPress = useCallback(() => {
-    if (!post) {
+    if (!comment) {
       Sentry.Native.captureException('Comment is not defined')
 
-      return Alert.alert('Could not reply to post', GENERIC_ERROR_MESSAGE)
+      return Alert.alert('Could not reply to comment', GENERIC_ERROR_MESSAGE)
     }
 
     navigation.push('CreateComment', {
-      postId: post.id,
-      postAuthorUsername: post.username,
-      postContent: post.content,
-      postCreatedAtTs: post.created_at.getTime()
+      parentId: comment.id,
+      parentUsername: comment.username,
+      parentContent: comment.content,
+      parentCreatedAtTs: comment.created_at.getTime()
     })
-  }, [navigation, post])
+  }, [comment, navigation])
 
   const handleCommentVoteButtonPress = useCallback(
     ({

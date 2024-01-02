@@ -31,7 +31,7 @@ export const CreateComment: FunctionComponent<
 > = ({
   navigation,
   route: {
-    params: { postId, postAuthorUsername, postContent, postCreatedAtTs }
+    params: { parentId, parentUsername, parentContent, parentCreatedAtTs }
   }
 }) => {
   const {
@@ -45,32 +45,32 @@ export const CreateComment: FunctionComponent<
   })
 
   const {
-    mutate: createRootComment,
-    error: createRootCommentError,
-    isPending: isCreateRootCommentPending
+    mutate: createComment,
+    error: createCommentError,
+    isPending: isCreateCommentPending
   } = useCreateComment()
 
   useEffect(() => {
-    if (createRootCommentError) {
+    if (createCommentError) {
       Alert.alert('Could not create comment', GENERIC_ERROR_MESSAGE)
     }
-  }, [createRootCommentError])
+  }, [createCommentError])
 
   const handleCreateCommentSubmitButtonPress = useCallback(
     ({ content }: CreateCommentSchema) => {
-      createRootComment(
+      createComment(
         {
-          postId,
+          postId: parentId,
           content
         },
         {
           onSuccess: commentId => {
-            navigation.replace('Comment', { commentId, postId })
+            navigation.replace('Comment', { commentId, postId: parentId })
           }
         }
       )
     },
-    [createRootComment, navigation, postId]
+    [createComment, navigation, parentId]
   )
 
   const handleCloseButtonPress = useCallback(() => {
@@ -120,14 +120,14 @@ export const CreateComment: FunctionComponent<
               <Button
                 className="flex-1"
                 isDisabled={!isValid}
-                isLoading={isCreateRootCommentPending}
+                isLoading={isCreateCommentPending}
                 onPress={handleSubmit(handleCreateCommentSubmitButtonPress)}
               >
                 Comment
               </Button>
               <Button
                 className="flex-1"
-                isDisabled={isCreateRootCommentPending}
+                isDisabled={isCreateCommentPending}
                 variant="secondary"
                 onPress={handleCloseButtonPress}
               >
@@ -145,7 +145,7 @@ export const CreateComment: FunctionComponent<
                     autoFocus
                     multiline
                     className="mx-auto w-5/6 font-Poppins_500Medium text-base"
-                    editable={!isCreateRootCommentPending}
+                    editable={!isCreateCommentPending}
                     maxLength={600}
                     placeholder="Share your thoughts"
                     value={value}
@@ -167,16 +167,16 @@ export const CreateComment: FunctionComponent<
                     <FontAwesome5 name="reply" />
                     {'  '}Replying to{' '}
                     <Text className="font-Poppins_600SemiBold">
-                      {postAuthorUsername}
+                      {parentUsername}
                     </Text>
                   </Text>
 
                   <Text className="font-Poppins_500Medium text-gray-600">
-                    {formatDuration(Date.now() - postCreatedAtTs)}
+                    {formatDuration(Date.now() - parentCreatedAtTs)}
                   </Text>
                 </View>
 
-                <Text className="font-Poppins_500Medium">{postContent}</Text>
+                <Text className="font-Poppins_500Medium">{parentContent}</Text>
               </View>
             </View>
           </View>

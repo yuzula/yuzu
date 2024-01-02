@@ -261,10 +261,10 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
 
     navigation.push('CreateComment', {
-      postId: post.id,
-      postAuthorUsername: post.username,
-      postContent: post.content,
-      postCreatedAtTs: post.created_at.getTime()
+      parentId: post.id,
+      parentUsername: post.username,
+      parentContent: post.content,
+      parentCreatedAtTs: post.created_at.getTime()
     })
   }, [navigation, post])
 

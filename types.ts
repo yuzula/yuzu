@@ -40,10 +40,10 @@ interface CreatePostScreenParams {
 }
 
 interface CreateCommentScreenParams {
-  postId: number
-  postAuthorUsername?: string
-  postContent?: string
-  postCreatedAtTs: number
+  parentId: number
+  parentUsername?: string
+  parentContent?: string
+  parentCreatedAtTs: number
 }
 
 export type RootStackParamList = {
