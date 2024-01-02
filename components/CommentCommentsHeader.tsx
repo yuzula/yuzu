@@ -6,34 +6,35 @@ import { Alert, Pressable, Text, View } from 'react-native'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
-import { useVotePost } from '../hooks/useVotePost'
+import { useVoteComment } from '../hooks/useVoteComment'
+import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { Vote } from '../types/vote'
 
-interface PostCommentsHeaderProps {
+interface CommentCommentsHeaderProps {
   post: postModel.Schema
+  comment: commentModel.Schema
   onReplyButtonPress: () => void
 }
 
-export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
-  post,
-  onReplyButtonPress
-}) => {
-  const { mutate: votePost, error: votePostError } = useVotePost()
+export const CommentCommentsHeader: FunctionComponent<
+  CommentCommentsHeaderProps
+> = ({ post, comment, onReplyButtonPress }) => {
+  const { mutate: voteComment, error: voteCommentError } = useVoteComment()
 
   useEffect(() => {
-    if (votePostError) {
-      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
+    if (voteCommentError) {
+      Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
     }
-  }, [votePostError])
+  }, [voteCommentError])
 
-  const handlePostVoteButtonPress = useCallback(
+  const handleCommentVoteButtonPress = useCallback(
     ({ oldVote, vote }: { oldVote?: Vote; vote: Vote }) => {
       const { newVote, delta } = getResultingVote({ oldVote, vote })
 
-      votePost({ postId: post.id, vote: newVote, delta })
+      voteComment({ commentId: comment.id, vote: newVote, delta })
     },
-    [post.id, votePost]
+    [comment.id, voteComment]
   )
 
   return (
@@ -43,14 +44,14 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
           <Text
             className={clsx('font-Poppins_600SemiBold text-base', {
               'font-Poppins_600SemiBold_Italic text-gray-light':
-                post.is_deleted || post.is_flagged
+                comment.is_deleted || comment.is_flagged
             })}
           >
-            {post.is_deleted
+            {comment.is_deleted
               ? 'Deleted'
-              : post.is_flagged
+              : comment.is_flagged
               ? 'Flagged'
-              : post.content}
+              : comment.content}
           </Text>
 
           <View className="space-y-1">
@@ -59,10 +60,10 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
               <Text
                 className={clsx('font-Poppins_600SemiBold', {
                   'font-Poppins_600SemiBold_Italic text-gray-light':
-                    post.is_deleted
+                    comment.is_deleted
                 })}
               >
-                {post.is_deleted ? 'Deleted' : post.username}
+                {comment.is_deleted ? 'Deleted' : comment.username}
               </Text>{' '}
               in{' '}
               <Text className="font-Poppins_600SemiBold">
@@ -72,20 +73,16 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
 
             <View className="flex flex-row items-center space-x-2">
               <Text className="font-Poppins_500Medium text-gray-light">
-                <FontAwesome5 name="arrow-up" size={14} /> {post.vote_count}
+                <FontAwesome5 name="arrow-up" size={14} /> {comment.vote_count}
               </Text>
               <Text className="font-Poppins_500Medium text-gray-light">
-                <FontAwesome5 name="comment" size={14} /> {post.comment_count}
+                <FontAwesome5 name="comment" size={14} />{' '}
+                {comment.comment_count}
               </Text>
               <Text className="font-Poppins_500Medium text-gray-light">
                 <FontAwesome5 name="clock" size={14} />{' '}
-                {formatDuration(Date.now() - post.created_at.getTime())}
+                {formatDuration(Date.now() - comment.created_at.getTime())}
               </Text>
-              {post.is_private && (
-                <Text className="text-yellow-light">
-                  <FontAwesome5 name="lock" size={14} />
-                </Text>
-              )}
             </View>
           </View>
         </View>
@@ -96,22 +93,22 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
             className={clsx(
               {
                 'bg-pink-light active:opacity-90':
-                  post.current_user_vote === 'upvote',
-                'active:bg-gray-200': post.current_user_vote !== 'upvote'
+                  comment.current_user_vote === 'upvote',
+                'active:bg-gray-200': comment.current_user_vote !== 'upvote'
               },
               'rounded-lg p-2'
             )}
             onPress={() =>
-              handlePostVoteButtonPress({
-                oldVote: post.current_user_vote,
+              handleCommentVoteButtonPress({
+                oldVote: comment.current_user_vote,
                 vote: 'upvote'
               })
             }
           >
             <Text
               className={clsx({
-                'text-white': post.current_user_vote === 'upvote',
-                'text-gray-light': post.current_user_vote !== 'upvote'
+                'text-white': comment.current_user_vote === 'upvote',
+                'text-gray-light': comment.current_user_vote !== 'upvote'
               })}
             >
               <FontAwesome5 name="arrow-up" size={18} />
@@ -121,22 +118,22 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
             className={clsx(
               {
                 'bg-blue-light active:opacity-90':
-                  post.current_user_vote === 'downvote',
-                'active:bg-gray-200': post.current_user_vote !== 'downvote'
+                  comment.current_user_vote === 'downvote',
+                'active:bg-gray-200': comment.current_user_vote !== 'downvote'
               },
               'rounded-lg p-2'
             )}
             onPress={() =>
-              handlePostVoteButtonPress({
-                oldVote: post.current_user_vote,
+              handleCommentVoteButtonPress({
+                oldVote: comment.current_user_vote,
                 vote: 'downvote'
               })
             }
           >
             <Text
               className={clsx({
-                'text-white': post.current_user_vote === 'downvote',
-                'text-gray-light': post.current_user_vote !== 'downvote'
+                'text-white': comment.current_user_vote === 'downvote',
+                'text-gray-light': comment.current_user_vote !== 'downvote'
               })}
             >
               <FontAwesome5 name="arrow-down" size={18} />

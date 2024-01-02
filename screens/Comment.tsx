@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import React, {
@@ -18,13 +17,18 @@ import {
 } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
+import { CommentCommentsHeader } from '../components/CommentCommentsHeader'
+import { Comments } from '../components/Comments'
+import { CommentSkeleton } from '../components/CommentSkeleton'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useChildComments } from '../hooks/useChildComments'
 import { useComment } from '../hooks/useComment'
 import { useDeleteComment } from '../hooks/useDeleteComment'
+import { usePost } from '../hooks/usePost'
 import { useReportComment } from '../hooks/useReportComment'
+import { useUserRefresh } from '../hooks/useUserRefresh'
 import { commentModel } from '../models/comment'
 import { RootStackScreenProps } from '../types'
 
@@ -34,6 +38,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     params: { postId, commentId }
   }
 }) => {
+  const [isPostInitialLoading, setIsPostInitialLoading] = useState(true)
   const [areCommentsInitialLoading, setAreCommentsInitialLoading] =
     useState(true)
   const [isCommentInitialLoading, setIsCommentInitialLoading] = useState(true)
@@ -41,6 +46,13 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   const { showActionSheetWithOptions } = useActionSheet()
 
   const { profile } = useAuthenticatedProfile()
+
+  const {
+    data: post,
+    error: postError,
+    isFetching: isPostFetching,
+    refetch: refetchPost
+  } = usePost(postId)
 
   const {
     data: comment,
@@ -59,6 +71,13 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     isFetchingNextPage: areCommentsFetchingNextPage
   } = useChildComments({ commentId })
 
+  const { refresh: refreshPost, isRefreshing: isPostRefreshing } =
+    useUserRefresh(refetchPost)
+  const { refresh: refreshComment, isRefreshing: isCommentRefreshing } =
+    useUserRefresh(refetchComment)
+  const { refresh: refreshComments, isRefreshing: areCommentsRefreshing } =
+    useUserRefresh(refetchComments)
+
   const { mutate: deleteComment, error: deleteCommentError } =
     useDeleteComment()
 
@@ -66,6 +85,12 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
 
   const { mutate: reportComment, error: reportCommentError } =
     useReportComment()
+
+  useEffect(() => {
+    if (!isPostFetching) {
+      setIsPostInitialLoading(false)
+    }
+  }, [areCommentsFetching, isPostFetching])
 
   useEffect(() => {
     if (!areCommentsFetching) {
@@ -78,6 +103,14 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       setIsCommentInitialLoading(false)
     }
   }, [areCommentsFetching, isCommentFetching])
+
+  useEffect(() => {
+    if (postError) {
+      Sentry.Native.captureException(postError)
+
+      Alert.alert('Could not fetch post', GENERIC_ERROR_MESSAGE)
+    }
+  }, [postError])
 
   useEffect(() => {
     if (commentError) {
@@ -253,6 +286,60 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     showActionSheetWithOptions
   ])
 
+  const handleHeaderReplyButtonPress = useCallback(() => {
+    if (!post) {
+      Sentry.Native.captureException('Comment is not defined')
+
+      return Alert.alert('Could not reply to post', GENERIC_ERROR_MESSAGE)
+    }
+
+    navigation.push('CreateComment', {
+      postId: post.id,
+      postAuthorUsername: post.username,
+      postContent: post.content,
+      postCreatedAtTs: post.created_at.getTime()
+    })
+  }, [navigation, post])
+
+  const renderListHeader = useCallback(
+    () =>
+      post && comment ? (
+        <CommentCommentsHeader
+          comment={comment}
+          post={post}
+          onReplyButtonPress={handleHeaderReplyButtonPress}
+        />
+      ) : null,
+    [comment, handleHeaderReplyButtonPress, post]
+  )
+
+  const handleCommentPress = useCallback(
+    (commentId: number) => {
+      if (!post) {
+        Sentry.Native.captureException('Post is not defined')
+
+        return Alert.alert(
+          'Could not fetch post details',
+          GENERIC_ERROR_MESSAGE
+        )
+      }
+
+      navigation.push('Comment', { commentId, postId: post.id })
+    },
+    [navigation, post]
+  )
+
+  const handleListRefresh = useCallback(() => {
+    refreshPost()
+    refreshComment()
+    refreshComments()
+  }, [refreshComment, refreshComments, refreshPost])
+
+  const areResourcesLoading =
+    isPostInitialLoading || isCommentInitialLoading || areCommentsInitialLoading
+
+  const areResourcesDefined = post && comment
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
       <KeyboardAvoidingView
@@ -279,6 +366,26 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             </Pressable>
           </View>
         </View>
+
+        {areResourcesLoading || !areResourcesDefined ? (
+          <CommentSkeleton />
+        ) : (
+          <Comments
+            areCommentsFetching={areCommentsFetching}
+            areCommentsFetchingNextPage={areCommentsFetchingNextPage}
+            comments={commentsData?.pages.map(page => page.comments).flat(1)}
+            communityDomainName={post.community_domain_name}
+            fetchCommentsNextPage={fetchCommentsNextPage}
+            hasCommentsNextPage={hasCommentsNextPage}
+            isPostPrivate={post.is_private}
+            renderListHeader={renderListHeader}
+            isRefreshing={
+              isPostRefreshing || isCommentRefreshing || areCommentsRefreshing
+            }
+            onCommentPress={handleCommentPress}
+            onRefresh={handleListRefresh}
+          />
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
