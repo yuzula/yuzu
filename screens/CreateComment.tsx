@@ -62,15 +62,15 @@ export const CreateComment: FunctionComponent<
         {
           postId,
           content
+        },
+        {
+          onSuccess: commentId => {
+            navigation.replace('Comment', { commentId, postId })
+          }
         }
-        // {
-        //   onSuccess: post => {
-        //     navigation.replace('Post', { postId: post.id })
-        //   }
-        // }
       )
     },
-    [createRootComment, postId]
+    [createRootComment, navigation, postId]
   )
 
   const handleCloseButtonPress = useCallback(() => {
