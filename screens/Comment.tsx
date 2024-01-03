@@ -247,13 +247,14 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
                 text: 'Yes',
                 style: 'destructive',
                 onPress: () => {
-                  deleteComment({ commentId })
-
-                  if (navigation.canGoBack()) {
-                    navigation.goBack()
-                  } else {
-                    navigation.replace('Post', { postId })
-                  }
+                  deleteComment(
+                    { commentId },
+                    {
+                      onSuccess: () => {
+                        navigation.pop()
+                      }
+                    }
+                  )
                 }
               },
               {
@@ -292,7 +293,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     handleBlockAuthorButtonPress,
     handleReportCommentButtonPress,
     navigation,
-    postId,
     profile.id,
     showActionSheetWithOptions
   ])

@@ -204,5 +204,6 @@ export const Comment: FunctionComponent<CommentProps> = memo(
   (prevProps, nextProps) =>
     prevProps.voteCount === nextProps.voteCount &&
     prevProps.currentUserVote === nextProps.currentUserVote &&
-    prevProps.commentCount === nextProps.commentCount
+    prevProps.commentCount === nextProps.commentCount &&
+    prevProps.isDeleted === nextProps.isDeleted
 )
