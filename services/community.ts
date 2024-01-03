@@ -3,28 +3,29 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { communityModel } from '../models/community'
 
-export const search = async (query: string) => {
-  const response = await supabase.rpc('search_communities', { query }).limit(20)
+const PAGE_SIZE = 10
 
-  if (response.error) {
-    throw response.error
-  }
-
-  return communityModel.schema.array().parse(response.data)
+interface SearchParams {
+  query: string
+  fetchedDomainNames: string[]
 }
 
-export const getAll = async () => {
+export const search = async ({ query, fetchedDomainNames }: SearchParams) => {
   const response = await supabase
-    .from('communities_with_member_count')
-    .select()
-    .order('member_count', { ascending: false })
-    .limit(20)
+    .rpc('search_communities', { query })
+    .not('domain_name', 'in', `(${fetchedDomainNames.join(',')})`)
+    .limit(PAGE_SIZE + 1)
 
   if (response.error) {
     throw response.error
   }
 
-  return communityModel.schema.array().parse(response.data)
+  return {
+    communities: communityModel.schema
+      .array()
+      .parse(response.data.slice(0, PAGE_SIZE)),
+    hasNextPage: response.data.length === PAGE_SIZE + 1
+  }
 }
 
 export const getMemberCount = async (domainName: string) => {

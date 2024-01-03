@@ -6,6 +6,7 @@ import React, {
   useState
 } from 'react'
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   KeyboardAvoidingView,
@@ -17,12 +18,14 @@ import {
   View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 import { useDebounce } from 'usehooks-ts'
 
 import { Separator } from '../components/Separator'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useSearchCommunities } from '../hooks/useSearchCommunities'
+import { useUserRefresh } from '../hooks/useUserRefresh'
 import { communityModel } from '../models/community'
 import { RootTabScreenProps } from '../types'
 
@@ -36,17 +39,35 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebounce(query, 500)
 
+  const [areCommunitiesInitialLoading, setAreCommunitiesInitialLoading] =
+    useState(true)
+
   const {
-    communities,
-    isInitialLoading: areCommunitiesInitialLoading,
+    data: communitiesData,
     error: communitiesError,
+    isFetching: areCommunitiesFetching,
+    refetch: refetchCommunities,
+    fetchNextPage: fetchCommunitiesNextPage,
+    hasNextPage: hasCommunitiesNextPage,
+    isFetchingNextPage: areCommunitiesFetchingNextPage
+  } = useSearchCommunities({ query: debouncedQuery })
+
+  const {
     refresh: refreshCommunities,
     isRefreshing: areCommunitiesRefreshing
-  } = useSearchCommunities({ query: debouncedQuery })
+  } = useUserRefresh(refetchCommunities)
+
+  useEffect(() => {
+    if (!areCommunitiesFetching) {
+      setAreCommunitiesInitialLoading(false)
+    }
+  }, [areCommunitiesFetching])
 
   useEffect(() => {
     if (communitiesError) {
-      Alert.alert('Could not get communities', GENERIC_ERROR_MESSAGE)
+      Sentry.Native.captureException(communitiesError)
+
+      Alert.alert('Could not fetch communities', GENERIC_ERROR_MESSAGE)
     }
   }, [communitiesError])
 
@@ -79,6 +100,56 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
       </Pressable>
     ),
     [handleCommunityPress]
+  )
+
+  const renderListFooterComponent = useCallback(() => {
+    if (areCommunitiesFetchingNextPage) {
+      return <ActivityIndicator className="py-4" />
+    }
+
+    return null
+  }, [areCommunitiesFetchingNextPage])
+
+  const handleEndReached = useCallback(() => {
+    if (!areCommunitiesFetching && hasCommunitiesNextPage) {
+      fetchCommunitiesNextPage()
+    }
+  }, [areCommunitiesFetching, fetchCommunitiesNextPage, hasCommunitiesNextPage])
+
+  const listKeyExtractor = useCallback(
+    (community: communityModel.Schema) => community.domain_name,
+    []
+  )
+
+  const renderListEmptyComponent = useCallback(
+    () =>
+      areCommunitiesFetching ? (
+        <View className="w-full grow">
+          {[...Array(4).keys()].map(i => (
+            <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
+              <View>
+                <Skeleton colorMode="light" height={12} width="90%" />
+              </View>
+              <View>
+                <Skeleton colorMode="light" height={12} width="80%" />
+              </View>
+              <View>
+                <Skeleton colorMode="light" height={12} width="60%" />
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View className="flex-1 items-center justify-center">
+          <Text className="font-Poppins_600SemiBold text-base text-gray-light">
+            No results
+          </Text>
+          <Text className="font-Poppins_500Medium text-gray-light">
+            Try refining your search
+          </Text>
+        </View>
+      ),
+    [areCommunitiesFetching]
   )
 
   return (
@@ -120,12 +191,18 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
           ) : (
             <FlatList
               ItemSeparatorComponent={Separator}
+              ListEmptyComponent={renderListEmptyComponent}
+              ListFooterComponent={renderListFooterComponent}
               className="w-full"
-              data={communities}
-              keyExtractor={item => item.domain_name}
+              keyExtractor={listKeyExtractor}
               keyboardDismissMode="interactive"
               refreshing={areCommunitiesRefreshing}
               renderItem={handleRenderCommunityItem}
+              data={communitiesData?.pages
+                .map(page => page.communities)
+                .flat(1)}
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={0.2}
               onRefresh={refreshCommunities}
             />
           )}

@@ -4,10 +4,12 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Text, View } from 'react-native'
+import { Alert, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as Sentry from 'sentry-expo'
 
 import { Posts } from '../components/Posts'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { usePosts } from '../hooks/usePosts'
 import { useUserRefresh } from '../hooks/useUserRefresh'
@@ -27,6 +29,7 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
 
   const {
     data: postsData,
+    error: postsError,
     isFetching: arePostsFetching,
     refetch: refetchPosts,
     fetchNextPage: fetchPostsNextPage,
@@ -42,6 +45,14 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
       setArePostsInitialLoading(false)
     }
   }, [arePostsFetching])
+
+  useEffect(() => {
+    if (postsError) {
+      Sentry.Native.captureException(postsError)
+
+      Alert.alert('Could not fetch posts', GENERIC_ERROR_MESSAGE)
+    }
+  }, [postsError])
 
   const handlePostPress = useCallback(
     (postId: number) => {
