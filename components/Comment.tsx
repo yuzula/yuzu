@@ -150,16 +150,14 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           )}
         </View>
         <View className="flex-row items-center space-x-1">
-          {variant === 'parent' && (
-            <Pressable
-              className="rounded-lg p-2 active:bg-gray-200"
-              onPress={() => onReplyButtonPress?.(id)}
-            >
-              <Text className="text-gray-light">
-                <FontAwesome5 name="comment" size={14} />
-              </Text>
-            </Pressable>
-          )}
+          <Pressable
+            className="rounded-lg p-2 active:bg-gray-200"
+            onPress={() => onReplyButtonPress?.(id)}
+          >
+            <Text className="text-gray-light">
+              <FontAwesome5 name="comment" size={14} />
+            </Text>
+          </Pressable>
           <Pressable
             className={clsx(
               {
