@@ -6,21 +6,12 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
+import { postModel } from '../models/post'
 import { Vote } from '../types/vote'
 
 interface PostProps {
-  id: number
-  isDeleted: boolean
-  isFlagged: boolean
-  isPrivate: boolean
-  authorId?: string
-  authorUsername?: string
-  communityDomainName?: string
-  voteCount: number
-  commentCount: number
-  content?: string
-  currentUserVote?: Vote
-  createdAt: Date
+  post: postModel.Schema
+  shouldDisplayCommunityDomainName?: boolean
   onPress: (postId: number) => void
   onVoteButtonPress: ({
     postId,
@@ -43,68 +34,58 @@ interface PostProps {
 
 export const Post: FunctionComponent<PostProps> = memo(
   ({
-    id,
-    isDeleted,
-    isFlagged,
-    isPrivate,
-    authorUsername,
-    communityDomainName,
-    authorId,
-    voteCount,
-    commentCount,
-    content,
-    currentUserVote,
-    createdAt,
+    post,
+    shouldDisplayCommunityDomainName = false,
     onPress,
     onVoteButtonPress,
     onEllipsisButtonPress,
     onCommunityDomainNamePress
   }) => {
     const handleDomainNamePress = useCallback(() => {
-      if (!communityDomainName) {
+      if (!post.community_domain_name) {
         Sentry.Native.captureException('communityDomainName is not defined')
 
         return Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
       }
 
-      onCommunityDomainNamePress?.(communityDomainName)
-    }, [communityDomainName, onCommunityDomainNamePress])
+      onCommunityDomainNamePress?.(post.community_domain_name)
+    }, [onCommunityDomainNamePress, post.community_domain_name])
 
     const handlePress = useCallback(() => {
-      onPress(id)
-    }, [id, onPress])
+      onPress(post.id)
+    }, [onPress, post.id])
 
     const handleEllipsisButtonPress = useCallback(() => {
       onEllipsisButtonPress({
-        postId: id,
-        postAuthorId: authorId
+        postId: post.id,
+        postAuthorId: post.user_id
       })
-    }, [authorId, id, onEllipsisButtonPress])
+    }, [onEllipsisButtonPress, post.id, post.user_id])
 
     const handleUpvoteButtonPress = useCallback(() => {
       onVoteButtonPress({
-        postId: id,
-        oldVote: currentUserVote,
+        postId: post.id,
+        oldVote: post.current_user_vote,
         vote: 'upvote'
       })
-    }, [currentUserVote, id, onVoteButtonPress])
+    }, [onVoteButtonPress, post.current_user_vote, post.id])
 
     const handleDownvoteButtonPress = useCallback(() => {
       onVoteButtonPress({
-        postId: id,
-        oldVote: currentUserVote,
+        postId: post.id,
+        oldVote: post.current_user_vote,
         vote: 'downvote'
       })
-    }, [currentUserVote, id, onVoteButtonPress])
+    }, [onVoteButtonPress, post.current_user_vote, post.id])
 
     return (
       <Pressable className="active:bg-gray-200" onPress={handlePress}>
         <View className="mx-auto w-5/6 space-y-2 py-4">
-          {communityDomainName && (
+          {shouldDisplayCommunityDomainName && (
             <View className="flex-row">
               <Pressable className="shrink" onPress={handleDomainNamePress}>
                 <Text className="font-Poppins_600SemiBold text-gray-light">
-                  @{communityDomainName}
+                  @{post.community_domain_name}
                 </Text>
               </Pressable>
             </View>
@@ -115,10 +96,14 @@ export const Post: FunctionComponent<PostProps> = memo(
             numberOfLines={4}
             className={clsx('font-Poppins_600SemiBold text-base', {
               'font-Poppins_600SemiBold_Italic text-gray-light':
-                isDeleted || isFlagged
+                post.is_deleted || post.is_flagged
             })}
           >
-            {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}
+            {post.is_deleted
+              ? 'Deleted'
+              : post.is_flagged
+              ? 'Flagged'
+              : post.content}
           </Text>
 
           <View className="flex flex-row items-center justify-between space-x-2">
@@ -131,24 +116,24 @@ export const Post: FunctionComponent<PostProps> = memo(
                 by{' '}
                 <Text
                   className={clsx('font-Poppins_600SemiBold', {
-                    'font-Poppins_600SemiBold_Italic': isDeleted
+                    'font-Poppins_600SemiBold_Italic': post.is_deleted
                   })}
                 >
-                  {isDeleted ? 'Deleted' : authorUsername}
+                  {post.is_deleted ? 'Deleted' : post.username}
                 </Text>
               </Text>
               <View className="flex flex-row items-center space-x-2">
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="arrow-up" size={14} /> {voteCount}
+                  <FontAwesome5 name="arrow-up" size={14} /> {post.vote_count}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
-                  <FontAwesome5 name="comment" size={14} /> {commentCount}
+                  <FontAwesome5 name="comment" size={14} /> {post.comment_count}
                 </Text>
                 <Text className="font-Poppins_500Medium text-gray-light">
                   <FontAwesome5 name="clock" size={14} />{' '}
-                  {formatDuration(Date.now() - createdAt.getTime())}
+                  {formatDuration(Date.now() - post.created_at.getTime())}
                 </Text>
-                {isPrivate && (
+                {post.is_private && (
                   <Text className="text-yellow-light">
                     <FontAwesome5 name="lock" size={14} />
                   </Text>
@@ -169,8 +154,8 @@ export const Post: FunctionComponent<PostProps> = memo(
                 className={clsx(
                   {
                     'bg-pink-light active:opacity-90':
-                      currentUserVote === 'upvote',
-                    'active:bg-gray-200': currentUserVote !== 'upvote'
+                      post.current_user_vote === 'upvote',
+                    'active:bg-gray-200': post.current_user_vote !== 'upvote'
                   },
                   'rounded-lg p-2'
                 )}
@@ -178,8 +163,8 @@ export const Post: FunctionComponent<PostProps> = memo(
               >
                 <Text
                   className={clsx({
-                    'text-white': currentUserVote === 'upvote',
-                    'text-gray-light': currentUserVote !== 'upvote'
+                    'text-white': post.current_user_vote === 'upvote',
+                    'text-gray-light': post.current_user_vote !== 'upvote'
                   })}
                 >
                   <FontAwesome5 name="arrow-up" size={18} />
@@ -189,8 +174,8 @@ export const Post: FunctionComponent<PostProps> = memo(
                 className={clsx(
                   {
                     'bg-blue-light active:opacity-90':
-                      currentUserVote === 'downvote',
-                    'active:bg-gray-200': currentUserVote !== 'downvote'
+                      post.current_user_vote === 'downvote',
+                    'active:bg-gray-200': post.current_user_vote !== 'downvote'
                   },
                   'rounded-lg p-2'
                 )}
@@ -198,8 +183,8 @@ export const Post: FunctionComponent<PostProps> = memo(
               >
                 <Text
                   className={clsx({
-                    'text-white': currentUserVote === 'downvote',
-                    'text-gray-light': currentUserVote !== 'downvote'
+                    'text-white': post.current_user_vote === 'downvote',
+                    'text-gray-light': post.current_user_vote !== 'downvote'
                   })}
                 >
                   <FontAwesome5 name="arrow-down" size={18} />
@@ -212,7 +197,8 @@ export const Post: FunctionComponent<PostProps> = memo(
     )
   },
   (prevProps, nextProps) =>
-    prevProps.voteCount === nextProps.voteCount &&
-    prevProps.currentUserVote === nextProps.currentUserVote &&
-    prevProps.commentCount === nextProps.commentCount
+    prevProps.post.vote_count === nextProps.post.vote_count &&
+    prevProps.post.current_user_vote === nextProps.post.current_user_vote &&
+    prevProps.post.comment_count === nextProps.post.comment_count &&
+    prevProps.post.is_deleted === nextProps.post.is_deleted
 )

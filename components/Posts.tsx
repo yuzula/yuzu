@@ -227,22 +227,8 @@ export const Posts: FunctionComponent<PostsProps> = memo(
     const renderListItem = useCallback(
       ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
         <Post
-          authorId={post.user_id}
-          authorUsername={post.username}
-          commentCount={post.comment_count}
-          content={post.content}
-          createdAt={post.created_at}
-          currentUserVote={post.current_user_vote}
-          id={post.id}
-          isDeleted={post.is_deleted}
-          isFlagged={post.is_flagged}
-          isPrivate={post.is_private}
-          voteCount={post.vote_count}
-          communityDomainName={
-            shouldDisplayCommunityDomainName
-              ? post.community_domain_name
-              : undefined
-          }
+          post={post}
+          shouldDisplayCommunityDomainName={shouldDisplayCommunityDomainName}
           onCommunityDomainNamePress={onPostCommunityDomainNamePress}
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
           onPress={onPostPress}
