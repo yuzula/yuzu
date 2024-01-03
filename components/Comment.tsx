@@ -6,22 +6,14 @@ import Popover from 'react-native-popover-view'
 
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { formatDuration } from '../helpers/time'
-import { Vote } from '../types/vote'
+import { commentModel } from '../models/comment'
 
 interface CommentProps {
-  id: number
-  username?: string
-  voteCount: number
-  commentCount: number
-  createdAt: Date
-  isDeleted: boolean
-  isFlagged: boolean
-  content?: string
+  comment: commentModel.Schema
+  variant?: 'parent' | 'child'
   communityDomainName: string
   isPostPrivate: boolean
   isAuthorInternal: boolean
-  currentUserVote?: Vote
-  variant?: 'parent' | 'child'
   onPress?: (id: number) => void
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
@@ -31,19 +23,11 @@ interface CommentProps {
 
 export const Comment: FunctionComponent<CommentProps> = memo(
   ({
-    id,
-    username,
-    voteCount,
-    commentCount,
-    createdAt,
-    content,
+    comment,
+    variant = 'parent',
     communityDomainName,
     isPostPrivate,
     isAuthorInternal,
-    currentUserVote,
-    variant = 'parent',
-    isDeleted,
-    isFlagged,
     onPress,
     onEllipsisButtonPress,
     onReplyButtonPress,
@@ -58,7 +42,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         },
         'space-y-1 py-2'
       )}
-      onPress={() => onPress?.(id)}
+      onPress={() => onPress?.(comment.id)}
     >
       <View className="mx-auto w-5/6 flex-row items-center justify-between space-x-2">
         <View className="shrink flex-row items-center space-x-2">
@@ -66,10 +50,11 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             ellipsizeMode="tail"
             numberOfLines={1}
             className={clsx('shrink font-Poppins_600SemiBold', {
-              'font-Poppins_600SemiBold_Italic text-gray-light': !username
+              'font-Poppins_600SemiBold_Italic text-gray-light':
+                !comment.username
             })}
           >
-            {!username ? 'Deleted' : username}
+            {!comment.username ? 'Deleted' : comment.username}
           </Text>
           {!isPostPrivate && isAuthorInternal && (
             <View>
@@ -106,7 +91,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             </Text>
             <Text className="font-Poppins_500Medium text-gray-light">
               {' '}
-              {voteCount}
+              {comment.vote_count}
             </Text>
           </View>
         </View>
@@ -114,14 +99,14 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         <View className="flex-row items-center space-x-1">
           <Pressable
             className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onEllipsisButtonPress?.(id)}
+            onPress={() => onEllipsisButtonPress?.(comment.id)}
           >
             <Text className="text-gray-light">
               <FontAwesome5 name="ellipsis-h" size={14} />
             </Text>
           </Pressable>
           <Text className="font-Poppins_500Medium text-gray-light">
-            {formatDuration(Date.now() - createdAt.getTime())}
+            {formatDuration(Date.now() - comment.created_at.getTime())}
           </Text>
         </View>
       </View>
@@ -130,29 +115,34 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         <Text
           className={clsx('font-Poppins_500Medium', {
             'font-Poppins_500Medium_Italic text-gray-light':
-              isDeleted || isFlagged
+              comment.is_deleted || comment.is_flagged
           })}
         >
-          {isDeleted ? 'Deleted' : isFlagged ? 'Flagged' : content}
+          {comment.is_deleted
+            ? 'Deleted'
+            : comment.is_flagged
+            ? 'Flagged'
+            : comment.content}
         </Text>
       </View>
 
       <View className="mx-auto w-5/6 flex-row items-center justify-between">
         <View className="shrink flex-row">
-          {commentCount > 0 && (
+          {comment.comment_count > 0 && (
             <Text
               className="font-Poppins_500Medium text-gray-light"
               ellipsizeMode="tail"
               numberOfLines={1}
             >
-              {commentCount} {commentCount > 1 ? 'replies' : 'reply'}
+              {comment.comment_count}{' '}
+              {comment.comment_count > 1 ? 'replies' : 'reply'}
             </Text>
           )}
         </View>
         <View className="flex-row items-center space-x-1">
           <Pressable
             className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onReplyButtonPress?.(id)}
+            onPress={() => onReplyButtonPress?.(comment.id)}
           >
             <Text className="text-gray-light">
               <FontAwesome5 name="comment" size={14} />
@@ -161,17 +151,18 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           <Pressable
             className={clsx(
               {
-                'bg-pink-light active:opacity-90': currentUserVote === 'upvote',
-                'active:bg-gray-200': currentUserVote !== 'upvote'
+                'bg-pink-light active:opacity-90':
+                  comment.current_user_vote === 'upvote',
+                'active:bg-gray-200': comment.current_user_vote !== 'upvote'
               },
               'rounded-lg p-2'
             )}
-            onPress={() => onUpvoteButtonPress?.(id)}
+            onPress={() => onUpvoteButtonPress?.(comment.id)}
           >
             <Text
               className={clsx({
-                'text-white': currentUserVote === 'upvote',
-                'text-gray-light': currentUserVote !== 'upvote'
+                'text-white': comment.current_user_vote === 'upvote',
+                'text-gray-light': comment.current_user_vote !== 'upvote'
               })}
             >
               <FontAwesome5 name="arrow-up" size={14} />
@@ -181,17 +172,17 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             className={clsx(
               {
                 'bg-blue-light active:opacity-90':
-                  currentUserVote === 'downvote',
-                'active:bg-gray-200': currentUserVote !== 'downvote'
+                  comment.current_user_vote === 'downvote',
+                'active:bg-gray-200': comment.current_user_vote !== 'downvote'
               },
               'rounded-lg p-2'
             )}
-            onPress={() => onDownvoteButtonPress?.(id)}
+            onPress={() => onDownvoteButtonPress?.(comment.id)}
           >
             <Text
               className={clsx({
-                'text-white': currentUserVote === 'downvote',
-                'text-gray-light': currentUserVote !== 'downvote'
+                'text-white': comment.current_user_vote === 'downvote',
+                'text-gray-light': comment.current_user_vote !== 'downvote'
               })}
             >
               <FontAwesome5 name="arrow-down" size={14} />
@@ -202,8 +193,9 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     </Pressable>
   ),
   (prevProps, nextProps) =>
-    prevProps.voteCount === nextProps.voteCount &&
-    prevProps.currentUserVote === nextProps.currentUserVote &&
-    prevProps.commentCount === nextProps.commentCount &&
-    prevProps.isDeleted === nextProps.isDeleted
+    prevProps.comment.vote_count === nextProps.comment.vote_count &&
+    prevProps.comment.current_user_vote ===
+      nextProps.comment.current_user_vote &&
+    prevProps.comment.comment_count === nextProps.comment.comment_count &&
+    prevProps.comment.is_deleted === nextProps.comment.is_deleted
 )

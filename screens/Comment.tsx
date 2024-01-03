@@ -360,18 +360,10 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       post && comment ? (
         <View className="border-b border-gray-100">
           <CommentComponent
-            commentCount={comment.comment_count}
+            comment={comment}
             communityDomainName={post.community_domain_name}
-            content={comment.content}
-            createdAt={comment.created_at}
-            currentUserVote={comment.current_user_vote}
-            id={comment.id}
             isAuthorInternal={comment.is_author_internal}
-            isDeleted={comment.is_deleted}
-            isFlagged={comment.is_flagged}
             isPostPrivate={post.is_private}
-            username={comment.username}
-            voteCount={comment.vote_count}
             onEllipsisButtonPress={handleCommentEllipsisButtonPress}
             onReplyButtonPress={handleHeaderReplyButtonPress}
             onDownvoteButtonPress={() =>

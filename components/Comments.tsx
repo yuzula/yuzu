@@ -235,19 +235,11 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     const renderListItem = useCallback(
       ({ item: comment }: ListRenderItemInfo<commentModel.Schema>) => (
         <Comment
-          commentCount={comment.comment_count}
+          comment={comment}
           communityDomainName={communityDomainName}
-          content={comment.content}
-          createdAt={comment.created_at}
-          currentUserVote={comment.current_user_vote}
-          id={comment.id}
           isAuthorInternal={comment.is_author_internal}
-          isDeleted={comment.is_deleted}
-          isFlagged={comment.is_flagged}
           isPostPrivate={isPostPrivate}
-          username={comment.username}
           variant={variant}
-          voteCount={comment.vote_count}
           onPress={onCommentPress}
           onReplyButtonPress={() => onCommentReplyButtonPress(comment)}
           onDownvoteButtonPress={() =>
