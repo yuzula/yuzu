@@ -40,6 +40,7 @@ interface CreatePostScreenParams {
 }
 
 interface CreateCommentScreenParams {
+  postId: number
   parentId: number
   parentUsername?: string
   parentContent?: string

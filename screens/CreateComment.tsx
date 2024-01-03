@@ -31,7 +31,13 @@ export const CreateComment: FunctionComponent<
 > = ({
   navigation,
   route: {
-    params: { parentId, parentUsername, parentContent, parentCreatedAtTs }
+    params: {
+      postId,
+      parentId,
+      parentUsername,
+      parentContent,
+      parentCreatedAtTs
+    }
   }
 }) => {
   const {
@@ -60,7 +66,8 @@ export const CreateComment: FunctionComponent<
     ({ content }: CreateCommentSchema) => {
       createComment(
         {
-          postId: parentId,
+          postId,
+          parentCommentId: parentId,
           content
         },
         {
@@ -70,7 +77,7 @@ export const CreateComment: FunctionComponent<
         }
       )
     },
-    [createComment, navigation, parentId]
+    [createComment, navigation, parentId, postId]
   )
 
   const handleCloseButtonPress = useCallback(() => {

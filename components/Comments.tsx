@@ -41,6 +41,7 @@ interface CommentsProps {
   renderListHeader: () => ReactNode
   onRefresh: () => void
   onCommentPress: (id: number) => void
+  onCommentReplyButtonPress: (comment: commentModel.Schema) => void
 }
 
 export const Comments: FunctionComponent<CommentsProps> = memo(
@@ -56,7 +57,8 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     fetchCommentsNextPage,
     renderListHeader,
     onRefresh,
-    onCommentPress
+    onCommentPress,
+    onCommentReplyButtonPress
   }) => {
     const { showActionSheetWithOptions } = useActionSheet()
 
@@ -199,12 +201,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
       ]
     )
 
-    const handleCommentReplyButtonPress = useCallback(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      (commentId: number) => {},
-      []
-    )
-
     const handleCommentVoteButtonPress = useCallback(
       ({
         commentId,
@@ -253,7 +249,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           variant={variant}
           voteCount={comment.vote_count}
           onPress={onCommentPress}
-          onReplyButtonPress={id => handleCommentReplyButtonPress(id)}
+          onReplyButtonPress={() => onCommentReplyButtonPress(comment)}
           onDownvoteButtonPress={() =>
             handleCommentVoteButtonPress({
               commentId: comment.id,
@@ -276,10 +272,10 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
       [
         communityDomainName,
         handleCommentEllipsisButtonPress,
-        handleCommentReplyButtonPress,
         handleCommentVoteButtonPress,
         isPostPrivate,
         onCommentPress,
+        onCommentReplyButtonPress,
         variant
       ]
     )

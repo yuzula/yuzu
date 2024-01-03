@@ -28,6 +28,7 @@ import { usePost } from '../hooks/usePost'
 import { useReportPost } from '../hooks/useReportPost'
 import { useRootComments } from '../hooks/useRootComments'
 import { useUserRefresh } from '../hooks/useUserRefresh'
+import { commentModel } from '../models/comment'
 import { postModel } from '../models/post'
 import { RootStackScreenProps } from '../types'
 
@@ -261,12 +262,32 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
 
     navigation.push('CreateComment', {
+      postId: post.id,
       parentId: post.id,
       parentUsername: post.username,
       parentContent: post.content,
       parentCreatedAtTs: post.created_at.getTime()
     })
   }, [navigation, post])
+
+  const handleCommentReplyButtonPress = useCallback(
+    (comment: commentModel.Schema) => {
+      if (!post) {
+        Sentry.Native.captureException('Post is not defined')
+
+        return Alert.alert('Could not reply to post', GENERIC_ERROR_MESSAGE)
+      }
+
+      navigation.push('CreateComment', {
+        postId: post.id,
+        parentId: comment.id,
+        parentUsername: comment.username,
+        parentContent: comment.content,
+        parentCreatedAtTs: comment.created_at.getTime()
+      })
+    },
+    [navigation, post]
+  )
 
   const renderListHeader = useCallback(
     () =>
@@ -336,6 +357,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             isRefreshing={isPostRefreshing || areCommentsRefreshing}
             renderListHeader={renderListHeader}
             onCommentPress={handleCommentPress}
+            onCommentReplyButtonPress={handleCommentReplyButtonPress}
             onRefresh={handleListRefresh}
           />
         )}

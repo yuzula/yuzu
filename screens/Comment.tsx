@@ -298,6 +298,12 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   ])
 
   const handleHeaderReplyButtonPress = useCallback(() => {
+    if (!post) {
+      Sentry.Native.captureException('Post is not defined')
+
+      return Alert.alert('Could not reply to comment', GENERIC_ERROR_MESSAGE)
+    }
+
     if (!comment) {
       Sentry.Native.captureException('Comment is not defined')
 
@@ -305,12 +311,32 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     }
 
     navigation.push('CreateComment', {
+      postId: post.id,
       parentId: comment.id,
       parentUsername: comment.username,
       parentContent: comment.content,
       parentCreatedAtTs: comment.created_at.getTime()
     })
-  }, [comment, navigation])
+  }, [comment, navigation, post])
+
+  const handleCommentReplyButtonPress = useCallback(
+    (comment: commentModel.Schema) => {
+      if (!post) {
+        Sentry.Native.captureException('Post is not defined')
+
+        return Alert.alert('Could not reply to comment', GENERIC_ERROR_MESSAGE)
+      }
+
+      navigation.push('CreateComment', {
+        postId: post.id,
+        parentId: comment.id,
+        parentUsername: comment.username,
+        parentContent: comment.content,
+        parentCreatedAtTs: comment.created_at.getTime()
+      })
+    },
+    [navigation, post]
+  )
 
   const handleCommentVoteButtonPress = useCallback(
     ({
@@ -445,6 +471,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
               isPostRefreshing || isCommentRefreshing || areCommentsRefreshing
             }
             onCommentPress={handleCommentPress}
+            onCommentReplyButtonPress={handleCommentReplyButtonPress}
             onRefresh={handleListRefresh}
           />
         )}
