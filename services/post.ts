@@ -44,6 +44,7 @@ export const getAll = async ({
     .select('*')
     .eq('is_deleted', false)
     .eq('is_flagged', false)
+    .eq('is_blocked', false)
     .order(
       sortBy === 'hot'
         ? 'hotness'

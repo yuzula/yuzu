@@ -43,13 +43,15 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
           <Text
             className={clsx('font-Poppins_600SemiBold text-base', {
               'font-Poppins_600SemiBold_Italic text-gray-light':
-                post.is_deleted || post.is_flagged
+                post.is_deleted || post.is_flagged || post.is_blocked
             })}
           >
             {post.is_deleted
               ? 'Deleted'
               : post.is_flagged
               ? 'Flagged'
+              : post.is_blocked
+              ? 'Blocked'
               : post.content}
           </Text>
 
@@ -59,10 +61,14 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
               <Text
                 className={clsx('font-Poppins_600SemiBold', {
                   'font-Poppins_600SemiBold_Italic text-gray-light':
-                    post.is_deleted
+                    post.is_deleted || post.is_blocked
                 })}
               >
-                {post.is_deleted ? 'Deleted' : post.username}
+                {post.is_deleted
+                  ? 'Deleted'
+                  : post.is_blocked
+                  ? 'Blocked'
+                  : post.username}
               </Text>{' '}
               in{' '}
               <Text className="font-Poppins_600SemiBold">

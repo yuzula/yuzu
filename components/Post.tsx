@@ -96,13 +96,15 @@ export const Post: FunctionComponent<PostProps> = memo(
             numberOfLines={4}
             className={clsx('font-Poppins_600SemiBold text-base', {
               'font-Poppins_600SemiBold_Italic text-gray-light':
-                post.is_deleted || post.is_flagged
+                post.is_deleted || post.is_flagged || post.is_blocked
             })}
           >
             {post.is_deleted
               ? 'Deleted'
               : post.is_flagged
               ? 'Flagged'
+              : post.is_blocked
+              ? 'Blocked'
               : post.content}
           </Text>
 
@@ -116,10 +118,15 @@ export const Post: FunctionComponent<PostProps> = memo(
                 by{' '}
                 <Text
                   className={clsx('font-Poppins_600SemiBold', {
-                    'font-Poppins_600SemiBold_Italic': post.is_deleted
+                    'font-Poppins_600SemiBold_Italic':
+                      post.is_deleted || post.is_blocked
                   })}
                 >
-                  {post.is_deleted ? 'Deleted' : post.username}
+                  {post.is_deleted
+                    ? 'Deleted'
+                    : post.is_blocked
+                    ? 'Blocked'
+                    : post.username}
                 </Text>
               </Text>
               <View className="flex flex-row items-center space-x-2">
@@ -200,5 +207,6 @@ export const Post: FunctionComponent<PostProps> = memo(
     prevProps.post.vote_count === nextProps.post.vote_count &&
     prevProps.post.current_user_vote === nextProps.post.current_user_vote &&
     prevProps.post.comment_count === nextProps.post.comment_count &&
-    prevProps.post.is_deleted === nextProps.post.is_deleted
+    prevProps.post.is_deleted === nextProps.post.is_deleted &&
+    prevProps.post.is_blocked === nextProps.post.is_blocked
 )

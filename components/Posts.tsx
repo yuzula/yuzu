@@ -121,13 +121,6 @@ export const Posts: FunctionComponent<PostsProps> = memo(
       }
     }, [reportPostError])
 
-    const handleBlockAuthorButtonPress = useCallback(
-      (authorId: string) => {
-        blockUser({ userId: authorId })
-      },
-      [blockUser]
-    )
-
     const handleReportPostButtonPress = useCallback(
       ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
         reportPost({ postId })
@@ -146,7 +139,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
                     text: 'Yes',
                     onPress: () => {
                       if (postAuthorId) {
-                        handleBlockAuthorButtonPress(postAuthorId)
+                        blockUser({ userId: postAuthorId })
                       }
                     }
                   }
@@ -156,7 +149,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
           }
         ])
       },
-      [handleBlockAuthorButtonPress, reportPost]
+      [blockUser, reportPost]
     )
 
     const handlePostEllipsisButtonPress = useCallback(
@@ -209,15 +202,15 @@ export const Posts: FunctionComponent<PostsProps> = memo(
               if (index === 0) {
                 handleReportPostButtonPress({ postId, postAuthorId })
               } else if (index === 1 && postAuthorId) {
-                handleBlockAuthorButtonPress(postAuthorId)
+                blockUser({ userId: postAuthorId })
               }
             }
           )
         }
       },
       [
+        blockUser,
         deletePost,
-        handleBlockAuthorButtonPress,
         handleReportPostButtonPress,
         profile.id,
         showActionSheetWithOptions

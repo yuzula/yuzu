@@ -12,6 +12,7 @@ export const schema = z.object({
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),
   is_deleted: z.boolean(),
   is_flagged: z.boolean(),
+  is_blocked: z.boolean(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date().optional()
 })

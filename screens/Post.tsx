@@ -128,25 +128,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     }
   }, [navigation])
 
-  const handleBlockAuthorButtonPress = useCallback(
-    (authorId: string) => {
-      if (!post) {
-        return Alert.alert('Could not get post', GENERIC_ERROR_MESSAGE)
-      }
-
-      blockUser({ userId: authorId })
-
-      if (authorId === post.user_id) {
-        if (navigation.canGoBack()) {
-          navigation.goBack()
-        } else {
-          navigation.replace('Tabs')
-        }
-      }
-    },
-    [blockUser, navigation, post]
-  )
-
   const handleReportPostButtonPress = useCallback(
     (post: postModel.Schema) => {
       reportPost({ postId: post.id })
@@ -165,7 +146,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
                   text: 'Yes',
                   onPress: () => {
                     if (post.user_id) {
-                      handleBlockAuthorButtonPress(post.user_id)
+                      blockUser({ userId: post.user_id })
                     }
                   }
                 }
@@ -175,7 +156,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         }
       ])
     },
-    [handleBlockAuthorButtonPress, reportPost]
+    [blockUser, reportPost]
   )
 
   const handleListRefresh = useCallback(() => {
@@ -238,14 +219,14 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
           if (index === 0) {
             handleReportPostButtonPress(post)
           } else if (index === 1 && post.user_id) {
-            handleBlockAuthorButtonPress(post.user_id)
+            blockUser({ userId: post.user_id })
           }
         }
       )
     }
   }, [
+    blockUser,
     deletePost,
-    handleBlockAuthorButtonPress,
     handleReportPostButtonPress,
     navigation,
     post,

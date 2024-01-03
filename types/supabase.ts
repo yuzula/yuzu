@@ -79,6 +79,13 @@ export interface Database {
             foreignKeyName: 'comment_votes_comment_id_fkey'
             columns: ['comment_id']
             isOneToOne: false
+            referencedRelation: 'comments_with_shallow_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comment_votes_comment_id_fkey'
+            columns: ['comment_id']
+            isOneToOne: false
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
@@ -135,6 +142,13 @@ export interface Database {
             columns: ['parent_comment_id']
             isOneToOne: false
             referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_shallow_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -437,6 +451,13 @@ export interface Database {
             foreignKeyName: 'reported_comments_comment_id_fkey'
             columns: ['comment_id']
             isOneToOne: true
+            referencedRelation: 'comments_with_shallow_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reported_comments_comment_id_fkey'
+            columns: ['comment_id']
+            isOneToOne: true
             referencedRelation: 'comments_with_vote_count'
             referencedColumns: ['id']
           },
@@ -528,6 +549,105 @@ export interface Database {
       }
     }
     Views: {
+      comments_with_shallow_comment_count: {
+        Row: {
+          comment_count: number | null
+          content: string | null
+          created_at: string | null
+          id: number | null
+          is_deleted: boolean | null
+          parent_comment_id: number | null
+          post_id: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_shallow_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'post_screen_comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'home_screen_posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_hotness'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_hotness_with_flagged'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_vote_and_comment_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts_with_vote_count'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       comments_with_vote_count: {
         Row: {
           content: string | null
@@ -546,6 +666,13 @@ export interface Database {
             columns: ['parent_comment_id']
             isOneToOne: false
             referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_shallow_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -637,6 +764,7 @@ export interface Database {
           current_user_vote: string | null
           hotness: number | null
           id: number | null
+          is_blocked: boolean | null
           is_deleted: boolean | null
           is_flagged: boolean | null
           is_private: boolean | null
@@ -671,11 +799,13 @@ export interface Database {
       }
       post_screen_comments: {
         Row: {
+          comment_count: number | null
           content: string | null
           created_at: string | null
           current_user_vote: string | null
           id: number | null
           is_author_internal: boolean | null
+          is_blocked: boolean | null
           is_deleted: boolean | null
           is_flagged: boolean | null
           parent_comment_id: number | null
@@ -691,6 +821,13 @@ export interface Database {
             columns: ['parent_comment_id']
             isOneToOne: false
             referencedRelation: 'comments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey'
+            columns: ['parent_comment_id']
+            isOneToOne: false
+            referencedRelation: 'comments_with_shallow_comment_count'
             referencedColumns: ['id']
           },
           {
@@ -990,3 +1127,83 @@ export interface Database {
     }
   }
 }
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database['public']['Tables'] & Database['public']['Views'])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+        Database[PublicTableNameOrOptions['schema']]['Views'])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database['public']['Tables'] &
+      Database['public']['Views'])
+  ? (Database['public']['Tables'] &
+      Database['public']['Views'])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof Database['public']['Tables']
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
+  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof Database['public']['Tables']
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
+  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof Database['public']['Enums']
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : PublicEnumNameOrOptions extends keyof Database['public']['Enums']
+  ? Database['public']['Enums'][PublicEnumNameOrOptions]
+  : never

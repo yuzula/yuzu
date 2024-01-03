@@ -12,6 +12,7 @@ export const schema = z.object({
   is_private: z.boolean(),
   is_deleted: z.boolean(),
   is_flagged: z.boolean(),
+  is_blocked: z.boolean(),
   created_at: z.coerce.date(),
   updated_at: z.coerce.date().optional()
 })

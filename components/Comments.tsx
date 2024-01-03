@@ -98,15 +98,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
       }
     }, [voteCommentError])
 
-    const handleBlockAuthorButtonPress = useCallback(
-      (authorId: string) => {
-        blockUser({ userId: authorId })
-
-        onRefresh()
-      },
-      [blockUser, onRefresh]
-    )
-
     const handleReportCommentButtonPress = useCallback(
       (comment: commentModel.Schema) => {
         reportComment({ commentId: comment.id })
@@ -125,7 +116,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
                     text: 'Yes',
                     onPress: () => {
                       if (comment.user_id) {
-                        handleBlockAuthorButtonPress(comment.user_id)
+                        blockUser({ userId: comment.user_id })
                       }
                     }
                   }
@@ -135,7 +126,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           }
         ])
       },
-      [handleBlockAuthorButtonPress, reportComment]
+      [blockUser, reportComment]
     )
 
     const handleCommentEllipsisButtonPress = useCallback(
@@ -186,15 +177,15 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
               if (index === 0) {
                 handleReportCommentButtonPress(comment)
               } else if (index === 1 && comment.user_id) {
-                handleBlockAuthorButtonPress(comment.user_id)
+                blockUser({ userId: comment.user_id })
               }
             }
           )
         }
       },
       [
+        blockUser,
         deleteComment,
-        handleBlockAuthorButtonPress,
         handleReportCommentButtonPress,
         profile.id,
         showActionSheetWithOptions

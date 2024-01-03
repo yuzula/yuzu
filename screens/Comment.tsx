@@ -171,25 +171,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     }
   }, [navigation, postId])
 
-  const handleBlockAuthorButtonPress = useCallback(
-    (authorId: string) => {
-      if (!comment) {
-        return Alert.alert('Could not get post', GENERIC_ERROR_MESSAGE)
-      }
-
-      blockUser({ userId: authorId })
-
-      if (authorId === comment.user_id) {
-        if (navigation.canGoBack()) {
-          navigation.goBack()
-        } else {
-          navigation.replace('Tabs')
-        }
-      }
-    },
-    [blockUser, comment, navigation]
-  )
-
   const handleReportCommentButtonPress = useCallback(
     (comment: commentModel.Schema) => {
       reportComment({ commentId: comment.id })
@@ -208,7 +189,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
                   text: 'Yes',
                   onPress: () => {
                     if (comment.user_id) {
-                      handleBlockAuthorButtonPress(comment.user_id)
+                      blockUser({ userId: comment.user_id })
                     }
                   }
                 }
@@ -218,7 +199,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
         }
       ])
     },
-    [handleBlockAuthorButtonPress, reportComment]
+    [blockUser, reportComment]
   )
 
   const handleCommentEllipsisButtonPress = useCallback(() => {
@@ -281,16 +262,16 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
           if (index === 0) {
             handleReportCommentButtonPress(comment)
           } else if (index === 1 && comment.user_id) {
-            handleBlockAuthorButtonPress(comment.user_id)
+            blockUser({ userId: comment.user_id })
           }
         }
       )
     }
   }, [
+    blockUser,
     comment,
     commentId,
     deleteComment,
-    handleBlockAuthorButtonPress,
     handleReportCommentButtonPress,
     navigation,
     profile.id,

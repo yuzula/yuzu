@@ -51,10 +51,10 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             numberOfLines={1}
             className={clsx('shrink font-Poppins_600SemiBold', {
               'font-Poppins_600SemiBold_Italic text-gray-light':
-                !comment.username
+                comment.is_deleted
             })}
           >
-            {!comment.username ? 'Deleted' : comment.username}
+            {comment.is_deleted ? 'Deleted' : comment.username}
           </Text>
           {!isPostPrivate && isAuthorInternal && (
             <View>
@@ -115,13 +115,15 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         <Text
           className={clsx('font-Poppins_500Medium', {
             'font-Poppins_500Medium_Italic text-gray-light':
-              comment.is_deleted || comment.is_flagged
+              comment.is_deleted || comment.is_flagged || comment.is_blocked
           })}
         >
           {comment.is_deleted
             ? 'Deleted'
             : comment.is_flagged
             ? 'Flagged'
+            : comment.is_blocked
+            ? 'Blocked'
             : comment.content}
         </Text>
       </View>
@@ -197,5 +199,6 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     prevProps.comment.current_user_vote ===
       nextProps.comment.current_user_vote &&
     prevProps.comment.comment_count === nextProps.comment.comment_count &&
-    prevProps.comment.is_deleted === nextProps.comment.is_deleted
+    prevProps.comment.is_deleted === nextProps.comment.is_deleted &&
+    prevProps.comment.is_blocked === nextProps.comment.is_blocked
 )
