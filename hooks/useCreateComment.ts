@@ -24,7 +24,11 @@ export const useCreateComment = () => {
         content,
         parentCommentId
       }),
-    onSuccess: async (_, { postId }) => {
+    onSuccess: async (_, { postId, parentCommentId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ['comment', parentCommentId],
+        exact: true
+      })
       queryClient.invalidateQueries({ queryKey: ['comments'] })
       queryClient.invalidateQueries({ queryKey: ['post', postId], exact: true })
       queryClient.invalidateQueries({ queryKey: ['posts'] })

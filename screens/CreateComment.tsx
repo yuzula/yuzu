@@ -33,10 +33,10 @@ export const CreateComment: FunctionComponent<
   route: {
     params: {
       postId,
-      parentId,
-      parentUsername,
-      parentContent,
-      parentCreatedAtTs
+      parentCommentId,
+      replyingToUsername,
+      replyingToContent,
+      replyingToCreatedAtTs
     }
   }
 }) => {
@@ -67,17 +67,20 @@ export const CreateComment: FunctionComponent<
       createComment(
         {
           postId,
-          parentCommentId: parentId,
+          parentCommentId,
           content
         },
         {
           onSuccess: commentId => {
-            navigation.replace('Comment', { commentId, postId: parentId })
+            navigation.replace('Comment', {
+              commentId,
+              postId
+            })
           }
         }
       )
     },
-    [createComment, navigation, parentId, postId]
+    [createComment, navigation, parentCommentId, postId]
   )
 
   const handleCloseButtonPress = useCallback(() => {
@@ -174,16 +177,18 @@ export const CreateComment: FunctionComponent<
                     <FontAwesome5 name="reply" />
                     {'  '}Replying to{' '}
                     <Text className="font-Poppins_600SemiBold">
-                      {parentUsername}
+                      {replyingToUsername}
                     </Text>
                   </Text>
 
                   <Text className="font-Poppins_500Medium text-gray-600">
-                    {formatDuration(Date.now() - parentCreatedAtTs)}
+                    {formatDuration(Date.now() - replyingToCreatedAtTs)}
                   </Text>
                 </View>
 
-                <Text className="font-Poppins_500Medium">{parentContent}</Text>
+                <Text className="font-Poppins_500Medium">
+                  {replyingToContent}
+                </Text>
               </View>
             </View>
           </View>

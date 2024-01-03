@@ -263,10 +263,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
     navigation.push('CreateComment', {
       postId: post.id,
-      parentId: post.id,
-      parentUsername: post.username,
-      parentContent: post.content,
-      parentCreatedAtTs: post.created_at.getTime()
+      replyingToUsername: post.username,
+      replyingToContent: post.content,
+      replyingToCreatedAtTs: post.created_at.getTime()
     })
   }, [navigation, post])
 
@@ -280,10 +279,9 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
 
       navigation.push('CreateComment', {
         postId: post.id,
-        parentId: comment.id,
-        parentUsername: comment.username,
-        parentContent: comment.content,
-        parentCreatedAtTs: comment.created_at.getTime()
+        replyingToUsername: comment.username,
+        replyingToContent: comment.content,
+        replyingToCreatedAtTs: comment.created_at.getTime()
       })
     },
     [navigation, post]
