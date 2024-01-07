@@ -41,6 +41,10 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const [filterBy, setFilterBy] = useState<FilterBy>('all')
 
   const [arePostsInitialLoading, setArePostsInitialLoading] = useState(true)
+  const [
+    isCommunityMemberCountInitialLoading,
+    setIsCommunityMemberCountInitialLoading
+  ] = useState(true)
 
   const {
     data: postsData,
@@ -54,17 +58,23 @@ export const Community: FunctionComponent<CommunityProps> = ({
   const { refresh: refreshPosts, isRefreshing: arePostsRefreshing } =
     useUserRefresh(refetchPosts)
 
-  const { memberCount, isLoading: isMemberCountLoading } =
+  const { data: memberCount, isFetching: isCommunityMemberCountFetching } =
     useCommunityMemberCount(domainName)
 
   const areResourcesInitialLoading =
-    arePostsInitialLoading || isMemberCountLoading
+    arePostsInitialLoading || isCommunityMemberCountInitialLoading
 
   useEffect(() => {
     if (!arePostsFetching) {
       setArePostsInitialLoading(false)
     }
   }, [arePostsFetching])
+
+  useEffect(() => {
+    if (!isCommunityMemberCountFetching) {
+      setIsCommunityMemberCountInitialLoading(false)
+    }
+  }, [isCommunityMemberCountFetching])
 
   const handleCreatePostButtonPress = useCallback(() => {
     onCreatePostButtonPress(filterBy === 'private')
@@ -152,7 +162,9 @@ export const Community: FunctionComponent<CommunityProps> = ({
           <View>
             <Skeleton colorMode="light" show={areResourcesInitialLoading}>
               <Text className="font-Poppins_600SemiBold text-gray-light">
-                {`${memberCount} ${memberCount > 1 ? 'members' : 'member'}`}
+                {`${memberCount} ${
+                  memberCount ?? 0 > 1 ? 'members' : 'member'
+                }`}
               </Text>
             </Skeleton>
           </View>
