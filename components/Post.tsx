@@ -95,16 +95,16 @@ export const Post: FunctionComponent<PostProps> = memo(
             ellipsizeMode="tail"
             numberOfLines={4}
             className={clsx('font-Poppins_600SemiBold text-base', {
-              'font-Poppins_600SemiBold_Italic text-gray-light':
+              'text-gray-light':
                 post.is_deleted || post.is_flagged || post.is_blocked
             })}
           >
             {post.is_deleted
-              ? 'Deleted'
+              ? 'This post has been deleted'
               : post.is_flagged
-              ? 'Flagged'
+              ? 'This post has been flagged by the community'
               : post.is_blocked
-              ? 'Blocked'
+              ? 'This post was submitted by a blocked user'
               : post.content}
           </Text>
 
@@ -116,12 +116,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                 numberOfLines={1}
               >
                 by{' '}
-                <Text
-                  className={clsx('font-Poppins_600SemiBold', {
-                    'font-Poppins_600SemiBold_Italic':
-                      post.is_deleted || post.is_blocked
-                  })}
-                >
+                <Text className="font-Poppins_600SemiBold">
                   {post.is_deleted
                     ? 'Deleted'
                     : post.is_blocked

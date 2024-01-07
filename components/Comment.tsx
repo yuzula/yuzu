@@ -50,8 +50,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             ellipsizeMode="tail"
             numberOfLines={1}
             className={clsx('shrink font-Poppins_600SemiBold', {
-              'font-Poppins_600SemiBold_Italic text-gray-light':
-                comment.is_deleted
+              'text-gray-light': comment.is_deleted
             })}
           >
             {comment.is_deleted ? 'Deleted' : comment.username}
@@ -114,16 +113,16 @@ export const Comment: FunctionComponent<CommentProps> = memo(
       <View className="mx-auto w-5/6">
         <Text
           className={clsx('font-Poppins_500Medium', {
-            'font-Poppins_500Medium_Italic text-gray-light':
+            'text-gray-light':
               comment.is_deleted || comment.is_flagged || comment.is_blocked
           })}
         >
           {comment.is_deleted
-            ? 'Deleted'
+            ? 'This comment has been deleted'
             : comment.is_flagged
-            ? 'Flagged'
+            ? 'This comment has been flagged by the community'
             : comment.is_blocked
-            ? 'Blocked'
+            ? 'This comment was submitted by a blocked user'
             : comment.content}
         </Text>
       </View>

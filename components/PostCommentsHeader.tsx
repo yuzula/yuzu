@@ -42,16 +42,16 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
         <View className="mx-auto w-5/6 space-y-2 py-4">
           <Text
             className={clsx('font-Poppins_600SemiBold text-base', {
-              'font-Poppins_600SemiBold_Italic text-gray-light':
+              'text-gray-light':
                 post.is_deleted || post.is_flagged || post.is_blocked
             })}
           >
             {post.is_deleted
-              ? 'Deleted'
+              ? 'This post has been deleted'
               : post.is_flagged
-              ? 'Flagged'
+              ? 'This post has been flagged by the community'
               : post.is_blocked
-              ? 'Blocked'
+              ? 'This post was submitted by a blocked user'
               : post.content}
           </Text>
 
@@ -60,8 +60,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
               by{' '}
               <Text
                 className={clsx('font-Poppins_600SemiBold', {
-                  'font-Poppins_600SemiBold_Italic text-gray-light':
-                    post.is_deleted || post.is_blocked
+                  'text-gray-light': post.is_deleted || post.is_blocked
                 })}
               >
                 {post.is_deleted
