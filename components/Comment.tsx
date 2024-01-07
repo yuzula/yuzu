@@ -120,10 +120,10 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           {comment.is_deleted
             ? 'This comment has been deleted'
             : comment.is_flagged
-            ? 'This comment has been flagged by the community'
-            : comment.is_blocked
-            ? 'This comment was submitted by a blocked user'
-            : comment.content}
+              ? 'This comment has been flagged by the community'
+              : comment.is_blocked
+                ? 'This comment was submitted by a blocked user'
+                : comment.content}
         </Text>
       </View>
 

@@ -102,10 +102,10 @@ export const Post: FunctionComponent<PostProps> = memo(
             {post.is_deleted
               ? 'This post has been deleted'
               : post.is_flagged
-              ? 'This post has been flagged by the community'
-              : post.is_blocked
-              ? 'This post was submitted by a blocked user'
-              : post.content}
+                ? 'This post has been flagged by the community'
+                : post.is_blocked
+                  ? 'This post was submitted by a blocked user'
+                  : post.content}
           </Text>
 
           <View className="flex flex-row items-center justify-between space-x-2">
@@ -120,8 +120,8 @@ export const Post: FunctionComponent<PostProps> = memo(
                   {post.is_deleted
                     ? 'Deleted'
                     : post.is_blocked
-                    ? 'Blocked'
-                    : post.username}
+                      ? 'Blocked'
+                      : post.username}
                 </Text>
               </Text>
               <View className="flex flex-row items-center space-x-2">

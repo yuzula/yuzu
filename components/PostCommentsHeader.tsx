@@ -49,10 +49,10 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
             {post.is_deleted
               ? 'This post has been deleted'
               : post.is_flagged
-              ? 'This post has been flagged by the community'
-              : post.is_blocked
-              ? 'This post was submitted by a blocked user'
-              : post.content}
+                ? 'This post has been flagged by the community'
+                : post.is_blocked
+                  ? 'This post was submitted by a blocked user'
+                  : post.content}
           </Text>
 
           <View className="space-y-1">
@@ -66,8 +66,8 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
                 {post.is_deleted
                   ? 'Deleted'
                   : post.is_blocked
-                  ? 'Blocked'
-                  : post.username}
+                    ? 'Blocked'
+                    : post.username}
               </Text>{' '}
               in{' '}
               <Text className="font-Poppins_600SemiBold">

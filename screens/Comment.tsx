@@ -6,15 +6,8 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  Text,
-  View
-} from 'react-native'
+import { Alert, Pressable, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Comment as CommentComponent } from '../components/Comment'
@@ -283,7 +276,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       return Alert.alert('Could not reply to comment', GENERIC_ERROR_MESSAGE)
     }
 
-    navigation.push('CreateComment', {
+    navigation.navigate('CreateComment', {
       postId: post.id,
       parentCommentId: comment.id,
       replyingToUsername: comment.username,
@@ -300,7 +293,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
         return Alert.alert('Could not reply to comment', GENERIC_ERROR_MESSAGE)
       }
 
-      navigation.push('CreateComment', {
+      navigation.navigate('CreateComment', {
         postId: post.id,
         parentCommentId: comment.id,
         replyingToUsername: comment.username,
@@ -376,7 +369,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
         )
       }
 
-      navigation.push('Comment', { commentId, postId: post.id })
+      navigation.navigate('Comment', { commentId, postId: post.id })
     },
     [navigation, post]
   )
@@ -394,10 +387,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="w-full flex-1"
-      >
+      <View className="w-full flex-1">
         <View className="border-b border-gray-100">
           <View className="mx-auto w-5/6 flex-row items-center justify-between">
             <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
@@ -440,7 +430,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             onRefresh={handleListRefresh}
           />
         )}
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   )
 }

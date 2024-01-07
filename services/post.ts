@@ -49,8 +49,8 @@ export const getAll = async ({
       sortBy === 'hot'
         ? 'hotness'
         : sortBy === 'new'
-        ? 'created_at'
-        : 'comment_count',
+          ? 'created_at'
+          : 'comment_count',
       { ascending: false }
     )
     .order('id')
