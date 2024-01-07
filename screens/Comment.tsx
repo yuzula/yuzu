@@ -326,6 +326,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       post && comment ? (
         <View className="border-b border-gray-100">
           <CommentComponent
+            isHeader
             comment={comment}
             communityDomainName={post.community_domain_name}
             isAuthorInternal={comment.is_author_internal}

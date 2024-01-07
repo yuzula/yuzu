@@ -14,6 +14,7 @@ interface CommentProps {
   communityDomainName: string
   isPostPrivate: boolean
   isAuthorInternal: boolean
+  isHeader?: boolean
   onPress?: (id: number) => void
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
@@ -28,6 +29,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     communityDomainName,
     isPostPrivate,
     isAuthorInternal,
+    isHeader = false,
     onPress,
     onEllipsisButtonPress,
     onReplyButtonPress,
@@ -85,7 +87,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             </View>
           )}
           <View className="flex-row items-center">
-            <Text className="text-gray-light">
+            <Text className="py-2 text-gray-light">
               <FontAwesome5 name="arrow-up" size={14} />
             </Text>
             <Text className="font-Poppins_500Medium text-gray-light">
@@ -96,14 +98,16 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         </View>
 
         <View className="flex-row items-center space-x-1">
-          <Pressable
-            className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onEllipsisButtonPress?.(comment.id)}
-          >
-            <Text className="text-gray-light">
-              <FontAwesome5 name="ellipsis-h" size={14} />
-            </Text>
-          </Pressable>
+          {!isHeader && (
+            <Pressable
+              className="rounded-lg p-2 active:bg-gray-200"
+              onPress={() => onEllipsisButtonPress?.(comment.id)}
+            >
+              <Text className="text-gray-light">
+                <FontAwesome5 name="ellipsis-h" size={14} />
+              </Text>
+            </Pressable>
+          )}
           <Text className="font-Poppins_500Medium text-gray-light">
             {formatDuration(Date.now() - comment.created_at.getTime())}
           </Text>
