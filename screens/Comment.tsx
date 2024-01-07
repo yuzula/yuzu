@@ -279,9 +279,13 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     navigation.navigate('CreateComment', {
       postId: post.id,
       parentCommentId: comment.id,
+      replyingTo: 'comment',
       replyingToUsername: comment.username,
       replyingToContent: comment.content,
-      replyingToCreatedAtTs: comment.created_at.getTime()
+      replyingToCreatedAtTs: comment.created_at.getTime(),
+      isReplyingToDeleted: comment.is_deleted,
+      isReplyingToFlagged: comment.is_flagged,
+      isReplyingToBlocked: comment.is_blocked
     })
   }, [comment, navigation, post])
 
@@ -296,9 +300,13 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       navigation.navigate('CreateComment', {
         postId: post.id,
         parentCommentId: comment.id,
+        replyingTo: 'comment',
         replyingToUsername: comment.username,
         replyingToContent: comment.content,
-        replyingToCreatedAtTs: comment.created_at.getTime()
+        replyingToCreatedAtTs: comment.created_at.getTime(),
+        isReplyingToDeleted: comment.is_deleted,
+        isReplyingToFlagged: comment.is_flagged,
+        isReplyingToBlocked: comment.is_blocked
       })
     },
     [navigation, post]

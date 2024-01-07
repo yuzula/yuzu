@@ -42,9 +42,13 @@ interface CreatePostScreenParams {
 interface CreateCommentScreenParams {
   postId: number
   parentCommentId?: number
+  replyingTo: 'post' | 'comment'
   replyingToUsername?: string
   replyingToContent?: string
   replyingToCreatedAtTs: number
+  isReplyingToDeleted?: boolean
+  isReplyingToFlagged?: boolean
+  isReplyingToBlocked?: boolean
 }
 
 export type RootStackParamList = {

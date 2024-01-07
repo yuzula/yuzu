@@ -1,5 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import clsx from 'clsx'
 import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -34,9 +35,13 @@ export const CreateComment: FunctionComponent<
     params: {
       postId,
       parentCommentId,
+      replyingTo,
       replyingToUsername,
       replyingToContent,
-      replyingToCreatedAtTs
+      replyingToCreatedAtTs,
+      isReplyingToDeleted = false,
+      isReplyingToFlagged = false,
+      isReplyingToBlocked = false
     }
   }
 }) => {
@@ -176,8 +181,21 @@ export const CreateComment: FunctionComponent<
                   >
                     <FontAwesome5 name="reply" />
                     {'  '}Replying to{' '}
-                    <Text className="font-Poppins_600SemiBold">
-                      {replyingToUsername}
+                    <Text
+                      className={clsx('font-Poppins_600SemiBold', {
+                        'text-gray-light':
+                          isReplyingToDeleted ||
+                          isReplyingToFlagged ||
+                          isReplyingToBlocked
+                      })}
+                    >
+                      {isReplyingToDeleted
+                        ? 'Deleted'
+                        : isReplyingToFlagged
+                          ? 'Flagged'
+                          : isReplyingToBlocked
+                            ? 'Blocked'
+                            : replyingToUsername}
                     </Text>
                   </Text>
 
@@ -186,8 +204,21 @@ export const CreateComment: FunctionComponent<
                   </Text>
                 </View>
 
-                <Text className="font-Poppins_500Medium">
-                  {replyingToContent}
+                <Text
+                  className={clsx('font-Poppins_500Medium', {
+                    'text-gray-light':
+                      isReplyingToDeleted ||
+                      isReplyingToFlagged ||
+                      isReplyingToBlocked
+                  })}
+                >
+                  {isReplyingToDeleted
+                    ? `This ${replyingTo} has been deleted`
+                    : isReplyingToFlagged
+                      ? `This ${replyingTo} has been flagged by the community`
+                      : isReplyingToBlocked
+                        ? `This ${replyingTo} was submitted by a blocked user`
+                        : replyingToContent}
                 </Text>
               </View>
             </View>
