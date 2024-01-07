@@ -285,7 +285,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
         )
       }
 
-      navigation.navigate('Comment', { commentId, postId: post.id })
+      navigation.push('Comment', { commentId, postId: post.id })
     },
     [navigation, post]
   )
