@@ -29,7 +29,7 @@
         "backgroundColor": "#fcf951"
       },
       "package": "com.yuzu.android",
-      "versionCode": 3
+      "versionCode": 20
     },
     "web": {
       "bundler": "metro",
