@@ -15,6 +15,7 @@ export const useDeleteComment = () => {
     mutationFn: ({ commentId }: DeleteCommentParams) =>
       commentService.markAsDeleted(commentId),
     onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ['comment'] })
       queryClient.invalidateQueries({ queryKey: ['comments'] })
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)

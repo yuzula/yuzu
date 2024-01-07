@@ -70,6 +70,7 @@ export const getAllChildren = async ({
     .select('*')
     .eq('parent_comment_id', commentId)
     .order('vote_count', { ascending: false })
+    .order('id')
     .not('id', 'in', `(${fetchedIds.join(',')})`)
     .limit(PAGE_SIZE + 1)
 
@@ -102,6 +103,7 @@ export const getAllRoot = async ({ postId, fetchedIds }: GetAllRootParams) => {
     .is('parent_comment_id', null)
     .eq('post_id', postId)
     .order('vote_count', { ascending: false })
+    .order('id')
     .not('id', 'in', `(${fetchedIds.join(',')})`)
     .limit(PAGE_SIZE + 1)
 

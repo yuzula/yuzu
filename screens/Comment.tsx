@@ -228,14 +228,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
                 text: 'Yes',
                 style: 'destructive',
                 onPress: () => {
-                  deleteComment(
-                    { commentId },
-                    {
-                      onSuccess: () => {
-                        navigation.pop()
-                      }
-                    }
-                  )
+                  deleteComment({ commentId })
                 }
               },
               {
@@ -273,7 +266,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     commentId,
     deleteComment,
     handleReportCommentButtonPress,
-    navigation,
     profile.id,
     showActionSheetWithOptions
   ])

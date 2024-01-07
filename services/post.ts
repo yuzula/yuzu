@@ -53,6 +53,7 @@ export const getAll = async ({
         : 'comment_count',
       { ascending: false }
     )
+    .order('id')
     .not('id', 'in', `(${fetchedIds.join(',')})`)
     .limit(PAGE_SIZE + 1)
 

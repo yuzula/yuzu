@@ -188,12 +188,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               style: 'destructive',
               onPress: () => {
                 deletePost({ postId })
-
-                if (navigation.canGoBack()) {
-                  navigation.goBack()
-                } else {
-                  navigation.replace('Tabs')
-                }
               }
             },
             {
@@ -228,7 +222,6 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     blockUser,
     deletePost,
     handleReportPostButtonPress,
-    navigation,
     post,
     postId,
     profile.id,
