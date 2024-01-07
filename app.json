@@ -21,7 +21,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#fcf951"
       },
       "package": "com.yuzu.android",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "bundler": "metro",
