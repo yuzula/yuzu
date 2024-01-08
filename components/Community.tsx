@@ -25,11 +25,10 @@ import { Posts } from './Posts'
 interface CommunityProps {
   domainName: string
   isForeign?: boolean
-  onBackButtonPress?: () => void
 }
 
 export const Community: FunctionComponent<CommunityProps> = memo(
-  ({ domainName, isForeign = false, onBackButtonPress }) => {
+  ({ domainName, isForeign = false }) => {
     const navigation = useNavigation()
 
     const { showActionSheetWithOptions } = useActionSheet()
@@ -72,6 +71,14 @@ export const Community: FunctionComponent<CommunityProps> = memo(
         setIsCommunityMemberCountInitialLoading(false)
       }
     }, [isCommunityMemberCountFetching])
+
+    const handleBackButtonPress = useCallback(() => {
+      if (navigation.canGoBack()) {
+        navigation.goBack()
+      } else {
+        navigation.navigate('Tabs')
+      }
+    }, [navigation])
 
     const handleCreatePostButtonPress = useCallback(() => {
       navigation.navigate('CreatePost', {
@@ -188,7 +195,7 @@ export const Community: FunctionComponent<CommunityProps> = memo(
               <Button
                 className="h-10 flex-1"
                 variant="secondary"
-                onPress={onBackButtonPress}
+                onPress={handleBackButtonPress}
               >
                 <FontAwesome5 name="arrow-left" />
                 {'  '}Back
