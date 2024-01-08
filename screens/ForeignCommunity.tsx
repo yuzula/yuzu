@@ -15,14 +15,6 @@ export const ForeignCommunity: FunctionComponent<
     params: { domainName }
   }
 }) => {
-  const handleCreatePostButtonPress = useCallback(() => {
-    navigation.navigate('CreatePost', {
-      initialIsPrivate: false,
-      isVisibilityChangeable: false,
-      communityDomainName: domainName
-    })
-  }, [domainName, navigation])
-
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -39,7 +31,6 @@ export const ForeignCommunity: FunctionComponent<
         isForeign
         domainName={domainName}
         onBackButtonPress={handleBackButtonPress}
-        onCreatePostButtonPress={handleCreatePostButtonPress}
       />
     </SafeAreaView>
   )
