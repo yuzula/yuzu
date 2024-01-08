@@ -54,13 +54,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
     }
   }, [postsError])
 
-  const handlePostPress = useCallback(
-    (postId: number) => {
-      navigation.navigate('Post', { postId })
-    },
-    [navigation]
-  )
-
   const handlePostCommunityDomainNamePress = useCallback(
     (domainName: string) => {
       if (profile.community_domain_name === domainName) {
@@ -94,7 +87,6 @@ export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
           sortBy={sortBy}
           sortPosts={setSortBy}
           onPostCommunityDomainNamePress={handlePostCommunityDomainNamePress}
-          onPostPress={handlePostPress}
           onRefresh={refreshPosts}
         />
       </View>

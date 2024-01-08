@@ -24,7 +24,6 @@ interface CommunityProps {
   domainName: string
   isForeign?: boolean
   onCreatePostButtonPress: (initialIsPrivate: boolean) => void
-  onPostPress: (postId: number) => void
   onBackButtonPress?: () => void
 }
 
@@ -32,7 +31,6 @@ export const Community: FunctionComponent<CommunityProps> = ({
   domainName,
   isForeign = false,
   onCreatePostButtonPress,
-  onPostPress,
   onBackButtonPress
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
@@ -209,7 +207,6 @@ export const Community: FunctionComponent<CommunityProps> = ({
             shouldDisplayInternalPopover={!isForeign}
             sortBy={sortBy}
             sortPosts={setSortBy}
-            onPostPress={onPostPress}
             onRefresh={refreshPosts}
           />
         </View>

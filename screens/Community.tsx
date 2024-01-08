@@ -22,13 +22,6 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
     [navigation, profile]
   )
 
-  const handlePostPress = useCallback(
-    (postId: number) => {
-      navigation.navigate('Post', { postId })
-    },
-    [navigation]
-  )
-
   if (!profile) {
     return null
   }
@@ -41,7 +34,6 @@ export const Community: FunctionComponent<RootTabScreenProps<'Community'>> = ({
       <CommunityComponent
         domainName={profile.community_domain_name}
         onCreatePostButtonPress={handleCreatePostButtonPress}
-        onPostPress={handlePostPress}
       />
     </View>
   )

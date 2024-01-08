@@ -1,4 +1,5 @@
 import { FontAwesome5 } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 import clsx from 'clsx'
 import React, { FunctionComponent, memo, useCallback } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'
@@ -12,7 +13,6 @@ import { Vote } from '../types/vote'
 interface PostProps {
   post: postModel.Schema
   shouldDisplayCommunityDomainName?: boolean
-  onPress: (postId: number) => void
   onVoteButtonPress: ({
     postId,
     oldVote,
@@ -36,11 +36,12 @@ export const Post: FunctionComponent<PostProps> = memo(
   ({
     post,
     shouldDisplayCommunityDomainName = false,
-    onPress,
     onVoteButtonPress,
     onEllipsisButtonPress,
     onCommunityDomainNamePress
   }) => {
+    const navigation = useNavigation()
+
     const handleDomainNamePress = useCallback(() => {
       if (!post.community_domain_name) {
         Sentry.Native.captureException('communityDomainName is not defined')
@@ -52,8 +53,8 @@ export const Post: FunctionComponent<PostProps> = memo(
     }, [onCommunityDomainNamePress, post.community_domain_name])
 
     const handlePress = useCallback(() => {
-      onPress(post.id)
-    }, [onPress, post.id])
+      navigation.navigate('Post', { postId: post.id })
+    }, [navigation, post.id])
 
     const handleEllipsisButtonPress = useCallback(() => {
       onEllipsisButtonPress({

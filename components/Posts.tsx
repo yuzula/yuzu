@@ -47,7 +47,6 @@ interface PostsProps {
   shouldDisplayInternalPopover?: boolean
   sortPosts: (sortBy: SortBy) => void
   onRefresh: () => Promise<void>
-  onPostPress: (postId: number) => void
   onPostCommunityDomainNamePress?: (domainName: string) => void
 }
 
@@ -65,7 +64,6 @@ export const Posts: FunctionComponent<PostsProps> = memo(
     shouldDisplayInternalPopover = true,
     sortPosts,
     onRefresh,
-    onPostPress,
     onPostCommunityDomainNamePress
   }) => {
     const { showActionSheetWithOptions } = useActionSheet()
@@ -224,7 +222,6 @@ export const Posts: FunctionComponent<PostsProps> = memo(
           shouldDisplayCommunityDomainName={shouldDisplayCommunityDomainName}
           onCommunityDomainNamePress={onPostCommunityDomainNamePress}
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
-          onPress={onPostPress}
           onVoteButtonPress={handlePostVoteButtonPress}
         />
       ),
@@ -232,7 +229,6 @@ export const Posts: FunctionComponent<PostsProps> = memo(
         handlePostEllipsisButtonPress,
         handlePostVoteButtonPress,
         onPostCommunityDomainNamePress,
-        onPostPress,
         shouldDisplayCommunityDomainName
       ]
     )

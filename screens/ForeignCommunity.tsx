@@ -23,13 +23,6 @@ export const ForeignCommunity: FunctionComponent<
     })
   }, [domainName, navigation])
 
-  const handlePostPress = useCallback(
-    (postId: number) => {
-      navigation.navigate('Post', { postId })
-    },
-    [navigation]
-  )
-
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -47,7 +40,6 @@ export const ForeignCommunity: FunctionComponent<
         domainName={domainName}
         onBackButtonPress={handleBackButtonPress}
         onCreatePostButtonPress={handleCreatePostButtonPress}
-        onPostPress={handlePostPress}
       />
     </SafeAreaView>
   )
