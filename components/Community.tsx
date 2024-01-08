@@ -163,7 +163,7 @@ export const Community: FunctionComponent<CommunityProps> = ({
             <Skeleton colorMode="light" show={areResourcesInitialLoading}>
               <Text className="font-Poppins_600SemiBold text-gray-light">
                 {`${memberCount} ${
-                  memberCount ?? 0 > 1 ? 'members' : 'member'
+                  (memberCount ?? 0) > 1 ? 'members' : 'member'
                 }`}
               </Text>
             </Skeleton>
