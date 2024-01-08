@@ -20,15 +20,12 @@ import Popover from 'react-native-popover-view'
 
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { useReportPost } from '../hooks/useReportPost'
-import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
 import { SortBy } from '../types/post'
-import { Vote } from '../types/vote'
 import { Post } from './Post'
 import { PostsSkeleton } from './PostsSkeleton'
 import { Separator } from './Separator'
@@ -70,36 +67,11 @@ export const Posts: FunctionComponent<PostsProps> = memo(
 
     const { profile } = useAuthenticatedProfile()
 
-    const { mutate: votePost, error: votePostError } = useVotePost()
-
     const { mutate: deletePost, error: deletePostError } = useDeletePost()
 
     const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
     const { mutate: reportPost, error: reportPostError } = useReportPost()
-
-    const handlePostVoteButtonPress = useCallback(
-      ({
-        postId,
-        oldVote,
-        vote
-      }: {
-        postId: number
-        oldVote?: Vote
-        vote: Vote
-      }) => {
-        const { newVote, delta } = getResultingVote({ oldVote, vote })
-
-        votePost({ postId, vote: newVote, delta })
-      },
-      [votePost]
-    )
-
-    useEffect(() => {
-      if (votePostError) {
-        Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-      }
-    }, [votePostError])
 
     useEffect(() => {
       if (deletePostError) {
@@ -222,12 +194,10 @@ export const Posts: FunctionComponent<PostsProps> = memo(
           shouldDisplayCommunityDomainName={shouldDisplayCommunityDomainName}
           onCommunityDomainNamePress={onPostCommunityDomainNamePress}
           onEllipsisButtonPress={handlePostEllipsisButtonPress}
-          onVoteButtonPress={handlePostVoteButtonPress}
         />
       ),
       [
         handlePostEllipsisButtonPress,
-        handlePostVoteButtonPress,
         onPostCommunityDomainNamePress,
         shouldDisplayCommunityDomainName
       ]

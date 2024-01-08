@@ -9,25 +9,29 @@ import { Vote } from '../types/vote'
 import { useAuthenticatedProfile } from './useAuthenticatedProfile'
 
 interface VotePostParams {
-  postId: number
   vote?: Vote
   delta: number
 }
 
-export const useVotePost = () => {
+interface UseVotePostProps {
+  postId: number
+}
+
+export const useVotePost = ({ postId }: UseVotePostProps) => {
   const queryClient = useQueryClient()
 
   const { profile } = useAuthenticatedProfile()
 
   return useMutation({
-    mutationFn: ({ postId, vote }: VotePostParams) =>
+    mutationKey: ['post', postId, 'vote'],
+    mutationFn: ({ vote }: VotePostParams) =>
       postService.registerVote({
         postId,
         userId: profile.id,
         vote
       }),
     // Optimistically update post vote across all posts
-    onMutate: async ({ postId, vote, delta }) => {
+    onMutate: async ({ vote, delta }) => {
       const prevPostsQueries = queryClient.getQueriesData({
         queryKey: ['posts']
       })
@@ -82,7 +86,7 @@ export const useVotePost = () => {
 
       return { prevPostsQueries, prevPostQuery }
     },
-    onError: async (error, { postId }, context) => {
+    onError: async (error, _, context) => {
       Sentry.Native.captureException(error)
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)

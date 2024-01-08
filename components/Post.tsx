@@ -1,27 +1,19 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import clsx from 'clsx'
-import React, { FunctionComponent, memo, useCallback } from 'react'
+import React, { FunctionComponent, memo, useCallback, useEffect } from 'react'
 import { Alert, Pressable, Text, View } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
+import { getResultingVote } from '../helpers/vote'
+import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
-import { Vote } from '../types/vote'
 
 interface PostProps {
   post: postModel.Schema
   shouldDisplayCommunityDomainName?: boolean
-  onVoteButtonPress: ({
-    postId,
-    oldVote,
-    vote
-  }: {
-    postId: number
-    oldVote?: Vote
-    vote: Vote
-  }) => void
   onEllipsisButtonPress: ({
     postId,
     postAuthorId
@@ -36,11 +28,20 @@ export const Post: FunctionComponent<PostProps> = memo(
   ({
     post,
     shouldDisplayCommunityDomainName = false,
-    onVoteButtonPress,
     onEllipsisButtonPress,
     onCommunityDomainNamePress
   }) => {
     const navigation = useNavigation()
+
+    const { mutate: votePost, error: votePostError } = useVotePost({
+      postId: post.id
+    })
+
+    useEffect(() => {
+      if (votePostError) {
+        Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [votePostError])
 
     const handleDomainNamePress = useCallback(() => {
       if (!post.community_domain_name) {
@@ -64,20 +65,22 @@ export const Post: FunctionComponent<PostProps> = memo(
     }, [onEllipsisButtonPress, post.id, post.user_id])
 
     const handleUpvoteButtonPress = useCallback(() => {
-      onVoteButtonPress({
-        postId: post.id,
+      const { newVote, delta } = getResultingVote({
         oldVote: post.current_user_vote,
         vote: 'upvote'
       })
-    }, [onVoteButtonPress, post.current_user_vote, post.id])
+
+      votePost({ vote: newVote, delta })
+    }, [post.current_user_vote, votePost])
 
     const handleDownvoteButtonPress = useCallback(() => {
-      onVoteButtonPress({
-        postId: post.id,
+      const { newVote, delta } = getResultingVote({
         oldVote: post.current_user_vote,
         vote: 'downvote'
       })
-    }, [onVoteButtonPress, post.current_user_vote, post.id])
+
+      votePost({ vote: newVote, delta })
+    }, [post.current_user_vote, votePost])
 
     return (
       <Pressable className="active:bg-gray-200" onPress={handlePress}>

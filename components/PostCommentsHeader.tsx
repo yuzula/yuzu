@@ -8,7 +8,6 @@ import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
-import { Vote } from '../types/vote'
 
 interface PostCommentsHeaderProps {
   post: postModel.Schema
@@ -19,7 +18,9 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
   post,
   onReplyButtonPress
 }) => {
-  const { mutate: votePost, error: votePostError } = useVotePost()
+  const { mutate: votePost, error: votePostError } = useVotePost({
+    postId: post.id
+  })
 
   useEffect(() => {
     if (votePostError) {
@@ -27,14 +28,23 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
     }
   }, [votePostError])
 
-  const handlePostVoteButtonPress = useCallback(
-    ({ oldVote, vote }: { oldVote?: Vote; vote: Vote }) => {
-      const { newVote, delta } = getResultingVote({ oldVote, vote })
+  const handlePostUpvoteButtonPress = useCallback(() => {
+    const { newVote, delta } = getResultingVote({
+      oldVote: post.current_user_vote,
+      vote: 'upvote'
+    })
 
-      votePost({ postId: post.id, vote: newVote, delta })
-    },
-    [post.id, votePost]
-  )
+    votePost({ vote: newVote, delta })
+  }, [post.current_user_vote, votePost])
+
+  const handlePostDownvoteButtonPress = useCallback(() => {
+    const { newVote, delta } = getResultingVote({
+      oldVote: post.current_user_vote,
+      vote: 'downvote'
+    })
+
+    votePost({ vote: newVote, delta })
+  }, [post.current_user_vote, votePost])
 
   return (
     <>
@@ -106,12 +116,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
               },
               'rounded-lg p-2'
             )}
-            onPress={() =>
-              handlePostVoteButtonPress({
-                oldVote: post.current_user_vote,
-                vote: 'upvote'
-              })
-            }
+            onPress={handlePostUpvoteButtonPress}
           >
             <Text
               className={clsx({
@@ -131,12 +136,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
               },
               'rounded-lg p-2'
             )}
-            onPress={() =>
-              handlePostVoteButtonPress({
-                oldVote: post.current_user_vote,
-                vote: 'downvote'
-              })
-            }
+            onPress={handlePostDownvoteButtonPress}
           >
             <Text
               className={clsx({
