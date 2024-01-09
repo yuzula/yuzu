@@ -149,8 +149,12 @@ export const Comment: FunctionComponent<CommentProps> = memo(
               <FontAwesome5 name="comment" size={14} />
             </Text>
           </Pressable>
-          <CommentVoteButton comment={comment} size={14} variant="upvote" />
-          <CommentVoteButton comment={comment} size={14} variant="downvote" />
+          <View>
+            <CommentVoteButton comment={comment} size={14} variant="upvote" />
+          </View>
+          <View>
+            <CommentVoteButton comment={comment} size={14} variant="downvote" />
+          </View>
         </View>
       </View>
     </Pressable>
