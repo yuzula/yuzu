@@ -12,11 +12,11 @@ import { Vote } from '../types/vote'
 interface PostVoteButtonProps {
   post: postModel.Schema
   variant: Vote
-  size: number
+  size?: number
 }
 
 export const PostVoteButton: FunctionComponent<PostVoteButtonProps> = memo(
-  ({ post, variant, size }) => {
+  ({ post, variant, size = 18 }) => {
     const { mutate: votePost, error: votePostError } = useVotePost({
       postId: post.id
     })
