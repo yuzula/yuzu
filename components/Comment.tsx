@@ -94,13 +94,16 @@ export const Comment: FunctionComponent<CommentProps> = memo(
         </View>
 
         <View className="flex-row items-center space-x-1">
-          {!isHeader && (
-            <CommentEllipsisButton
-              comment={comment}
-              size={14}
-              variant="child"
-            />
-          )}
+          {!isHeader &&
+            !comment.is_deleted &&
+            !comment.is_flagged &&
+            !comment.is_blocked && (
+              <CommentEllipsisButton
+                comment={comment}
+                size={14}
+                variant="child"
+              />
+            )}
           <Text className="font-Poppins_500Medium text-gray-light">
             {formatDuration(Date.now() - comment.created_at.getTime())}
           </Text>
