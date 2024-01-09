@@ -7,6 +7,7 @@ import Popover from 'react-native-popover-view'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { formatDuration } from '../helpers/time'
 import { commentModel } from '../models/comment'
+import { CommentVoteButton } from './CommentVoteButton'
 
 interface CommentProps {
   comment: commentModel.Schema
@@ -18,8 +19,6 @@ interface CommentProps {
   onPress?: (id: number) => void
   onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
-  onUpvoteButtonPress?: (id: number) => void
-  onDownvoteButtonPress?: (id: number) => void
 }
 
 export const Comment: FunctionComponent<CommentProps> = memo(
@@ -32,9 +31,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     isHeader = false,
     onPress,
     onEllipsisButtonPress,
-    onReplyButtonPress,
-    onUpvoteButtonPress,
-    onDownvoteButtonPress
+    onReplyButtonPress
   }) => (
     <Pressable
       className={clsx(
@@ -153,46 +150,8 @@ export const Comment: FunctionComponent<CommentProps> = memo(
               <FontAwesome5 name="comment" size={14} />
             </Text>
           </Pressable>
-          <Pressable
-            className={clsx(
-              {
-                'bg-pink-light active:opacity-90':
-                  comment.current_user_vote === 'upvote',
-                'active:bg-gray-200': comment.current_user_vote !== 'upvote'
-              },
-              'rounded-lg p-2'
-            )}
-            onPress={() => onUpvoteButtonPress?.(comment.id)}
-          >
-            <Text
-              className={clsx({
-                'text-white': comment.current_user_vote === 'upvote',
-                'text-gray-light': comment.current_user_vote !== 'upvote'
-              })}
-            >
-              <FontAwesome5 name="arrow-up" size={14} />
-            </Text>
-          </Pressable>
-          <Pressable
-            className={clsx(
-              {
-                'bg-blue-light active:opacity-90':
-                  comment.current_user_vote === 'downvote',
-                'active:bg-gray-200': comment.current_user_vote !== 'downvote'
-              },
-              'rounded-lg p-2'
-            )}
-            onPress={() => onDownvoteButtonPress?.(comment.id)}
-          >
-            <Text
-              className={clsx({
-                'text-white': comment.current_user_vote === 'downvote',
-                'text-gray-light': comment.current_user_vote !== 'downvote'
-              })}
-            >
-              <FontAwesome5 name="arrow-down" size={14} />
-            </Text>
-          </Pressable>
+          <CommentVoteButton comment={comment} size={14} variant="upvote" />
+          <CommentVoteButton comment={comment} size={14} variant="downvote" />
         </View>
       </View>
     </Pressable>

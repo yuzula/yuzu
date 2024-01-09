@@ -17,14 +17,11 @@ import {
 } from 'react-native'
 
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeleteComment } from '../hooks/useDeleteComment'
 import { useReportComment } from '../hooks/useReportComment'
-import { useVoteComment } from '../hooks/useVoteComment'
 import { commentModel } from '../models/comment'
-import { Vote } from '../types/vote'
 import { Comment } from './Comment'
 import { Separator } from './Separator'
 
@@ -64,8 +61,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
 
     const { profile } = useAuthenticatedProfile()
 
-    const { mutate: voteComment, error: voteCommentError } = useVoteComment()
-
     const { mutate: deleteComment, error: deleteCommentError } =
       useDeleteComment()
 
@@ -91,12 +86,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
         Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
       }
     }, [blockUserError])
-
-    useEffect(() => {
-      if (voteCommentError) {
-        Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
-      }
-    }, [voteCommentError])
 
     const handleReportCommentButtonPress = useCallback(
       (comment: commentModel.Schema) => {
@@ -192,23 +181,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
       ]
     )
 
-    const handleCommentVoteButtonPress = useCallback(
-      ({
-        commentId,
-        oldVote,
-        vote
-      }: {
-        commentId: number
-        oldVote?: Vote
-        vote: Vote
-      }) => {
-        const { newVote, delta } = getResultingVote({ oldVote, vote })
-
-        voteComment({ commentId, vote: newVote, delta })
-      },
-      [voteComment]
-    )
-
     const handleEndReached = useCallback(() => {
       if (!areCommentsFetching && hasCommentsNextPage) {
         fetchCommentsNextPage()
@@ -233,29 +205,14 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           variant={variant}
           onPress={onCommentPress}
           onReplyButtonPress={() => onCommentReplyButtonPress(comment)}
-          onDownvoteButtonPress={() =>
-            handleCommentVoteButtonPress({
-              commentId: comment.id,
-              oldVote: comment.current_user_vote,
-              vote: 'downvote'
-            })
-          }
           onEllipsisButtonPress={() =>
             handleCommentEllipsisButtonPress(comment)
-          }
-          onUpvoteButtonPress={() =>
-            handleCommentVoteButtonPress({
-              commentId: comment.id,
-              oldVote: comment.current_user_vote,
-              vote: 'upvote'
-            })
           }
         />
       ),
       [
         communityDomainName,
         handleCommentEllipsisButtonPress,
-        handleCommentVoteButtonPress,
         isPostPrivate,
         onCommentPress,
         onCommentReplyButtonPress,

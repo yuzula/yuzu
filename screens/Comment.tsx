@@ -14,7 +14,6 @@ import { Comment as CommentComponent } from '../components/Comment'
 import { Comments } from '../components/Comments'
 import { CommentSkeleton } from '../components/CommentSkeleton'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useChildComments } from '../hooks/useChildComments'
@@ -23,10 +22,8 @@ import { useDeleteComment } from '../hooks/useDeleteComment'
 import { usePost } from '../hooks/usePost'
 import { useReportComment } from '../hooks/useReportComment'
 import { useUserRefresh } from '../hooks/useUserRefresh'
-import { useVoteComment } from '../hooks/useVoteComment'
 import { commentModel } from '../models/comment'
 import { RootStackScreenProps } from '../types'
-import { Vote } from '../types/vote'
 
 export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   navigation,
@@ -77,8 +74,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   const { mutate: deleteComment, error: deleteCommentError } =
     useDeleteComment()
 
-  const { mutate: voteComment, error: voteCommentError } = useVoteComment()
-
   const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
   const { mutate: reportComment, error: reportCommentError } =
@@ -101,12 +96,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       setIsCommentInitialLoading(false)
     }
   }, [areCommentsFetching, isCommentFetching])
-
-  useEffect(() => {
-    if (voteCommentError) {
-      Alert.alert('Could not vote on comment', GENERIC_ERROR_MESSAGE)
-    }
-  }, [voteCommentError])
 
   useEffect(() => {
     if (postError) {
@@ -312,23 +301,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     [navigation, post]
   )
 
-  const handleCommentVoteButtonPress = useCallback(
-    ({
-      commentId,
-      oldVote,
-      vote
-    }: {
-      commentId: number
-      oldVote?: Vote
-      vote: Vote
-    }) => {
-      const { newVote, delta } = getResultingVote({ oldVote, vote })
-
-      voteComment({ commentId, vote: newVote, delta })
-    },
-    [voteComment]
-  )
-
   const renderListHeader = useCallback(
     () =>
       post && comment ? (
@@ -341,27 +313,12 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             isPostPrivate={post.is_private}
             onEllipsisButtonPress={handleCommentEllipsisButtonPress}
             onReplyButtonPress={handleHeaderReplyButtonPress}
-            onDownvoteButtonPress={() =>
-              handleCommentVoteButtonPress({
-                commentId: comment.id,
-                oldVote: comment.current_user_vote,
-                vote: 'downvote'
-              })
-            }
-            onUpvoteButtonPress={() =>
-              handleCommentVoteButtonPress({
-                commentId: comment.id,
-                oldVote: comment.current_user_vote,
-                vote: 'upvote'
-              })
-            }
           />
         </View>
       ) : null,
     [
       comment,
       handleCommentEllipsisButtonPress,
-      handleCommentVoteButtonPress,
       handleHeaderReplyButtonPress,
       post
     ]
