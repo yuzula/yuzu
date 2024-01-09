@@ -7,6 +7,7 @@ import Popover from 'react-native-popover-view'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { formatDuration } from '../helpers/time'
 import { commentModel } from '../models/comment'
+import { CommentEllipsisButton } from './CommentEllipsisButton'
 import { CommentVoteButton } from './CommentVoteButton'
 
 interface CommentProps {
@@ -17,7 +18,6 @@ interface CommentProps {
   isAuthorInternal: boolean
   isHeader?: boolean
   onPress?: (id: number) => void
-  onEllipsisButtonPress?: (id: number) => void
   onReplyButtonPress?: (id: number) => void
 }
 
@@ -30,7 +30,6 @@ export const Comment: FunctionComponent<CommentProps> = memo(
     isAuthorInternal,
     isHeader = false,
     onPress,
-    onEllipsisButtonPress,
     onReplyButtonPress
   }) => (
     <Pressable
@@ -96,14 +95,11 @@ export const Comment: FunctionComponent<CommentProps> = memo(
 
         <View className="flex-row items-center space-x-1">
           {!isHeader && (
-            <Pressable
-              className="rounded-lg p-2 active:bg-gray-200"
-              onPress={() => onEllipsisButtonPress?.(comment.id)}
-            >
-              <Text className="text-gray-light">
-                <FontAwesome5 name="ellipsis-h" size={14} />
-              </Text>
-            </Pressable>
+            <CommentEllipsisButton
+              comment={comment}
+              size={14}
+              variant="child"
+            />
           )}
           <Text className="font-Poppins_500Medium text-gray-light">
             {formatDuration(Date.now() - comment.created_at.getTime())}

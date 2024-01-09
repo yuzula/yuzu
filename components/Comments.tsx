@@ -1,26 +1,18 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import React, {
   FunctionComponent,
   memo,
   ReactNode,
   useCallback,
-  useEffect,
   useMemo
 } from 'react'
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   ListRenderItemInfo,
   Text,
   View
 } from 'react-native'
 
-import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
-import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
-import { useBlockUser } from '../hooks/useBlockUser'
-import { useDeleteComment } from '../hooks/useDeleteComment'
-import { useReportComment } from '../hooks/useReportComment'
 import { commentModel } from '../models/comment'
 import { Comment } from './Comment'
 import { Separator } from './Separator'
@@ -57,130 +49,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     onCommentPress,
     onCommentReplyButtonPress
   }) => {
-    const { showActionSheetWithOptions } = useActionSheet()
-
-    const { profile } = useAuthenticatedProfile()
-
-    const { mutate: deleteComment, error: deleteCommentError } =
-      useDeleteComment()
-
-    const { mutate: blockUser, error: blockUserError } = useBlockUser()
-
-    const { mutate: reportComment, error: reportCommentError } =
-      useReportComment()
-
-    useEffect(() => {
-      if (deleteCommentError) {
-        Alert.alert('Could not delete comment', GENERIC_ERROR_MESSAGE)
-      }
-    }, [deleteCommentError])
-
-    useEffect(() => {
-      if (reportCommentError) {
-        Alert.alert('Could not report comment', GENERIC_ERROR_MESSAGE)
-      }
-    }, [reportCommentError])
-
-    useEffect(() => {
-      if (blockUserError) {
-        Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
-      }
-    }, [blockUserError])
-
-    const handleReportCommentButtonPress = useCallback(
-      (comment: commentModel.Schema) => {
-        reportComment({ commentId: comment.id })
-
-        Alert.alert('Comment has been reported for moderation', undefined, [
-          {
-            onPress: () => {
-              Alert.alert(
-                'Would you like to block the author of the comment?',
-                undefined,
-                [
-                  {
-                    text: 'No'
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      if (comment.user_id) {
-                        blockUser({ userId: comment.user_id })
-                      }
-                    }
-                  }
-                ]
-              )
-            }
-          }
-        ])
-      },
-      [blockUser, reportComment]
-    )
-
-    const handleCommentEllipsisButtonPress = useCallback(
-      (comment: commentModel.Schema) => {
-        if (profile.id === comment.user_id) {
-          showActionSheetWithOptions(
-            {
-              title: 'More actions',
-              options: ['Delete this comment', 'Cancel'],
-              destructiveButtonIndex: 0,
-              cancelButtonIndex: 1
-            },
-            index => {
-              if (index === 1) {
-                return
-              }
-
-              Alert.alert(
-                'Are you sure you want to delete this comment?',
-                undefined,
-                [
-                  {
-                    text: 'Yes',
-                    style: 'destructive',
-                    onPress: () => deleteComment({ commentId: comment.id })
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel'
-                  }
-                ]
-              )
-            }
-          )
-        } else {
-          showActionSheetWithOptions(
-            {
-              title: 'More actions',
-              options: ['Report this comment', 'Block the author', 'Cancel'],
-              destructiveButtonIndex: 1,
-              cancelButtonIndex: 2
-            },
-            index => {
-              if (index === 2) {
-                return
-              }
-
-              if (index === 0) {
-                handleReportCommentButtonPress(comment)
-              } else if (index === 1 && comment.user_id) {
-                blockUser({ userId: comment.user_id })
-              }
-            }
-          )
-        }
-      },
-      [
-        blockUser,
-        deleteComment,
-        handleReportCommentButtonPress,
-        profile.id,
-        showActionSheetWithOptions
-      ]
-    )
-
     const handleEndReached = useCallback(() => {
       if (!areCommentsFetching && hasCommentsNextPage) {
         fetchCommentsNextPage()
@@ -205,14 +73,10 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
           variant={variant}
           onPress={onCommentPress}
           onReplyButtonPress={() => onCommentReplyButtonPress(comment)}
-          onEllipsisButtonPress={() =>
-            handleCommentEllipsisButtonPress(comment)
-          }
         />
       ),
       [
         communityDomainName,
-        handleCommentEllipsisButtonPress,
         isPostPrivate,
         onCommentPress,
         onCommentReplyButtonPress,

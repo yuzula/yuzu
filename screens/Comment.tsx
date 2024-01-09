@@ -1,4 +1,3 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import React, {
   FunctionComponent,
@@ -11,16 +10,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Comment as CommentComponent } from '../components/Comment'
+import { CommentEllipsisButton } from '../components/CommentEllipsisButton'
 import { Comments } from '../components/Comments'
 import { CommentSkeleton } from '../components/CommentSkeleton'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
-import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
-import { useBlockUser } from '../hooks/useBlockUser'
 import { useChildComments } from '../hooks/useChildComments'
 import { useComment } from '../hooks/useComment'
-import { useDeleteComment } from '../hooks/useDeleteComment'
 import { usePost } from '../hooks/usePost'
-import { useReportComment } from '../hooks/useReportComment'
 import { useUserRefresh } from '../hooks/useUserRefresh'
 import { commentModel } from '../models/comment'
 import { RootStackScreenProps } from '../types'
@@ -35,10 +31,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
   const [areCommentsInitialLoading, setAreCommentsInitialLoading] =
     useState(true)
   const [isCommentInitialLoading, setIsCommentInitialLoading] = useState(true)
-
-  const { showActionSheetWithOptions } = useActionSheet()
-
-  const { profile } = useAuthenticatedProfile()
 
   const {
     data: post,
@@ -70,14 +62,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     useUserRefresh(refetchComment)
   const { refresh: refreshComments, isRefreshing: areCommentsRefreshing } =
     useUserRefresh(refetchComments)
-
-  const { mutate: deleteComment, error: deleteCommentError } =
-    useDeleteComment()
-
-  const { mutate: blockUser, error: blockUserError } = useBlockUser()
-
-  const { mutate: reportComment, error: reportCommentError } =
-    useReportComment()
 
   useEffect(() => {
     if (!isPostFetching) {
@@ -121,30 +105,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     }
   }, [commentsError])
 
-  useEffect(() => {
-    if (deleteCommentError) {
-      Sentry.Native.captureException(deleteCommentError)
-
-      Alert.alert('Could not delete comment', GENERIC_ERROR_MESSAGE)
-    }
-  }, [deleteCommentError])
-
-  useEffect(() => {
-    if (blockUserError) {
-      Sentry.Native.captureException(blockUserError)
-
-      Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
-    }
-  }, [blockUserError])
-
-  useEffect(() => {
-    if (reportCommentError) {
-      Sentry.Native.captureException(reportCommentError)
-
-      Alert.alert('Could not report comment', GENERIC_ERROR_MESSAGE)
-    }
-  }, [reportCommentError])
-
   const handleBackButtonPress = useCallback(() => {
     if (navigation.canGoBack()) {
       navigation.goBack()
@@ -152,105 +112,6 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
       navigation.navigate('Post', { postId })
     }
   }, [navigation, postId])
-
-  const handleReportCommentButtonPress = useCallback(
-    (comment: commentModel.Schema) => {
-      reportComment({ commentId: comment.id })
-
-      Alert.alert('Comment has been reported for moderation', undefined, [
-        {
-          onPress: () => {
-            Alert.alert(
-              'Would you like to block the author of the comment?',
-              undefined,
-              [
-                {
-                  text: 'No'
-                },
-                {
-                  text: 'Yes',
-                  onPress: () => {
-                    if (comment.user_id) {
-                      blockUser({ userId: comment.user_id })
-                    }
-                  }
-                }
-              ]
-            )
-          }
-        }
-      ])
-    },
-    [blockUser, reportComment]
-  )
-
-  const handleCommentEllipsisButtonPress = useCallback(() => {
-    if (!comment) {
-      return Alert.alert('Could not get comment details', GENERIC_ERROR_MESSAGE)
-    }
-
-    if (profile.id === comment.user_id) {
-      showActionSheetWithOptions(
-        {
-          title: 'More actions',
-          options: ['Delete this comment', 'Cancel'],
-          destructiveButtonIndex: 0,
-          cancelButtonIndex: 1
-        },
-        index => {
-          if (index === 1) {
-            return
-          }
-
-          Alert.alert(
-            'Are you sure you want to delete this comment?',
-            undefined,
-            [
-              {
-                text: 'Yes',
-                style: 'destructive',
-                onPress: () => {
-                  deleteComment({ commentId })
-                }
-              },
-              {
-                text: 'Cancel',
-                style: 'cancel'
-              }
-            ]
-          )
-        }
-      )
-    } else {
-      showActionSheetWithOptions(
-        {
-          title: 'More actions',
-          options: ['Report this comment', 'Block the author', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2
-        },
-        index => {
-          if (index === 2) {
-            return
-          }
-
-          if (index === 0) {
-            handleReportCommentButtonPress(comment)
-          } else if (index === 1 && comment.user_id) {
-            blockUser({ userId: comment.user_id })
-          }
-        }
-      )
-    }
-  }, [
-    blockUser,
-    comment,
-    commentId,
-    deleteComment,
-    handleReportCommentButtonPress,
-    profile.id,
-    showActionSheetWithOptions
-  ])
 
   const handleHeaderReplyButtonPress = useCallback(() => {
     if (!post) {
@@ -311,17 +172,11 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             communityDomainName={post.community_domain_name}
             isAuthorInternal={comment.is_author_internal}
             isPostPrivate={post.is_private}
-            onEllipsisButtonPress={handleCommentEllipsisButtonPress}
             onReplyButtonPress={handleHeaderReplyButtonPress}
           />
         </View>
       ) : null,
-    [
-      comment,
-      handleCommentEllipsisButtonPress,
-      handleHeaderReplyButtonPress,
-      post
-    ]
+    [comment, handleHeaderReplyButtonPress, post]
   )
 
   const handleCommentPress = useCallback(
@@ -355,10 +210,12 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
       <View className="w-full flex-1">
         <View className="border-b border-gray-100">
-          <View className="mx-auto w-5/6 flex-row items-center justify-between">
-            <Pressable className="py-4 pr-4" onPress={handleBackButtonPress}>
-              <FontAwesome5 name="chevron-left" size={16} />
-            </Pressable>
+          <View className="mx-auto w-5/6 flex-row items-center justify-between py-4">
+            <View className="w-10 items-start justify-center">
+              <Pressable onPress={handleBackButtonPress}>
+                <FontAwesome5 name="chevron-left" size={16} />
+              </Pressable>
+            </View>
             <Text
               className="shrink text-center font-Poppins_700Bold text-base"
               ellipsizeMode="tail"
@@ -366,12 +223,15 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             >
               Comment
             </Text>
-            <Pressable
-              className="py-4 pl-4"
-              onPress={handleCommentEllipsisButtonPress}
-            >
-              <FontAwesome5 name="ellipsis-h" size={16} />
-            </Pressable>
+            <View className="w-10 items-end justify-center">
+              {comment && (
+                <CommentEllipsisButton
+                  comment={comment}
+                  size={16}
+                  variant="parent"
+                />
+              )}
+            </View>
           </View>
         </View>
 
