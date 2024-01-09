@@ -106,10 +106,16 @@ export const Post: FunctionComponent<PostProps> = memo(
 
             <View className="flex flex-row items-center space-x-1">
               {!post.is_deleted && !post.is_flagged && !post.is_blocked && (
-                <PostEllipsisButton post={post} size={18} />
+                <View>
+                  <PostEllipsisButton post={post} size={18} />
+                </View>
               )}
-              <PostVoteButton post={post} size={18} variant="upvote" />
-              <PostVoteButton post={post} size={18} variant="downvote" />
+              <View>
+                <PostVoteButton post={post} size={18} variant="upvote" />
+              </View>
+              <View>
+                <PostVoteButton post={post} size={18} variant="downvote" />
+              </View>
             </View>
           </View>
         </View>
