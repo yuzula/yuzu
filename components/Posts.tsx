@@ -1,15 +1,7 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
-import React, {
-  FunctionComponent,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo
-} from 'react'
+import React, { FunctionComponent, memo, useCallback, useMemo } from 'react'
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   ListRenderItemInfo,
   Pressable,
@@ -18,12 +10,8 @@ import {
 } from 'react-native'
 import Popover from 'react-native-popover-view'
 
-import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
-import { useBlockUser } from '../hooks/useBlockUser'
-import { useDeletePost } from '../hooks/useDeletePost'
-import { useReportPost } from '../hooks/useReportPost'
 import { postModel } from '../models/post'
 import { SortBy } from '../types/post'
 import { Post } from './Post'
@@ -63,129 +51,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
     onRefresh,
     onPostCommunityDomainNamePress
   }) => {
-    const { showActionSheetWithOptions } = useActionSheet()
-
     const { profile } = useAuthenticatedProfile()
-
-    const { mutate: deletePost, error: deletePostError } = useDeletePost()
-
-    const { mutate: blockUser, error: blockUserError } = useBlockUser()
-
-    const { mutate: reportPost, error: reportPostError } = useReportPost()
-
-    useEffect(() => {
-      if (deletePostError) {
-        Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
-      }
-    }, [deletePostError])
-
-    useEffect(() => {
-      if (blockUserError) {
-        Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
-      }
-    }, [blockUserError])
-
-    useEffect(() => {
-      if (reportPostError) {
-        Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
-      }
-    }, [reportPostError])
-
-    const handleReportPostButtonPress = useCallback(
-      ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-        reportPost({ postId })
-
-        Alert.alert('Post has been reported for moderation', undefined, [
-          {
-            onPress: () => {
-              Alert.alert(
-                'Would you like to block the author of the post?',
-                undefined,
-                [
-                  {
-                    text: 'No'
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      if (postAuthorId) {
-                        blockUser({ userId: postAuthorId })
-                      }
-                    }
-                  }
-                ]
-              )
-            }
-          }
-        ])
-      },
-      [blockUser, reportPost]
-    )
-
-    const handlePostEllipsisButtonPress = useCallback(
-      ({ postId, postAuthorId }: { postId: number; postAuthorId?: string }) => {
-        if (profile.id === postAuthorId) {
-          showActionSheetWithOptions(
-            {
-              title: 'More actions',
-              options: ['Delete this post', 'Cancel'],
-              destructiveButtonIndex: 0,
-              cancelButtonIndex: 1
-            },
-            index => {
-              if (index === 1) {
-                return
-              }
-
-              Alert.alert(
-                'Are you sure you want to delete this post?',
-                undefined,
-                [
-                  {
-                    text: 'Yes',
-                    style: 'destructive',
-                    onPress: () => {
-                      deletePost({ postId })
-                    }
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel'
-                  }
-                ]
-              )
-            }
-          )
-        } else {
-          showActionSheetWithOptions(
-            {
-              title: 'More actions',
-              options: ['Report this post', 'Block the author', 'Cancel'],
-              destructiveButtonIndex: 1,
-              cancelButtonIndex: 2
-            },
-            index => {
-              if (index === 2) {
-                return
-              }
-
-              if (index === 0) {
-                handleReportPostButtonPress({ postId, postAuthorId })
-              } else if (index === 1 && postAuthorId) {
-                blockUser({ userId: postAuthorId })
-              }
-            }
-          )
-        }
-      },
-      [
-        blockUser,
-        deletePost,
-        handleReportPostButtonPress,
-        profile.id,
-        showActionSheetWithOptions
-      ]
-    )
 
     const renderListItem = useCallback(
       ({ item: post }: ListRenderItemInfo<postModel.Schema>) => (
@@ -193,14 +59,9 @@ export const Posts: FunctionComponent<PostsProps> = memo(
           post={post}
           shouldDisplayCommunityDomainName={shouldDisplayCommunityDomainName}
           onCommunityDomainNamePress={onPostCommunityDomainNamePress}
-          onEllipsisButtonPress={handlePostEllipsisButtonPress}
         />
       ),
-      [
-        handlePostEllipsisButtonPress,
-        onPostCommunityDomainNamePress,
-        shouldDisplayCommunityDomainName
-      ]
+      [onPostCommunityDomainNamePress, shouldDisplayCommunityDomainName]
     )
 
     const renderListEmptyComponent = useCallback(

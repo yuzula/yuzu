@@ -1,3 +1,4 @@
+import { useActionSheet } from '@expo/react-native-action-sheet'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import clsx from 'clsx'
@@ -8,19 +9,16 @@ import * as Sentry from 'sentry-expo'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { getResultingVote } from '../helpers/vote'
+import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
+import { useBlockUser } from '../hooks/useBlockUser'
+import { useDeletePost } from '../hooks/useDeletePost'
+import { useReportPost } from '../hooks/useReportPost'
 import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
 
 interface PostProps {
   post: postModel.Schema
   shouldDisplayCommunityDomainName?: boolean
-  onEllipsisButtonPress: ({
-    postId,
-    postAuthorId
-  }: {
-    postId: number
-    postAuthorId?: string
-  }) => void
   onCommunityDomainNamePress?: (domainName: string) => void
 }
 
@@ -28,10 +26,19 @@ export const Post: FunctionComponent<PostProps> = memo(
   ({
     post,
     shouldDisplayCommunityDomainName = false,
-    onEllipsisButtonPress,
     onCommunityDomainNamePress
   }) => {
     const navigation = useNavigation()
+
+    const { profile } = useAuthenticatedProfile()
+
+    const { showActionSheetWithOptions } = useActionSheet()
+
+    const { mutate: deletePost, error: deletePostError } = useDeletePost()
+
+    const { mutate: blockUser, error: blockUserError } = useBlockUser()
+
+    const { mutate: reportPost, error: reportPostError } = useReportPost()
 
     const { mutate: votePost, error: votePostError } = useVotePost({
       postId: post.id
@@ -42,6 +49,24 @@ export const Post: FunctionComponent<PostProps> = memo(
         Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
       }
     }, [votePostError])
+
+    useEffect(() => {
+      if (deletePostError) {
+        Alert.alert('Could not delete post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [deletePostError])
+
+    useEffect(() => {
+      if (blockUserError) {
+        Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+      }
+    }, [blockUserError])
+
+    useEffect(() => {
+      if (reportPostError) {
+        Alert.alert('Could not report post', GENERIC_ERROR_MESSAGE)
+      }
+    }, [reportPostError])
 
     const handleDomainNamePress = useCallback(() => {
       if (!post.community_domain_name) {
@@ -57,12 +82,151 @@ export const Post: FunctionComponent<PostProps> = memo(
       navigation.navigate('Post', { postId: post.id })
     }, [navigation, post.id])
 
+    const handleReportPostSuccess = useCallback(() => {
+      Alert.alert('Post has been reported for moderation', undefined, [
+        {
+          onPress: () => {
+            Alert.alert(
+              'Would you like to block the author of the post?',
+              undefined,
+              [
+                {
+                  text: 'No'
+                },
+                {
+                  text: 'Yes',
+                  onPress: () => {
+                    if (post.user_id) {
+                      blockUser({ userId: post.user_id })
+                    } else {
+                      Sentry.Native.captureException(
+                        'Post author ID is not defined'
+                      )
+
+                      Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+                    }
+                  }
+                }
+              ]
+            )
+          }
+        }
+      ])
+    }, [blockUser, post.user_id])
+
+    const handleReportButtonPress = useCallback(() => {
+      Alert.alert('Are you sure you want to report this post?', undefined, [
+        {
+          text: 'Yes',
+          onPress: () => {
+            reportPost(
+              { postId: post.id },
+              {
+                onSuccess: handleReportPostSuccess
+              }
+            )
+          }
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ])
+    }, [handleReportPostSuccess, post.id, reportPost])
+
+    const handleOwnPostEllipsisButtonPress = useCallback(() => {
+      showActionSheetWithOptions(
+        {
+          title: 'More actions',
+          options: ['Delete this post', 'Cancel'],
+          destructiveButtonIndex: 0,
+          cancelButtonIndex: 1
+        },
+        index => {
+          if (index === 1) {
+            return
+          }
+
+          Alert.alert('Are you sure you want to delete this post?', undefined, [
+            {
+              text: 'Yes',
+              style: 'destructive',
+              onPress: () => {
+                deletePost({ postId: post.id })
+              }
+            },
+            {
+              text: 'Cancel',
+              style: 'cancel'
+            }
+          ])
+        }
+      )
+    }, [deletePost, post.id, showActionSheetWithOptions])
+
+    const handleBlockAuthorButtonPress = useCallback(() => {
+      Alert.alert(
+        'Are you sure you want to block the author of this post?',
+        undefined,
+        [
+          {
+            text: 'Yes',
+            onPress: () => {
+              if (post.user_id) {
+                blockUser({ userId: post.user_id })
+              } else {
+                Sentry.Native.captureException('Post author ID is not defined')
+
+                Alert.alert('Could not block user', GENERIC_ERROR_MESSAGE)
+              }
+            }
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          }
+        ]
+      )
+    }, [blockUser, post.user_id])
+
+    const handleOtherPostEllipsisButtonPress = useCallback(() => {
+      showActionSheetWithOptions(
+        {
+          title: 'More actions',
+          options: ['Report this post', 'Block the author', 'Cancel'],
+          destructiveButtonIndex: 1,
+          cancelButtonIndex: 2
+        },
+        index => {
+          if (index === 2) {
+            return
+          }
+
+          if (index === 0) {
+            handleReportButtonPress()
+          } else if (index === 1) {
+            handleBlockAuthorButtonPress()
+          }
+        }
+      )
+    }, [
+      handleBlockAuthorButtonPress,
+      handleReportButtonPress,
+      showActionSheetWithOptions
+    ])
+
     const handleEllipsisButtonPress = useCallback(() => {
-      onEllipsisButtonPress({
-        postId: post.id,
-        postAuthorId: post.user_id
-      })
-    }, [onEllipsisButtonPress, post.id, post.user_id])
+      if (profile.id === post.user_id) {
+        handleOwnPostEllipsisButtonPress()
+      } else {
+        handleOtherPostEllipsisButtonPress()
+      }
+    }, [
+      handleOtherPostEllipsisButtonPress,
+      handleOwnPostEllipsisButtonPress,
+      post.user_id,
+      profile.id
+    ])
 
     const handleUpvoteButtonPress = useCallback(() => {
       const { newVote, delta } = getResultingVote({
@@ -148,14 +312,16 @@ export const Post: FunctionComponent<PostProps> = memo(
             </View>
 
             <View className="flex flex-row items-center space-x-1">
-              <Pressable
-                className="rounded-lg p-2 active:bg-gray-200"
-                onPress={handleEllipsisButtonPress}
-              >
-                <Text className="text-gray-light">
-                  <FontAwesome5 name="ellipsis-h" size={18} />
-                </Text>
-              </Pressable>
+              {!post.is_deleted && !post.is_flagged && !post.is_blocked && (
+                <Pressable
+                  className="rounded-lg p-2 active:bg-gray-200"
+                  onPress={handleEllipsisButtonPress}
+                >
+                  <Text className="text-gray-light">
+                    <FontAwesome5 name="ellipsis-h" size={18} />
+                  </Text>
+                </Pressable>
+              )}
               <Pressable
                 className={clsx(
                   {
