@@ -83,7 +83,7 @@ export const CommentEllipsisButton: FunctionComponent<CommentEllipsisButtonProps
     }, [blockUser, comment.user_id])
 
     const handleReportButtonPress = useCallback(() => {
-      Alert.alert('Are you sure you want to report this Comment?', undefined, [
+      Alert.alert('Are you sure you want to report this comment?', undefined, [
         {
           text: 'Yes',
           onPress: () => {
