@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yuzu",
     "slug": "yuzu",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "owner": "yuzula",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -21,7 +21,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "25"
+      "buildNumber": "26"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#fcf951"
       },
       "package": "com.yuzu.android",
-      "versionCode": 25
+      "versionCode": 26
     },
     "web": {
       "bundler": "metro",
