@@ -165,7 +165,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
       <View className="w-full flex-1">
         <View className="border-b border-gray-100">
-          <View className="mx-auto w-5/6 flex-row items-center justify-between py-2">
+          <View className="mx-auto w-5/6 flex-row items-center justify-between py-4">
             <View className="w-10 items-start justify-center">
               <Pressable onPress={handleBackButtonPress}>
                 <FontAwesome5 name="chevron-left" size={16} />
