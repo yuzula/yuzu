@@ -179,9 +179,12 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
               Post
             </Text>
             <View className="w-10 items-end justify-center">
-              {post && (
-                <PostEllipsisButton post={post} size={16} variant="parent" />
-              )}
+              {post &&
+                !post.is_deleted &&
+                !post.is_flagged &&
+                !post.is_blocked && (
+                  <PostEllipsisButton post={post} size={16} variant="parent" />
+                )}
             </View>
           </View>
         </View>

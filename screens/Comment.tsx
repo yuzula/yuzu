@@ -224,13 +224,16 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
               Comment
             </Text>
             <View className="w-10 items-end justify-center">
-              {comment && (
-                <CommentEllipsisButton
-                  comment={comment}
-                  size={16}
-                  variant="parent"
-                />
-              )}
+              {comment &&
+                !comment.is_deleted &&
+                !comment.is_flagged &&
+                !comment.is_blocked && (
+                  <CommentEllipsisButton
+                    comment={comment}
+                    size={16}
+                    variant="parent"
+                  />
+                )}
             </View>
           </View>
         </View>
