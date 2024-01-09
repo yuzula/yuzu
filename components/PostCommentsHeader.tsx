@@ -1,52 +1,19 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import clsx from 'clsx'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
-import { Alert, Pressable, Text, View } from 'react-native'
+import React, { FunctionComponent, memo } from 'react'
+import { Pressable, Text, View } from 'react-native'
 
-import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
-import { getResultingVote } from '../helpers/vote'
-import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
+import { PostVoteButton } from './PostVoteButton'
 
 interface PostCommentsHeaderProps {
   post: postModel.Schema
   onReplyButtonPress: () => void
 }
 
-export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
-  post,
-  onReplyButtonPress
-}) => {
-  const { mutate: votePost, error: votePostError } = useVotePost({
-    postId: post.id
-  })
-
-  useEffect(() => {
-    if (votePostError) {
-      Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-    }
-  }, [votePostError])
-
-  const handlePostUpvoteButtonPress = useCallback(() => {
-    const { newVote, delta } = getResultingVote({
-      oldVote: post.current_user_vote,
-      vote: 'upvote'
-    })
-
-    votePost({ vote: newVote, delta })
-  }, [post.current_user_vote, votePost])
-
-  const handlePostDownvoteButtonPress = useCallback(() => {
-    const { newVote, delta } = getResultingVote({
-      oldVote: post.current_user_vote,
-      vote: 'downvote'
-    })
-
-    votePost({ vote: newVote, delta })
-  }, [post.current_user_vote, votePost])
-
-  return (
+export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> =
+  memo(({ post, onReplyButtonPress }) => (
     <>
       <View className="w-full border-b border-gray-100">
         <View className="mx-auto w-5/6 space-y-2 py-4">
@@ -107,46 +74,8 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
       </View>
       <View className="border-b border-gray-100">
         <View className="mx-auto w-5/6 flex-row justify-between py-2">
-          <Pressable
-            className={clsx(
-              {
-                'bg-pink-light active:opacity-90':
-                  post.current_user_vote === 'upvote',
-                'active:bg-gray-200': post.current_user_vote !== 'upvote'
-              },
-              'rounded-lg p-2'
-            )}
-            onPress={handlePostUpvoteButtonPress}
-          >
-            <Text
-              className={clsx({
-                'text-white': post.current_user_vote === 'upvote',
-                'text-gray-light': post.current_user_vote !== 'upvote'
-              })}
-            >
-              <FontAwesome5 name="arrow-up" size={18} />
-            </Text>
-          </Pressable>
-          <Pressable
-            className={clsx(
-              {
-                'bg-blue-light active:opacity-90':
-                  post.current_user_vote === 'downvote',
-                'active:bg-gray-200': post.current_user_vote !== 'downvote'
-              },
-              'rounded-lg p-2'
-            )}
-            onPress={handlePostDownvoteButtonPress}
-          >
-            <Text
-              className={clsx({
-                'text-white': post.current_user_vote === 'downvote',
-                'text-gray-light': post.current_user_vote !== 'downvote'
-              })}
-            >
-              <FontAwesome5 name="arrow-down" size={18} />
-            </Text>
-          </Pressable>
+          <PostVoteButton post={post} size={18} variant="upvote" />
+          <PostVoteButton post={post} size={18} variant="downvote" />
           <Pressable
             className="rounded-lg p-2 active:bg-gray-200"
             onPress={onReplyButtonPress}
@@ -158,5 +87,4 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> = ({
         </View>
       </View>
     </>
-  )
-}
+  ))

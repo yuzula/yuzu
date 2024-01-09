@@ -8,13 +8,12 @@ import * as Sentry from 'sentry-expo'
 
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
-import { getResultingVote } from '../helpers/vote'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useBlockUser } from '../hooks/useBlockUser'
 import { useDeletePost } from '../hooks/useDeletePost'
 import { useReportPost } from '../hooks/useReportPost'
-import { useVotePost } from '../hooks/useVotePost'
 import { postModel } from '../models/post'
+import { PostVoteButton } from './PostVoteButton'
 
 interface PostProps {
   post: postModel.Schema
@@ -39,16 +38,6 @@ export const Post: FunctionComponent<PostProps> = memo(
     const { mutate: blockUser, error: blockUserError } = useBlockUser()
 
     const { mutate: reportPost, error: reportPostError } = useReportPost()
-
-    const { mutate: votePost, error: votePostError } = useVotePost({
-      postId: post.id
-    })
-
-    useEffect(() => {
-      if (votePostError) {
-        Alert.alert('Could not vote on post', GENERIC_ERROR_MESSAGE)
-      }
-    }, [votePostError])
 
     useEffect(() => {
       if (deletePostError) {
@@ -228,24 +217,6 @@ export const Post: FunctionComponent<PostProps> = memo(
       profile.id
     ])
 
-    const handleUpvoteButtonPress = useCallback(() => {
-      const { newVote, delta } = getResultingVote({
-        oldVote: post.current_user_vote,
-        vote: 'upvote'
-      })
-
-      votePost({ vote: newVote, delta })
-    }, [post.current_user_vote, votePost])
-
-    const handleDownvoteButtonPress = useCallback(() => {
-      const { newVote, delta } = getResultingVote({
-        oldVote: post.current_user_vote,
-        vote: 'downvote'
-      })
-
-      votePost({ vote: newVote, delta })
-    }, [post.current_user_vote, votePost])
-
     return (
       <Pressable className="active:bg-gray-200" onPress={handlePress}>
         <View className="mx-auto w-5/6 space-y-2 py-4">
@@ -322,46 +293,8 @@ export const Post: FunctionComponent<PostProps> = memo(
                   </Text>
                 </Pressable>
               )}
-              <Pressable
-                className={clsx(
-                  {
-                    'bg-pink-light active:opacity-90':
-                      post.current_user_vote === 'upvote',
-                    'active:bg-gray-200': post.current_user_vote !== 'upvote'
-                  },
-                  'rounded-lg p-2'
-                )}
-                onPress={handleUpvoteButtonPress}
-              >
-                <Text
-                  className={clsx({
-                    'text-white': post.current_user_vote === 'upvote',
-                    'text-gray-light': post.current_user_vote !== 'upvote'
-                  })}
-                >
-                  <FontAwesome5 name="arrow-up" size={18} />
-                </Text>
-              </Pressable>
-              <Pressable
-                className={clsx(
-                  {
-                    'bg-blue-light active:opacity-90':
-                      post.current_user_vote === 'downvote',
-                    'active:bg-gray-200': post.current_user_vote !== 'downvote'
-                  },
-                  'rounded-lg p-2'
-                )}
-                onPress={handleDownvoteButtonPress}
-              >
-                <Text
-                  className={clsx({
-                    'text-white': post.current_user_vote === 'downvote',
-                    'text-gray-light': post.current_user_vote !== 'downvote'
-                  })}
-                >
-                  <FontAwesome5 name="arrow-down" size={18} />
-                </Text>
-              </Pressable>
+              <PostVoteButton post={post} size={18} variant="upvote" />
+              <PostVoteButton post={post} size={18} variant="downvote" />
             </View>
           </View>
         </View>
