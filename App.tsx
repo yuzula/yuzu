@@ -1,6 +1,7 @@
 import 'react-native-reanimated'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { NavigationContainer } from '@react-navigation/native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
@@ -14,7 +15,8 @@ import { useAuthContext } from './hooks/useAuthContext'
 import { useFonts } from './hooks/useFonts'
 import { useProfileContext } from './hooks/useProfileContext'
 import { useTrackingTransparency } from './hooks/useTrackingTransparency'
-import { Navigation } from './navigation'
+import { linking } from './linking'
+import { RootNavigator } from './navigators/Root'
 
 Sentry.init({
   dsn: 'https://ed72494c4256c5d19e3994d2d69e93e2@o4506121746186240.ingest.sentry.io/4506121763160064',
@@ -51,7 +53,9 @@ const BaseApp: FunctionComponent = memo(() => {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar />
-        <Navigation onReady={handleNavigationReady} />
+        <NavigationContainer linking={linking} onReady={handleNavigationReady}>
+          <RootNavigator />
+        </NavigationContainer>
       </GestureHandlerRootView>
     )
   }
