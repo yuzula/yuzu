@@ -1,10 +1,9 @@
-import React, { FunctionComponent, useCallback } from 'react'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import * as Sentry from 'sentry-expo'
 
 import { Button } from '../components/Button'
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useDeleteCurrentUser } from '../hooks/useDeleteCurrentUser'
 import { useLogOut } from '../hooks/useLogOut'
@@ -14,8 +13,17 @@ export const Me: FunctionComponent = () => {
 
   const { logOut, isLoading: isLogOutLoading } = useLogOut()
 
-  const { deleteCurrentUser, isLoading: isDeleteCurrentUserLoading } =
-    useDeleteCurrentUser()
+  const {
+    mutate: deleteCurrentUser,
+    isPending: isDeleteCurrentUserPending,
+    error: deleteCurrentUserError
+  } = useDeleteCurrentUser()
+
+  useEffect(() => {
+    if (deleteCurrentUserError) {
+      Alert.alert('Could not delete current user', GENERIC_ERROR_MESSAGE)
+    }
+  }, [deleteCurrentUserError])
 
   const handleLogOutButtonPress = useCallback(() => {
     Alert.alert('Are you sure you want to log out?', undefined, [
@@ -38,15 +46,8 @@ export const Me: FunctionComponent = () => {
       {
         text: 'Yes',
         style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteCurrentUser()
-            await logOut()
-          } catch (error) {
-            Sentry.Native.captureException(error)
-
-            Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-          }
+        onPress: () => {
+          deleteCurrentUser()
         }
       },
       {
@@ -54,7 +55,7 @@ export const Me: FunctionComponent = () => {
         style: 'cancel'
       }
     ])
-  }, [deleteCurrentUser, logOut])
+  }, [deleteCurrentUser])
 
   return (
     <SafeAreaView
@@ -70,14 +71,14 @@ export const Me: FunctionComponent = () => {
         <View className="space-y-2">
           <Button
             isDisabled={isLogOutLoading}
-            isLoading={isDeleteCurrentUserLoading}
+            isLoading={isDeleteCurrentUserPending}
             variant="secondary"
             onPress={handleDeleteAccountButtonPress}
           >
             Delete my account
           </Button>
           <Button
-            isDisabled={isDeleteCurrentUserLoading}
+            isDisabled={isDeleteCurrentUserPending}
             isLoading={isLogOutLoading}
             onPress={handleLogOutButtonPress}
           >

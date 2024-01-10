@@ -1,26 +1,18 @@
-import { useCallback, useState } from 'react'
-import { Alert } from 'react-native'
+import { useMutation } from '@tanstack/react-query'
+import * as Haptics from 'expo-haptics'
 import * as Sentry from 'sentry-expo'
 
-import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { userService } from '../services/user'
 
-export const useDeleteCurrentUser = () => {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const deleteCurrentUser = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      await userService.deleteCurrentUser()
-    } catch (error) {
+export const useDeleteCurrentUser = () =>
+  useMutation({
+    mutationFn: userService.deleteCurrentUser,
+    onSuccess: async () => {
+      await userService.logOut()
+    },
+    onError: async error => {
       Sentry.Native.captureException(error)
 
-      Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-    } finally {
-      setIsLoading(false)
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     }
-  }, [])
-
-  return { deleteCurrentUser, isLoading }
-}
+  })
