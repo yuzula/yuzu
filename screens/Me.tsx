@@ -1,4 +1,3 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Alert, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -11,8 +10,6 @@ import { useDeleteCurrentUser } from '../hooks/useDeleteCurrentUser'
 import { useLogOut } from '../hooks/useLogOut'
 
 export const Me: FunctionComponent = () => {
-  const { showActionSheetWithOptions } = useActionSheet()
-
   const { profile } = useAuthenticatedProfile()
 
   const { logOut, isLoading: isLogOutLoading } = useLogOut()
@@ -21,29 +18,20 @@ export const Me: FunctionComponent = () => {
     useDeleteCurrentUser()
 
   const handleLogOutButtonPress = useCallback(() => {
-    showActionSheetWithOptions(
+    Alert.alert('Are you sure you want to log out?', undefined, [
       {
-        title: 'Are you sure you want to log out?',
-        options: ['Log Out', 'Cancel'],
-        destructiveButtonIndex: 0,
-        cancelButtonIndex: 1
-      },
-      async index => {
-        switch (index) {
-          case 0:
-            try {
-              await logOut()
-            } catch (error) {
-              Sentry.Native.captureException(error)
-
-              Alert.alert(GENERIC_ERROR_TITLE, GENERIC_ERROR_MESSAGE)
-            }
-            break
-          default:
+        text: 'Yes',
+        style: 'destructive',
+        onPress: async () => {
+          await logOut()
         }
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel'
       }
-    )
-  }, [logOut, showActionSheetWithOptions])
+    ])
+  }, [logOut])
 
   const handleDeleteAccountButtonPress = useCallback(() => {
     Alert.alert('Are you sure you want to delete your account?', undefined, [
