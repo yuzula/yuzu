@@ -1,5 +1,6 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent } from 'react'
 
 import { Community } from '../screens/Community'
@@ -13,6 +14,11 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>()
 export const BottomTabNavigator: FunctionComponent = () => (
   <BottomTab.Navigator
     initialRouteName="Home"
+    screenListeners={{
+      blur: async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      }
+    }}
     screenOptions={{
       headerShown: false,
       tabBarActiveTintColor: 'black',
