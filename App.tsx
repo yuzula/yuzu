@@ -3,6 +3,7 @@ import 'react-native-reanimated'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { NavigationContainer } from '@react-navigation/native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import * as Haptics from 'expo-haptics'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import React, { FunctionComponent, memo, useCallback } from 'react'
@@ -38,8 +39,10 @@ const BaseApp: FunctionComponent = memo(() => {
 
   useTrackingTransparency()
 
-  const handleNavigationReady = useCallback(() => {
-    SplashScreen.hideAsync()
+  const handleNavigationReady = useCallback(async () => {
+    await SplashScreen.hideAsync()
+
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
   }, [])
 
   const areResourcesLoading =
