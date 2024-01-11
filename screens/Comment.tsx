@@ -12,8 +12,10 @@ import * as Sentry from 'sentry-expo'
 import { Comment as CommentComponent } from '../components/Comment'
 import { CommentEllipsisButton } from '../components/CommentEllipsisButton'
 import { Comments } from '../components/Comments'
+import { CommentsEmpty } from '../components/CommentsEmpty'
 import { CommentSkeleton } from '../components/CommentSkeleton'
 import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
+import { MAX_COMMENT_DEPTH } from '../constants/comment'
 import { useChildComments } from '../hooks/useChildComments'
 import { useComment } from '../hooks/useComment'
 import { usePost } from '../hooks/usePost'
@@ -179,6 +181,23 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
     [comment, handleHeaderReplyButtonPress, post]
   )
 
+  const renderCommentsEmpty = useCallback(
+    () =>
+      (comment?.depth ?? 0) < MAX_COMMENT_DEPTH - 1 ? (
+        <CommentsEmpty />
+      ) : (
+        <View className="flex-1 items-center justify-center">
+          <Text className="font-Poppins_600SemiBold text-base text-gray-light">
+            Thread is too deep!
+          </Text>
+          <Text className="font-Poppins_500Medium text-gray-light">
+            No more replies can be added
+          </Text>
+        </View>
+      ),
+    [comment?.depth]
+  )
+
   const handleCommentPress = useCallback(
     (commentId: number) => {
       if (!post) {
@@ -249,6 +268,7 @@ export const Comment: FunctionComponent<RootStackScreenProps<'Comment'>> = ({
             fetchCommentsNextPage={fetchCommentsNextPage}
             hasCommentsNextPage={hasCommentsNextPage}
             isPostPrivate={post.is_private}
+            renderListEmpty={renderCommentsEmpty}
             renderListHeader={renderListHeader}
             variant="child"
             isRefreshing={

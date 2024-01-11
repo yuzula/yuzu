@@ -5,13 +5,7 @@ import React, {
   useCallback,
   useMemo
 } from 'react'
-import {
-  ActivityIndicator,
-  FlatList,
-  ListRenderItemInfo,
-  Text,
-  View
-} from 'react-native'
+import { ActivityIndicator, FlatList, ListRenderItemInfo } from 'react-native'
 
 import { commentModel } from '../models/comment'
 import { Comment } from './Comment'
@@ -28,6 +22,7 @@ interface CommentsProps {
   areCommentsFetchingNextPage: boolean
   fetchCommentsNextPage: () => void
   renderListHeader: () => ReactNode
+  renderListEmpty: () => ReactNode
   onRefresh: () => void
   onCommentPress: (id: number) => void
   onCommentReplyButtonPress: (comment: commentModel.Schema) => void
@@ -45,6 +40,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     areCommentsFetchingNextPage,
     fetchCommentsNextPage,
     renderListHeader,
+    renderListEmpty,
     onRefresh,
     onCommentPress,
     onCommentReplyButtonPress
@@ -84,20 +80,6 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
       ]
     )
 
-    const renderListEmptyComponent = useCallback(
-      () => (
-        <View className="flex-1 items-center justify-center">
-          <Text className="font-Poppins_600SemiBold text-base text-gray-light">
-            No comments yet
-          </Text>
-          <Text className="font-Poppins_500Medium text-gray-light">
-            Be the first to comment!
-          </Text>
-        </View>
-      ),
-      []
-    )
-
     const listKeyExtractor = useCallback(
       (comment: commentModel.Schema) => comment.id.toString(),
       []
@@ -108,7 +90,7 @@ export const Comments: FunctionComponent<CommentsProps> = memo(
     return (
       <FlatList
         ItemSeparatorComponent={Separator}
-        ListEmptyComponent={renderListEmptyComponent}
+        ListEmptyComponent={renderListEmpty}
         ListFooterComponent={renderListFooterComponent}
         ListHeaderComponent={renderListHeader}
         className="w-full"

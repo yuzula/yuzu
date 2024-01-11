@@ -4,6 +4,7 @@ import React, { FunctionComponent, memo } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import Popover from 'react-native-popover-view'
 
+import { MAX_COMMENT_DEPTH } from '../constants/comment'
 import { POPOVER_VERTICAL_OFFSET } from '../constants/popover'
 import { formatDuration } from '../helpers/time'
 import { commentModel } from '../models/comment'
@@ -141,14 +142,16 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           )}
         </View>
         <View className="flex-row items-center space-x-1">
-          <Pressable
-            className="rounded-lg p-2 active:bg-gray-200"
-            onPress={() => onReplyButtonPress?.(comment.id)}
-          >
-            <Text className="text-gray-light">
-              <FontAwesome5 name="comment" size={14} />
-            </Text>
-          </Pressable>
+          {comment.depth < MAX_COMMENT_DEPTH - 1 && (
+            <Pressable
+              className="rounded-lg p-2 active:bg-gray-200"
+              onPress={() => onReplyButtonPress?.(comment.id)}
+            >
+              <Text className="text-gray-light">
+                <FontAwesome5 name="comment" size={14} />
+              </Text>
+            </Pressable>
+          )}
           <View>
             <CommentVoteButton comment={comment} size={14} variant="upvote" />
           </View>

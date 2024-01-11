@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Sentry from 'sentry-expo'
 
 import { Comments } from '../components/Comments'
+import { CommentsEmpty } from '../components/CommentsEmpty'
 import { PostCommentsHeader } from '../components/PostCommentsHeader'
 import { PostEllipsisButton } from '../components/PostEllipsisButton'
 import { PostSkeleton } from '../components/PostSkeleton'
@@ -161,6 +162,8 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
     [navigation, post]
   )
 
+  const renderCommentsEmpty = useCallback(() => <CommentsEmpty />, [])
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white">
       <View className="w-full flex-1">
@@ -201,6 +204,7 @@ export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
             hasCommentsNextPage={hasCommentsNextPage}
             isPostPrivate={post.is_private}
             isRefreshing={isPostRefreshing || areCommentsRefreshing}
+            renderListEmpty={renderCommentsEmpty}
             renderListHeader={renderListHeader}
             onCommentPress={handleCommentPress}
             onCommentReplyButtonPress={handleCommentReplyButtonPress}

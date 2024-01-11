@@ -8,6 +8,7 @@ export const schema = z.object({
   content: z.string().optional(),
   vote_count: z.number(),
   comment_count: z.number(),
+  depth: z.number(),
   is_author_internal: z.boolean(),
   current_user_vote: z.literal('upvote').or(z.literal('downvote')).optional(),
   is_deleted: z.boolean(),

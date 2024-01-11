@@ -803,6 +803,7 @@ export interface Database {
           content: string | null
           created_at: string | null
           current_user_vote: string | null
+          depth: number | null
           id: number | null
           is_author_internal: boolean | null
           is_blocked: boolean | null
@@ -1105,6 +1106,12 @@ export interface Database {
       count_posts_by_user: {
         Args: {
           post_user_id: string
+        }
+        Returns: number
+      }
+      get_comment_depth: {
+        Args: {
+          comment_id: number
         }
         Returns: number
       }
