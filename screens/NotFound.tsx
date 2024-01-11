@@ -2,7 +2,7 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 export const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
   navigation

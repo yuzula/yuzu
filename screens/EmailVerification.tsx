@@ -16,7 +16,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 const emailVerificationSchema = z.object({
   token: z.string().length(6)

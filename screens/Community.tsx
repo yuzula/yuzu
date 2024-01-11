@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Community as CommunityComponent } from '../components/Community'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
-import { RootTabScreenProps } from '../types'
+import { RootTabScreenProps } from '../navigation/types'
 
 export const Community: FunctionComponent<
   RootTabScreenProps<'Community'>

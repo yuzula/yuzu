@@ -18,7 +18,7 @@ import { usePost } from '../hooks/usePost'
 import { useRootComments } from '../hooks/useRootComments'
 import { useUserRefresh } from '../hooks/useUserRefresh'
 import { commentModel } from '../models/comment'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 export const Post: FunctionComponent<RootStackScreenProps<'Post'>> = ({
   navigation,

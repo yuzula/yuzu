@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Community as CommunityComponent } from '../components/Community'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 export const ForeignCommunity: FunctionComponent<
   RootStackScreenProps<'ForeignCommunity'>

@@ -16,8 +16,8 @@ import { useAuthContext } from './hooks/useAuthContext'
 import { useFonts } from './hooks/useFonts'
 import { useProfileContext } from './hooks/useProfileContext'
 import { useTrackingTransparency } from './hooks/useTrackingTransparency'
-import { linking } from './linking'
-import { RootNavigator } from './navigators/Root'
+import { linking } from './navigation/linking'
+import { RootNavigator } from './navigation/navigators/Root'
 
 Sentry.init({
   dsn: 'https://ed72494c4256c5d19e3994d2d69e93e2@o4506121746186240.ingest.sentry.io/4506121763160064',

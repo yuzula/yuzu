@@ -25,7 +25,7 @@ import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useCreatePost } from '../hooks/useCreatePost'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 const createPostSchema = z.object({
   content: z.string().trim().min(1).max(300)

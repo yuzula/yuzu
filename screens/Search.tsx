@@ -27,7 +27,7 @@ import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { useSearchCommunities } from '../hooks/useSearchCommunities'
 import { useUserRefresh } from '../hooks/useUserRefresh'
 import { communityModel } from '../models/community'
-import { RootTabScreenProps } from '../types'
+import { RootTabScreenProps } from '../navigation/types'
 
 export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
   navigation

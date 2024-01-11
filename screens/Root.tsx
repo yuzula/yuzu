@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Logo } from '../components/Logo'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 export const Root: FunctionComponent<RootStackScreenProps<'Root'>> = ({
   navigation

@@ -19,7 +19,7 @@ import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
 import { formatDuration } from '../helpers/time'
 import { useCreateComment } from '../hooks/useCreateComment'
-import { RootStackScreenProps } from '../types'
+import { RootStackScreenProps } from '../navigation/types'
 
 const createCommentSchema = z.object({
   content: z.string().trim().min(1).max(600)

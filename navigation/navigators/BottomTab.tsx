@@ -4,10 +4,10 @@ import * as Haptics from 'expo-haptics'
 import React, { FunctionComponent } from 'react'
 import { useBoolean } from 'usehooks-ts'
 
-import { Community } from '../screens/Community'
-import { Home } from '../screens/Home'
-import { Me } from '../screens/Me'
-import { Search } from '../screens/Search'
+import { Community } from '../../screens/Community'
+import { Home } from '../../screens/Home'
+import { Me } from '../../screens/Me'
+import { Search } from '../../screens/Search'
 import { RootTabParamList } from '../types'
 
 const BottomTab = createBottomTabNavigator<RootTabParamList>()

@@ -13,7 +13,7 @@ import { GENERIC_ERROR_MESSAGE } from '../constants/alert'
 import { useAuthenticatedProfile } from '../hooks/useAuthenticatedProfile'
 import { usePosts } from '../hooks/usePosts'
 import { useUserRefresh } from '../hooks/useUserRefresh'
-import { RootTabScreenProps } from '../types'
+import { RootTabScreenProps } from '../navigation/types'
 import { SortBy } from '../types/post'
 
 export const Home: FunctionComponent<RootTabScreenProps<'Home'>> = ({
