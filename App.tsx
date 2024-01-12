@@ -15,7 +15,7 @@ import { ProfileContextProvider } from './contexts/ProfileContext'
 import { useAuthContext } from './hooks/useAuthContext'
 import { useFonts } from './hooks/useFonts'
 import { useProfileContext } from './hooks/useProfileContext'
-import { useTrackingTransparency } from './hooks/useTrackingTransparency'
+import { useInitialTrackingTransparency } from './hooks/useTrackingTransparency'
 import { linking } from './navigation/linking'
 import { RootNavigator } from './navigation/navigators/Root'
 
@@ -37,7 +37,7 @@ const BaseApp: FunctionComponent = memo(() => {
   const { isLoading: isProfileLoading, error: profileError } =
     useProfileContext()
 
-  useTrackingTransparency()
+  useInitialTrackingTransparency()
 
   const handleNavigationReady = useCallback(async () => {
     await SplashScreen.hideAsync()
