@@ -97,6 +97,18 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
     }
   }, [])
 
+  const handleTermsOfUsePress = useCallback(async () => {
+    const url = 'https://yuzu.la/terms'
+
+    if (await Linking.canOpenURL(url)) {
+      await Linking.openURL(url)
+    } else {
+      Sentry.Native.captureException(new Error('Could not open Terms of Use'))
+
+      Alert.alert('Could not open Terms of Use', GENERIC_ERROR_MESSAGE)
+    }
+  }, [])
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
@@ -196,6 +208,13 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
             </Button>
             <Text className="text-center font-Poppins_500Medium text-gray-light">
               By signing up, you agree to our{' '}
+              <Text
+                className="font-Poppins_600SemiBold"
+                onPress={handleTermsOfUsePress}
+              >
+                Terms of Use
+              </Text>{' '}
+              and{' '}
               <Text
                 className="font-Poppins_600SemiBold"
                 onPress={handlePrivacyPolicyPress}
