@@ -103,9 +103,11 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
     if (await Linking.canOpenURL(url)) {
       await Linking.openURL(url)
     } else {
-      Sentry.Native.captureException(new Error('Could not open Terms of Use'))
+      Sentry.Native.captureException(
+        new Error('Could not open Terms of Service')
+      )
 
-      Alert.alert('Could not open Terms of Use', GENERIC_ERROR_MESSAGE)
+      Alert.alert('Could not open Terms of Service', GENERIC_ERROR_MESSAGE)
     }
   }, [])
 
@@ -212,7 +214,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                 className="font-Poppins_600SemiBold"
                 onPress={handleTermsOfUsePress}
               >
-                Terms of Use
+                Terms of Service
               </Text>{' '}
               and{' '}
               <Text
