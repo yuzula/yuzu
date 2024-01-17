@@ -25,13 +25,18 @@ export const useCreateComment = () => {
         parentCommentId
       }),
     onSuccess: async (_, { postId, parentCommentId }) => {
-      queryClient.invalidateQueries({
-        queryKey: ['comment', parentCommentId],
-        exact: true
-      })
-      queryClient.invalidateQueries({ queryKey: ['comments'] })
-      queryClient.invalidateQueries({ queryKey: ['post', postId], exact: true })
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['comment', parentCommentId],
+          exact: true
+        }),
+        queryClient.invalidateQueries({ queryKey: ['comments'] }),
+        queryClient.invalidateQueries({
+          queryKey: ['post', postId],
+          exact: true
+        }),
+        queryClient.invalidateQueries({ queryKey: ['posts'] })
+      ])
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },

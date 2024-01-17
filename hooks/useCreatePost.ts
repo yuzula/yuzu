@@ -29,7 +29,7 @@ export const useCreatePost = () => {
         isPrivate
       }),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      await queryClient.invalidateQueries({ queryKey: ['posts'] })
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },

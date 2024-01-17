@@ -15,8 +15,10 @@ export const useDeletePost = () => {
     mutationFn: ({ postId }: DeletePostParams) =>
       postService.markAsDeleted(postId),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['post'] })
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['post'] }),
+        queryClient.invalidateQueries({ queryKey: ['posts'] })
+      ])
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },

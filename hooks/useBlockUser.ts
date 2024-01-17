@@ -21,10 +21,12 @@ export const useBlockUser = () => {
         blockeeId: userId
       }),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['post'] })
-      queryClient.invalidateQueries({ queryKey: ['comment'] })
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
-      queryClient.invalidateQueries({ queryKey: ['comments'] })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['post'] }),
+        queryClient.invalidateQueries({ queryKey: ['comment'] }),
+        queryClient.invalidateQueries({ queryKey: ['posts'] }),
+        queryClient.invalidateQueries({ queryKey: ['comments'] })
+      ])
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     },
