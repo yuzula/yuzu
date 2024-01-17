@@ -82,7 +82,7 @@ export const Community: FunctionComponent<CommunityProps> = memo(
 
     const handleCreatePostButtonPress = useCallback(() => {
       navigation.navigate('CreatePost', {
-        initialIsPrivate: true,
+        initialIsPrivate: !isForeign,
         communityDomainName: domainName,
         isVisibilityChangeable: !isForeign
       })
