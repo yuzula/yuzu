@@ -42,3 +42,7 @@ yarn-error.*
 
 # Environment
 .env
+
+# App binaries
+*.aab
+*.ipa
