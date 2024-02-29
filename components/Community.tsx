@@ -129,9 +129,9 @@ export const Community: FunctionComponent<CommunityProps> = memo(
 
     return (
       <View className="w-full flex-1 pt-4">
-        <View className="w-full flex-1 items-center justify-center space-y-4">
-          <View className="w-5/6 space-y-2">
-            <View className="flex flex-row items-center space-x-2">
+        <View className="w-full flex-1 items-center justify-center gap-y-4">
+          <View className="w-5/6 gap-y-2">
+            <View className="flex flex-row items-center gap-x-2">
               <Text className="font-Poppins_700Bold text-xl">
                 @{domainName}
               </Text>
@@ -140,14 +140,14 @@ export const Community: FunctionComponent<CommunityProps> = memo(
                   <Popover
                     verticalOffset={POPOVER_VERTICAL_OFFSET}
                     from={
-                      <Pressable className="h-6 w-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
+                      <Pressable className="size-6 items-center justify-center rounded-full bg-gray-100 active:bg-gray-200">
                         <Text className="text-gray-600">
                           <FontAwesome5 name="question" size={12} />
                         </Text>
                       </Pressable>
                     }
                   >
-                    <View className="space-y-2 p-4">
+                    <View className="gap-y-2 p-4">
                       <Text className="font-Poppins_600SemiBold text-base">
                         What's this?
                       </Text>
@@ -182,7 +182,7 @@ export const Community: FunctionComponent<CommunityProps> = memo(
             </View>
           </View>
 
-          <View className="flex w-5/6 flex-row space-x-2">
+          <View className="flex w-5/6 flex-row gap-x-2">
             <Button
               className="h-10 flex-1"
               onPress={handleCreatePostButtonPress}

@@ -88,7 +88,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
         className="active:bg-gray-200"
         onPress={() => handleCommunityPress(community.domain_name)}
       >
-        <View className="mx-auto w-5/6 space-y-2 py-4">
+        <View className="mx-auto w-5/6 gap-y-2 py-4">
           <Text className="font-Poppins_600SemiBold text-base">
             @{community.domain_name}
           </Text>
@@ -126,7 +126,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
       areCommunitiesFetching ? (
         <View className="w-full grow">
           {[...Array(4).keys()].map(i => (
-            <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
+            <View key={i} className="mx-auto w-5/6 gap-y-2 py-4">
               <View>
                 <Skeleton colorMode="light" height={12} width="90%" />
               </View>
@@ -161,7 +161,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="w-full flex-1"
       >
-        <View className="w-full items-center justify-center space-y-2 py-4">
+        <View className="w-full items-center justify-center gap-y-2 py-4">
           <TextInput
             className="mx-auto w-5/6 rounded-xl bg-gray-100 p-2 font-Poppins_600SemiBold"
             placeholder="Search communities"
@@ -175,7 +175,7 @@ export const Search: FunctionComponent<RootTabScreenProps<'Search'>> = ({
           {areCommunitiesInitialLoading ? (
             <View className="w-full grow">
               {[...Array(4).keys()].map(i => (
-                <View key={i} className="mx-auto w-5/6 space-y-2 py-4">
+                <View key={i} className="mx-auto w-5/6 gap-y-2 py-4">
                   <View>
                     <Skeleton colorMode="light" height={12} width="90%" />
                   </View>

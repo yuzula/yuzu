@@ -39,12 +39,12 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           'pl-6': variant === 'child',
           'active:bg-gray-200': !!onPress
         },
-        'space-y-1 py-2'
+        'gap-y-1 py-2'
       )}
       onPress={() => onPress?.(comment.id)}
     >
-      <View className="mx-auto w-5/6 flex-row items-center justify-between space-x-2">
-        <View className="shrink flex-row items-center space-x-2">
+      <View className="mx-auto w-5/6 flex-row items-center justify-between gap-x-2">
+        <View className="shrink flex-row items-center gap-x-2">
           <Text
             ellipsizeMode="tail"
             numberOfLines={1}
@@ -66,7 +66,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
                   </Pressable>
                 }
               >
-                <View className="space-y-2 p-4">
+                <View className="gap-y-2 p-4">
                   <Text className="font-Poppins_600SemiBold text-base">
                     Community members
                   </Text>
@@ -94,7 +94,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
           </View>
         </View>
 
-        <View className="flex-row items-center space-x-1">
+        <View className="flex-row items-center gap-x-1">
           {!isHeader &&
             !comment.is_deleted &&
             !comment.is_flagged &&
@@ -141,7 +141,7 @@ export const Comment: FunctionComponent<CommentProps> = memo(
             </Text>
           )}
         </View>
-        <View className="flex-row items-center space-x-1">
+        <View className="flex-row items-center gap-x-1">
           {comment.depth < MAX_COMMENT_DEPTH - 1 && (
             <Pressable
               className="rounded-lg p-2 active:bg-gray-200"

@@ -17,7 +17,7 @@ export const NotFound: FunctionComponent<RootStackScreenProps<'NotFound'>> = ({
 
   return (
     <View className="flex-1 items-center justify-center">
-      <View className="w-4/6 items-center justify-center space-y-6">
+      <View className="w-4/6 items-center justify-center gap-y-6">
         <Text className="text-center font-Poppins_600SemiBold text-xl">
           You ain't supposed to be here!
         </Text>

@@ -41,7 +41,7 @@ export const Post: FunctionComponent<PostProps> = memo(
 
     return (
       <Pressable className="active:bg-gray-200" onPress={handlePress}>
-        <View className="mx-auto w-5/6 space-y-2 py-4">
+        <View className="mx-auto w-5/6 gap-y-2 py-4">
           {shouldDisplayCommunityDomainName && (
             <View className="flex-row">
               <Pressable className="shrink" onPress={handleDomainNamePress}>
@@ -69,8 +69,8 @@ export const Post: FunctionComponent<PostProps> = memo(
                   : post.content}
           </Text>
 
-          <View className="flex flex-row items-center justify-between space-x-2">
-            <View className="flex-1 space-y-1">
+          <View className="flex flex-row items-center justify-between gap-x-2">
+            <View className="flex-1 gap-y-1">
               <Text
                 className="shrink font-Poppins_500Medium text-gray-light"
                 ellipsizeMode="tail"
@@ -85,7 +85,7 @@ export const Post: FunctionComponent<PostProps> = memo(
                       : post.username}
                 </Text>
               </Text>
-              <View className="flex flex-row items-center space-x-2">
+              <View className="flex flex-row items-center gap-x-2">
                 <Text className="font-Poppins_500Medium text-gray-light">
                   <FontAwesome5 name="arrow-up" size={14} /> {post.vote_count}
                 </Text>
@@ -104,7 +104,7 @@ export const Post: FunctionComponent<PostProps> = memo(
               </View>
             </View>
 
-            <View className="flex flex-row items-center space-x-1">
+            <View className="flex flex-row items-center gap-x-1">
               {!post.is_deleted && !post.is_flagged && !post.is_blocked && (
                 <View>
                   <PostEllipsisButton post={post} size={18} />

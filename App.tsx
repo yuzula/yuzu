@@ -1,4 +1,5 @@
 import 'react-native-reanimated'
+import './global.css'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { NavigationContainer } from '@react-navigation/native'

@@ -2,9 +2,13 @@
 node_modules/
 
 # Expo
+expo-env.d.ts
+
 .expo/
 dist/
 web-build/
+ios/
+android/
 
 # Native
 *.orig.*
@@ -26,22 +30,17 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# Env files
-.env
-.env*.local
-
 # Caches
 *.tsbuildinfo
 .eslintcache
 .node_repl_history
 .yarn-integrity
 
-# Service account
-google_service_account.json
+# Local env files
+.env*.local
 
-# App binaries
-*.aab
-*.ipa
+# TypeScript
+*.tsbuildinfo
 
-# Clojure
-.clj-kondo/
+# Environment
+.env

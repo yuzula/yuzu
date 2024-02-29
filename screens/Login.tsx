@@ -77,8 +77,8 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 items-center justify-center"
       >
-        <View className="w-4/6 items-center justify-center space-y-8">
-          <View className="w-full space-y-4">
+        <View className="w-4/6 items-center justify-center gap-y-8">
+          <View className="w-full gap-y-4">
             <View className="w-full">
               <Text className="font-Poppins_600SemiBold text-xs uppercase text-gray-light">
                 Email
@@ -128,7 +128,7 @@ export const Login: FunctionComponent<RootStackScreenProps<'Login'>> = ({
             </View>
           </View>
 
-          <View className="w-full space-y-2">
+          <View className="w-full gap-y-2">
             <Button
               isDisabled={!isValid}
               isLoading={isLoading}

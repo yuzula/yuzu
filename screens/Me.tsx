@@ -62,13 +62,13 @@ export const Me: FunctionComponent = () => {
       className="flex-1 items-center justify-center bg-white py-6"
       edges={['top']}
     >
-      <View className="mx-auto w-5/6 flex-1 justify-between space-y-4">
-        <View className="space-y-4">
+      <View className="mx-auto w-5/6 flex-1 justify-between gap-y-4">
+        <View className="gap-y-4">
           <Text className="text-center font-Poppins_600SemiBold text-2xl">
             {profile.username}
           </Text>
         </View>
-        <View className="space-y-2">
+        <View className="gap-y-2">
           <Button
             isDisabled={isLogOutLoading}
             isLoading={isDeleteCurrentUserPending}

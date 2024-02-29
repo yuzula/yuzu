@@ -16,7 +16,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> =
   memo(({ post, onReplyButtonPress }) => (
     <>
       <View className="w-full border-b border-gray-100">
-        <View className="mx-auto w-5/6 space-y-2 py-4">
+        <View className="mx-auto w-5/6 gap-y-2 py-4">
           <Text
             className={clsx('font-Poppins_600SemiBold text-base', {
               'text-gray-light':
@@ -32,7 +32,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> =
                   : post.content}
           </Text>
 
-          <View className="space-y-1">
+          <View className="gap-y-1">
             <Text className="font-Poppins_500Medium text-gray-light">
               by{' '}
               <Text
@@ -52,7 +52,7 @@ export const PostCommentsHeader: FunctionComponent<PostCommentsHeaderProps> =
               </Text>
             </Text>
 
-            <View className="flex flex-row items-center space-x-2">
+            <View className="flex flex-row items-center gap-x-2">
               <Text className="font-Poppins_500Medium text-gray-light">
                 <FontAwesome5 name="arrow-up" size={14} /> {post.vote_count}
               </Text>

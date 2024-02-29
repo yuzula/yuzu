@@ -31,11 +31,6 @@
       "package": "com.yuzu.android",
       "versionCode": 38
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
     "extra": {
       "router": {
         "origin": false

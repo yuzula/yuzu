@@ -130,8 +130,8 @@ export const CreateComment: FunctionComponent<
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1 bg-gray-100"
         >
-          <View className="flex-1 space-y-4 bg-white pt-4">
-            <View className="mx-auto flex w-5/6 flex-row space-x-2">
+          <View className="flex-1 gap-y-4 bg-white pt-4">
+            <View className="mx-auto flex w-5/6 flex-row gap-x-2">
               <Button
                 className="flex-1"
                 isDisabled={!isValid}
@@ -172,8 +172,8 @@ export const CreateComment: FunctionComponent<
             </View>
 
             <View className="bg-gray-100 py-2">
-              <View className="mx-auto w-5/6 space-y-2">
-                <View className="flex-row items-center justify-between space-x-2">
+              <View className="mx-auto w-5/6 gap-y-2">
+                <View className="flex-row items-center justify-between gap-x-2">
                   <Text
                     className="shrink font-Poppins_500Medium text-gray-600"
                     ellipsizeMode="tail"

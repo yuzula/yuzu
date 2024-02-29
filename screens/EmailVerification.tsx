@@ -77,7 +77,7 @@ export const EmailVerification: FunctionComponent<
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 items-center justify-center"
       >
-        <View className="w-4/6 items-center justify-center space-y-6">
+        <View className="w-4/6 items-center justify-center gap-y-6">
           <Text className="text-center font-Poppins_600SemiBold text-lg">
             Enter the verification code we just sent to your email
           </Text>
@@ -104,7 +104,7 @@ export const EmailVerification: FunctionComponent<
             />
           </View>
 
-          <View className="w-full space-y-2">
+          <View className="w-full gap-y-2">
             <Button
               isDisabled={!isValid}
               isLoading={isLoading}

@@ -98,7 +98,7 @@ export const Posts: FunctionComponent<PostsProps> = memo(
                   </Pressable>
                 }
               >
-                <View className="space-y-2 p-4">
+                <View className="gap-y-2 p-4">
                   <Text className="font-Poppins_600SemiBold text-base">
                     Internal posts
                   </Text>
