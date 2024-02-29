@@ -17,6 +17,7 @@ import { z } from 'zod'
 import { supabase } from '../clients/supabase'
 import { Button } from '../components/Button'
 import { GENERIC_ERROR_MESSAGE, GENERIC_ERROR_TITLE } from '../constants/alert'
+import { isEmailPopular } from '../helpers/email'
 import { RootStackScreenProps } from '../navigation/types'
 
 const registerSchema = z.object({
@@ -49,6 +50,13 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
 
   const handleSignUpButtonPress = useCallback(
     async ({ email, username, password }: RegisterSchema) => {
+      if (isEmailPopular(email)) {
+        return Alert.alert(
+          'Use your school or workplace email',
+          'This will allow you to see internal posts created by members of your community'
+        )
+      }
+
       setIsLoading(true)
 
       try {
