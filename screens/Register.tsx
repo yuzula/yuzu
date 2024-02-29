@@ -178,6 +178,7 @@ export const Register: FunctionComponent<RootStackScreenProps<'Register'>> = ({
                 rules={{ required: true }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
+                    secureTextEntry
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect={false}
