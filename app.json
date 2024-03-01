@@ -2,7 +2,7 @@
   "expo": {
     "name": "Yuzu",
     "slug": "yuzu",
-    "version": "2.0.12",
+    "version": "2.0.13",
     "owner": "yuzula",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,15 +19,16 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "39"
+      "buildNumber": "40"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#fcf951"
       },
+      "permissions": ["android.gms.permission.AD_ID"],
       "package": "com.yuzu.android",
-      "versionCode": 39
+      "versionCode": 40
     },
     "extra": {
       "router": {
